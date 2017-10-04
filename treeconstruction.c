@@ -325,6 +325,7 @@ int main() {
           bool turn = 1;
           int leftchunkrecvd = -2;
           int rightchunkrecvd = -1;
+          
 		  while(recieved < CHUNK || sent < CHUNK) {
             turn = turn + 1;
 
