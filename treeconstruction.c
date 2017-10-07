@@ -10,6 +10,18 @@
 struct TreeNode* leftTreeNode[max_processors];
 struct TreeNode* rightTreeNode[max_processors];
 
+
+void printGivenLevel(struct TreeNode* root, int level);
+int height(struct TreeNode* node);
+void printLevelOrder(struct TreeNode* root);
+struct TreeNode* newNode(int data, int tree);
+struct TreeNode* constructleft(int start_id, int last_id);
+struct TreeNode* constructTree(int no_of_pe, int start_id);
+void traverse(struct TreeNode* root);
+struct TreeNode* mirror(struct TreeNode* root, int no_of_pe);
+struct TreeNode* addNode (int node_id, struct TreeNode* root, int tree);
+void addParentColor(int node_id, int tree, int color);
+
 struct TreeNode
 {
     int process_id;
@@ -18,9 +30,6 @@ struct TreeNode
     struct TreeNode* parent;
     struct TreeNode *right_child;
 };
-
-void printGivenLevel(struct TreeNode* root, int level);
-int height(struct TreeNode* node);
 
 void printLevelOrder(struct TreeNode* root)
 {
@@ -260,7 +269,7 @@ int main() {
 
     // RUN MPI
     int rank,p,index,cdone=0;
-    long int count,i,j,SIZE,CSIZE;
+    long int sent,i,j,SIZE,CSIZE;
 	char *ptr;
 
 	int CHUNK;
@@ -305,94 +314,142 @@ int main() {
 
     for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
-        count = 0;
+		
+		t1 = MPI_Wtime();
+
+        sent = 0;
         if (rank == no_of_process){  // if root then setup all send's
-		   for(j=0;j<CHUNK;j++) {
+            for(j=0;j<CHUNK;j++) {
 			// left tree
-			if(!(j%2)) {
-				MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR, root->process_id,j,MPI_COMM_WORLD,&sreq[count++]);
-			}
+                if(!(j%2)) {
+                    MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR, root->process_id,j,MPI_COMM_WORLD,&sreq[sent++]);
+                }
 			// right tree
-			else {
-				MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,root2->process_id,j,MPI_COMM_WORLD,&sreq[count++]);
-			}
-		   }
+                else {
+                    MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,root2->process_id,j,MPI_COMM_WORLD,&sreq[sent++]);
+                }
+            }
 		}
         if(rank!=no_of_process) {// if not root setup all recvs
 
-          int recieved = 0;
-          int sent = 0;
-          bool turn = 1;
-          int leftchunkrecvd = -2;
-          int rightchunkrecvd = -1;
-          
-		  while(recieved < CHUNK || sent < CHUNK) {
-            turn = turn + 1;
-
-            if (leftchunkrecvd != -2) {// left send
+            MPI_Waitany(CHUNK, req, &index, &stt);
+            if(index == MPI_UNDEFINED) {
+                printf("Unexpected error!\n");
+                MPI_Abort(MPI_COMM_WORLD, 1);
+            }
+            bool turn;
+            int leftrecvd = -2;
+            int rightrecvd = -1;
+            if (index == 0) {
+                leftrecvd = 0;
                 struct TreeNode* temp = leftTreeNode[rank];
-                if(temp->left_child != NULL && temp->leftColor == turn) {
-                    MPI_Isend(msg+leftchunkrecvd*CSIZE,CSIZE,MPI_CHAR,temp->left_child->process_id,leftchunkrecvd,MPI_COMM_WORLD,&sreq[count++]);
-                    sent += 1;
+                if (temp->parent->left_child == temp) {
+                    turn = temp->parent->leftColor;
                 }
-                else if (temp->right_child != NULL && temp->rightColor == turn) {
-                    MPI_Isend(msg+leftchunkrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,leftchunkrecvd,MPI_COMM_WORLD,&sreq[count++]);
-                    sent += 1;
+                else {
+                    turn = temp->parent->rightColor;
                 }
             }
-            if (rightchunkrecvd != -1) {
+            else if (index == 1) {
+                rightrecvd = 1;
                 struct TreeNode* temp = rightTreeNode[rank];
-                if(temp->left_child != NULL && temp->leftColor == turn) {
-                    MPI_Isend(msg+rightchunkrecvd*CSIZE,CSIZE,MPI_CHAR,temp->left_child->process_id,rightchunkrecvd,MPI_COMM_WORLD,&sreq[count++]);
-                    sent += 1;
+                if (temp->parent->left_child == temp) {
+                    turn = temp->parent->leftColor;
                 }
-                else if (temp->right_child != NULL && temp->rightColor == turn) {
-                    MPI_Isend(msg+rightchunkrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,rightchunkrecvd,MPI_COMM_WORLD,&sreq[count++]);
-                    sent += 1;
+                else {
+                    turn = temp->parent->rightColor;
                 }
             }
+            else {
+                printf("error\n");
+            }
+            int recieved = 1;
+            
+            //count no of childs
+            int no_of_childs = 0;
+            struct TreeNode* t1 = leftTreeNode[rank];
+            if (t1->left_child != NULL) {
+                no_of_childs += 1;
+            }
+            if (t1->right_child != NULL) {
+                no_of_childs += 1;
+            }
+            t1 = rightTreeNode[rank];
+            if (t1->left_child != NULL) {
+                no_of_childs += 1;
+            }
+            if (t1->right_child != NULL) {
+                no_of_childs += 1;
+            }
+            
+            while(recieved < CHUNK || sent != no_of_childs*recieved) {
+                turn = turn + 1;
 
-            // left tree
-            int willrecieve = 0;
-            if ((leftTreeNode[rank]->parent->left_child->process_id == rank && leftTreeNode[rank]->parent->leftColor == turn)
+                if (leftrecvd != -2) {// left send
+                    struct TreeNode* temp = leftTreeNode[rank];
+                    if(temp->left_child != NULL && temp->leftColor == turn) {
+                        MPI_Isend(msg+leftrecvd*CSIZE,CSIZE,MPI_CHAR,temp->left_child->process_id,leftrecvd,MPI_COMM_WORLD,&sreq[sent++]);
+                    }
+                    else if (temp->right_child != NULL && temp->rightColor == turn) {
+                        MPI_Isend(msg+leftrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,leftrecvd,MPI_COMM_WORLD,&sreq[sent++]);
+                    }
+                }
+                if (rightrecvd != -1) { // right send
+                    struct TreeNode* temp = rightTreeNode[rank];
+                    if(temp->left_child != NULL && temp->leftColor == turn) {
+                        MPI_Isend(msg+rightrecvd*CSIZE,CSIZE,MPI_CHAR,temp->left_child->process_id,rightrecvd,MPI_COMM_WORLD,&sreq[sent++]);
+                    }
+                    else if (temp->right_child != NULL && temp->rightColor == turn) {
+                        MPI_Isend(msg+rightrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,rightrecvd,MPI_COMM_WORLD,&sreq[sent++]);
+                    }
+                }
+
+                // left tree
+                if ((leftTreeNode[rank]->parent->left_child->process_id == rank && leftTreeNode[rank]->parent->leftColor == turn)
                  || (leftTreeNode[rank]->parent->right_child->process_id == rank && leftTreeNode[rank]->parent->rightColor == turn)) {
-                        j = leftchunkrecvd + 2;
-                        int flag, MPI_Status st;
-                        MPI_IPROBE(leftTreeNode[rank]->parent->process_id, j, MPI_COMM_WORLD, &flag, &st);
-                        if (flag) {
-                            MPI_Irecv(msg+j*CSIZE,CSIZE,MPI_CHAR,leftTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&req[j]);
-                            willrecieve = 1;
+                    j = leftrecvd + 2;
+                    if (j < CHUNK) {
+                        MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,leftTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&st);
+                        if (st == MPI_SUCCESS) {
+                            recieved += 1;
+                            leftrecvd = j;
                         }
-            }
-            else if ((rightTreeNode[rank]->parent->left_child->process_id == rank && rightTreeNode[rank]->parent->leftColor == turn)
-                 || (rightTreeNode[rank]->parent->right_child->process_id == rank && rightTreeNode[rank]->parent->rightColor == turn)) {
-                        j = rightchunkrecvd + 2;
-                        int flag, MPI_Status st;
-                        MPI_IPROBE(rightTreeNode[rank]->parent->process_id, j, MPI_COMM_WORLD, &flag, &st);
-                        if (flag) {
-                            MPI_Irecv(msg+j*CSIZE,CSIZE,MPI_CHAR,rightTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&req[j]);
-                            willrecieve = 1
+                        else {
+                            printf("error recieving chunk no. %d from left tree with node %d\n", j, rank);
                         }
-            }
-
-            if (willrecieve == 1) {
-                MPI_Waitany(CHUNK, req, &index, &stt);
-	            	if(index == MPI_UNDEFINED) {
-                		printf("Unexpected error!\n");
-                		MPI_Abort(MPI_COMM_WORLD, 1);
-            		}
-                recieved += 1;
-                if(index%2 == 0) {  // left tree
-                    leftchunkrecvd = index;
-
-                } else { //right tree
-                    rightchunkrecvd = index;
-
+                    }
                 }
-			}
-            }
-        }
-    }
+                else if ((rightTreeNode[rank]->parent->left_child->process_id == rank && rightTreeNode[rank]->parent->leftColor == turn)
+                 || (rightTreeNode[rank]->parent->right_child->process_id == rank && rightTreeNode[rank]->parent->rightColor == turn)) {
+                    j = rightchunkrecvd + 2;
+                    if (j < CHUNK) {
+                        MPI_Irecv(msg+j*CSIZE,CSIZE,MPI_CHAR,rightTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&req[j]);
+                        if (st == MPI_SUCCESS) {
+                            recieved += 1;
+                            rightrecvd = j;
+                        }
+                        else {
+                            printf("error recieving chunk no. %d from right tree with node %d\n", j, rank);
+                        }
+                    }
+                }
+            } // while loop ends
+
+        }// code for rank != no_of_processors ends
+        
+        MPI_Waitall(sent,sreq,sstt);  // wait for all send to finish
+
+		t2 = MPI_Wtime() - t1;
+		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+		if(rank==0){
+			printf("Run %d time %1.9lf\n", i+1,res);
+		} else {
+			//printf("Outmsg %s Inmsg %s\n", outmsg,msg);
+			j=strcmp(outmsg,msg);
+			j!=0?printf("Error - msgs different\n"):0;
+			memset(msg,'$',SIZE);
+		}
+    } // End of loop for runs
     MPI_Finalize();
     return 0;
 }
