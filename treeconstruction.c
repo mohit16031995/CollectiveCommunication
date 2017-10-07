@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <mpi.h>
 
 #define max_processors 1000
 
@@ -194,7 +195,7 @@ void addParentColor(int node_id, int tree, int color) {
         }
     }
 }
-int main() {
+int main(int argc, char *argv[]) {
     int no_of_process;
     scanf("%d", &no_of_process);
     struct TreeNode* root, *root2;
@@ -307,11 +308,11 @@ int main() {
 
 	for(i=0;i<SIZE;i++) {
 		outmsg[i] = 'A'+rand()%26;
-		if(rank==root) msg[i] = outmsg[i];
+		if(rank==no_of_process) msg[i] = outmsg[i];
 	}
 	outmsg[SIZE] = '\0';
 	msg[SIZE] = '\0';
-
+    int RUNS = 10;
     for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
 		
@@ -337,7 +338,7 @@ int main() {
                 printf("Unexpected error!\n");
                 MPI_Abort(MPI_COMM_WORLD, 1);
             }
-            bool turn;
+            int turn;
             int leftrecvd = -2;
             int rightrecvd = -1;
             if (index == 0) {
@@ -383,7 +384,12 @@ int main() {
             }
             
             while(recieved < CHUNK || sent != no_of_childs*recieved) {
-                turn = turn + 1;
+                if (turn == 0) {
+			turn = 1;
+		}
+		else {
+			turn = 0;
+		}
 
                 if (leftrecvd != -2) {// left send
                     struct TreeNode* temp = leftTreeNode[rank];
@@ -409,27 +415,27 @@ int main() {
                  || (leftTreeNode[rank]->parent->right_child->process_id == rank && leftTreeNode[rank]->parent->rightColor == turn)) {
                     j = leftrecvd + 2;
                     if (j < CHUNK) {
-                        MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,leftTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&st);
-                        if (st == MPI_SUCCESS) {
+                        int ierr = MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,leftTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&stt);
+                        if (ierr == MPI_SUCCESS) {
                             recieved += 1;
                             leftrecvd = j;
                         }
                         else {
-                            printf("error recieving chunk no. %d from left tree with node %d\n", j, rank);
+                            printf("error recieving chunk no. %ld from left tree with node %d\n", j, rank);
                         }
                     }
                 }
                 else if ((rightTreeNode[rank]->parent->left_child->process_id == rank && rightTreeNode[rank]->parent->leftColor == turn)
                  || (rightTreeNode[rank]->parent->right_child->process_id == rank && rightTreeNode[rank]->parent->rightColor == turn)) {
-                    j = rightchunkrecvd + 2;
+                    j = rightrecvd + 2;
                     if (j < CHUNK) {
-                        MPI_Irecv(msg+j*CSIZE,CSIZE,MPI_CHAR,rightTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&req[j]);
-                        if (st == MPI_SUCCESS) {
+                       int ierr =  MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,rightTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&stt);
+                        if (ierr == MPI_SUCCESS) {
                             recieved += 1;
                             rightrecvd = j;
                         }
                         else {
-                            printf("error recieving chunk no. %d from right tree with node %d\n", j, rank);
+                            printf("error recieving chunk no. %ld from right tree with node %d\n", j, rank);
                         }
                     }
                 }
@@ -442,7 +448,7 @@ int main() {
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 		if(rank==0){
-			printf("Run %d time %1.9lf\n", i+1,res);
+			printf("Run %ld time %1.9lf\n", i+1,res);
 		} else {
 			//printf("Outmsg %s Inmsg %s\n", outmsg,msg);
 			j=strcmp(outmsg,msg);
