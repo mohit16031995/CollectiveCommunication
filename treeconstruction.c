@@ -93,7 +93,7 @@ struct TreeNode* newNode(int data, int tree)
 
 struct TreeNode* constructleft(int start_id, int last_id) {
     if (start_id < last_id) {
-    int mid = (last_id+start_id) / 2;
+    int mid = ceil((start_id+last_id) / 2);
     struct TreeNode* root = newNode(mid,0);
     root->left_child = constructleft(start_id, mid-1);
     if (root->left_child != NULL)
@@ -201,11 +201,11 @@ int main(int argc, char *argv[]) {
 	no_of_process = total_process - 1;
     struct TreeNode* root, *root2;
     int h = ceil((log10(no_of_process)) / log10(2.0));
-    if (no_of_process == pow(2,h) - 2) {
+   /* if (no_of_process == pow(2,h) - 2) {
         root = constructleft(1, no_of_process);
         root2 = mirror(root, no_of_process);
-    }
-    else if (no_of_process == pow(2,h)-1) {
+    }*/
+    if (no_of_process == pow(2,h)-1) {
         root = constructleft(1, no_of_process-1);
         root2 = mirror(root, no_of_process-1);
         struct TreeNode* temp = newNode(no_of_process-1,0);
@@ -242,7 +242,8 @@ int main(int argc, char *argv[]) {
    // printf("\n");
    // printLevelOrder(root2);
    // printf("\n");
-
+	printLevelOrder(top_node);
+	printf("\n");
 		
 	top_node->leftColor = 0;
 	addParentColor(root->process_id, 1, 1);
@@ -269,13 +270,13 @@ int main(int argc, char *argv[]) {
         }
     }
     printf("Colored\n");
-    for (int i = 1; i < no_of_process; i++) {
-      //  printf("process_id = %d : \n", i);
+    for (int i = 1; i <= no_of_process; i++) {
+      	 printf("process_id = %d : \n", i);
         struct TreeNode* temp1 = leftTreeNode[i];
         struct TreeNode* temp2 = rightTreeNode[i];
 
-       // printf("Tree1 : leftColor = %d, rightColor = %d\n", temp1->leftColor, temp1->rightColor);
-       //  printf("Tree2 : leftColor = %d, rightColor = %d\n\n", temp2->leftColor, temp2->rightColor);
+        printf("Tree1 : leftColor = %d, rightColor = %d\n", temp1->leftColor, temp1->rightColor);
+        printf("Tree2 : leftColor = %d, rightColor = %d\n\n", temp2->leftColor, temp2->rightColor);
     }
 
 	printf("argc = %d\n, argv[0] = %s\n, argv[1] = %s\n, argv[2] = %s\n", argc, argv[0], argv[1], argv[2]);
@@ -325,7 +326,7 @@ int main(int argc, char *argv[]) {
 
 	for(i=0;i<SIZE;i++) {
 		outmsg[i] = 'A'+rand()%26;
-		if(rank==no_of_process) msg[i] = outmsg[i];
+		if(rank==0) msg[i] = outmsg[i];
 	}
 	outmsg[SIZE] = '\0';
 	msg[SIZE] = '\0';
@@ -459,7 +460,8 @@ int main(int argc, char *argv[]) {
 			printf("process %d waiting for packet %ld from %d\n", rank, j, leftTreeNode[rank]->parent->process_id);
                         int ierr = MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,leftTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&stt);
                         if (ierr == MPI_SUCCESS) {
-                            recieved += 1;
+			    printf("Recieved: Process %d recieved packet %ld from %d\n", rank, j, leftTreeNode[rank]->parent->process_id);	
+			    recieved += 1;
                             leftrecvd = j;
                         }
                         else {
@@ -473,6 +475,7 @@ int main(int argc, char *argv[]) {
 			if (flag) {
 				recieved += 1;
 				leftrecvd = 0;
+				printf("%d rank process recvd 0 chunk", rank);
 			}		
 	       	   }
                 }
@@ -484,7 +487,8 @@ int main(int argc, char *argv[]) {
 			printf("process %d waiting for packet %ld from %d\n", rank, j, rightTreeNode[rank]->parent->process_id);
                        int ierr =  MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,rightTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&stt);
                         if (ierr == MPI_SUCCESS) {
-                            recieved += 1;
+                            printf("Recieved: Process %d recved packet %ld from %d\n", rank, j, rightTreeNode[rank]->parent->process_id);
+				recieved += 1;
                             rightrecvd = j;
                         }
                         else {
@@ -498,6 +502,7 @@ int main(int argc, char *argv[]) {
 			if (flag) {
 				recieved += 1;
 				rightrecvd = 1;
+				printf("%d rank process recvd 1 chunk\n", rank);
 			}	
 		   }
                 }
@@ -506,6 +511,7 @@ int main(int argc, char *argv[]) {
         }// code for rank != no_of_processors ends
         
         MPI_Waitall(sent,sreq,sstt);  // wait for all send to finish
+	MPI_Barrier(MPI_COMM_WORLD);
 
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
