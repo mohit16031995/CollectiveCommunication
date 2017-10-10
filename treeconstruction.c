@@ -82,6 +82,7 @@ struct TreeNode* newNode(int data, int tree)
   node->right_child = NULL;
   node->leftColor = -1;
   node->rightColor = -1;
+  node->parent = NULL;
   if (tree == 0) {
     leftTreeNode[data] = node;
   }
@@ -91,18 +92,19 @@ struct TreeNode* newNode(int data, int tree)
   return(node);
 }
 
-struct TreeNode* constructleft(int start_id, int last_id) {
-    if (start_id < last_id) {
-    int mid = ceil((start_id+last_id) / 2);
-    struct TreeNode* root = newNode(mid,0);
-    root->left_child = constructleft(start_id, mid-1);
-    if (root->left_child != NULL)
-        root->left_child->parent = root;
-    root->right_child = constructleft(mid+1, last_id);
-    if (root->right_child != NULL)
-        root->right_child->parent = root;
+struct TreeNode* constructCompleteBinary(int start_id, int last_id) {
+//    	printf("construct Complete binary called start_id = %d, last_id = %d\n", start_id, last_id);
+	if (start_id < last_id) {
+   	int mid = ceil((start_id+last_id) / 2.0);
+    	struct TreeNode* root = newNode(mid,0);
+    	root->left_child = constructCompleteBinary(start_id, mid-1);
+    	if (root->left_child != NULL)
+        	root->left_child->parent = root;
+    	root->right_child = constructCompleteBinary(mid+1, last_id);
+    	if (root->right_child != NULL)
+        	root->right_child->parent = root;
 
-    return root;
+    	return root;	
     }
     else if (start_id == last_id) {
         return newNode(start_id,0);
@@ -112,21 +114,20 @@ struct TreeNode* constructleft(int start_id, int last_id) {
     }
 }
 struct TreeNode* constructTree(int no_of_pe, int start_id) {
-    //printf("construct %d %d \n" , no_of_pe, start_id);
-    if (no_of_pe <= 0) {
+    //printf("ConstructTree called with no_of_pe = %d, start_id = %d\n", no_of_pe, start_id);
+	if (no_of_pe <= 0) {
         return NULL;
     }
     if (no_of_pe == 1) {
-        return newNode(start_id,0);
+        return newNode(start_id, 0);
     }
     int h = ceil((log10(no_of_pe+2.0)) / log10(2.0));
     int root_id = pow(2,h-1)-1 + start_id;
     struct TreeNode* root = newNode(root_id,0);
-    //printf("%d", root->process_id);
-    root->left_child = constructleft(start_id, root_id-1);
+    root->left_child = constructCompleteBinary(start_id, root_id-1);
     if (root->left_child != NULL)
         root->left_child->parent = root;
-    root->right_child = constructTree(no_of_pe-root_id, root_id+1);
+    root->right_child = constructTree(start_id+no_of_pe-1-root_id, root_id+1);
     if (root->right_child != NULL)
         root->right_child->parent = root;
     return root;
@@ -153,15 +154,6 @@ struct TreeNode* mirror(struct TreeNode* root, int no_of_pe) {
 
     return temp;
 }
-struct TreeNode* addNode (int node_id, struct TreeNode* root, int tree) {
-    if (root == NULL) {
-        return newNode(node_id, tree);
-    }
-    else {
-        root->right_child = addNode(node_id, root->right_child, tree);
-        return root;
-    }
-}
 void addParentColor(int node_id, int tree, int color) {
     //printf("addColor : %d, %d %d\n", node_id, tree, color);
     struct TreeNode* node;
@@ -176,8 +168,8 @@ void addParentColor(int node_id, int tree, int color) {
         //printf("%d ka parent null hai\n", node_id);
         return;
     }
-    if (parentNode->left_child == node) {
-        printf("left child hai, ");
+    if (parentNode->left_child == node && parentNode->leftColor == -1) {
+  //      printf("left child hai, ");
         parentNode->leftColor = color;
         if (parentNode->right_child != NULL) {
             //printf("right child %d hai\n", parentNode->right_child->process_id);
@@ -185,7 +177,7 @@ void addParentColor(int node_id, int tree, int color) {
             addParentColor(parentNode->right_child->process_id, !tree, color);
         }
     }
-    else if (parentNode->right_child == node){
+    else if (parentNode->right_child == node && parentNode->rightColor == -1){
         //printf("right child hai, ");
         parentNode->rightColor = color;
         if (parentNode->left_child != NULL) {
@@ -199,89 +191,102 @@ int main(int argc, char *argv[]) {
     int total_process, no_of_process;
     total_process = atoi(argv[1]);
 	no_of_process = total_process - 1;
-    struct TreeNode* root, *root2;
-    int h = ceil((log10(no_of_process)) / log10(2.0));
-   /* if (no_of_process == pow(2,h) - 2) {
-        root = constructleft(1, no_of_process);
-        root2 = mirror(root, no_of_process);
-    }*/
-    if (no_of_process == pow(2,h)-1) {
-        root = constructleft(1, no_of_process-1);
-        root2 = mirror(root, no_of_process-1);
-        struct TreeNode* temp = newNode(no_of_process-1,0);
-        temp->left_child = root;
-        root = temp;
-        struct TreeNode* temp2 = newNode(no_of_process-1,1);
-        temp2->left_child = root2;
-        root2 = temp2;
-    }
-    else if (no_of_process % 2 == 0) {
-        root = constructTree(no_of_process, 1);
-        root->parent = NULL;
-        root2 = mirror(root, no_of_process);
-        root2->parent = NULL;
-    }
-    else {
-        root = constructTree(no_of_process-1, 1);
-        root->parent = NULL;
-        root2 = mirror(root, no_of_process-1);
-        root2->parent = NULL;
-        addNode(no_of_process, root, 0);
-        addNode(no_of_process, root2, 1);
 
-    }
-    printf("Constructed \n");
-	struct TreeNode* top_node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    struct TreeNode *root, *root2, *top_node;
+	if (no_of_process % 2 == 0) {
+		int h = ceil((log10(no_of_process+2.0)) / log10(2.0));
+		if (no_of_process == pow(2,h)-2) {
+			root = constructCompleteBinary(1, no_of_process);
+			root2 = mirror(root, no_of_process);
+		}
+		else {
+			root = constructTree(no_of_process,1);
+			root2 = mirror(root, no_of_process);
+		}
+	}
+	else {
+		int temp = no_of_process-1;
+		int h = ceil((log10(temp+2.0)) / log10(2.0));
+		if (temp == pow(2,h)-2) {
+			root = constructCompleteBinary(1, temp);
+			root2 = mirror(root, temp);
+		}
+		else {
+			root = constructTree(temp,1);
+			root2 = mirror(root, temp);
+			
+		}
+		struct TreeNode* temp_node = newNode(no_of_process, 0);
+		temp_node->left_child = root;
+		root->parent = temp_node;
+		root = temp_node;
+		leftTreeNode[no_of_process] = temp_node;
+		struct TreeNode* temp_node2 = newNode(no_of_process, 1);
+		temp_node2->left_child = root2;
+		root2->parent = temp_node2;
+		rightTreeNode[no_of_process] = temp_node2;
+		root2 = temp_node2;
+	}
+	top_node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
 	top_node->process_id = 0;
 	top_node->left_child = root;
 	top_node->right_child = root2;
-	root->parent = top_node;
+	top_node->parent = NULL;
 	root2->parent = top_node;
+	root->parent = top_node;
+	top_node->leftColor = -1;
+	top_node->rightColor = -1;
+	
+    	//printLevelOrder(root);
+    	//printf("\n");
+    	//printLevelOrder(root2);
+    	//printf("\n");
+	//printLevelOrder(top_node);
+	//printf("\n");
 
-   // printLevelOrder(root);
-   // printf("\n");
-   // printLevelOrder(root2);
-   // printf("\n");
-	printLevelOrder(top_node);
-	printf("\n");
-		
-	top_node->leftColor = 0;
-	addParentColor(root->process_id, 1, 1);
-	top_node->rightColor = 1;
-	addParentColor(root2->process_id, 0, 0);
-    if (root->leftColor == -1 && root->rightColor == -1) {
-        if (root->left_child != NULL) {
-            root->leftColor = 0;
-            addParentColor(root->left_child->process_id, 1, 1);
-        }
-        if (root->right_child != NULL) {
-            root->rightColor = 1;
-            addParentColor(root->right_child->process_id, 1, 0);
-        }
-    }
-    if (root2->leftColor == -1 && root2->rightColor == -1) {
-        if (root2->left_child != NULL) {
-            root2->leftColor = 0;
-            addParentColor(root2->left_child->process_id, 0, 1);
-        }
-        if (root2->right_child != NULL) {
-            root2->rightColor = 1;
-            addParentColor(root2->right_child->process_id, 0, 0);
-        }
-    }
-    printf("Colored\n");
+	// coloring
+
+	if (top_node->leftColor == -1) {
+		top_node->leftColor = 0;
+		addParentColor(top_node->left_child->process_id, 1, 1);
+	}
+	if (top_node->rightColor == -1) {
+		top_node->rightColor = 1;
+		addParentColor(top_node->right_child->process_id, 0, 0);
+	}
+	for (int i = 1; i <= no_of_process; i++) {
+		struct TreeNode* temp = leftTreeNode[i];
+		if (temp->left_child != NULL && temp->leftColor == -1) {
+			temp->leftColor = 0;
+			addParentColor(temp->left_child->process_id, 1, 1);
+		}
+		if (temp->right_child != NULL && temp->rightColor == -1) {
+			temp->rightColor = 1;
+			addParentColor(temp->right_child->process_id, 0, 0);
+		}
+		struct TreeNode* temp2 = rightTreeNode[i];
+		if (temp2->left_child != NULL && temp2->leftColor == -1) {
+			temp2->leftColor = 0;
+			addParentColor(temp2->left_child->process_id, 0, 1);
+		}
+		if (temp2->right_child != NULL && temp2->rightColor == -1) {
+			temp2->rightColor = 1;
+			addParentColor(temp2->right_child->process_id, 0, 0);
+		}
+	}
+  // printf("Colored\n");
     for (int i = 1; i <= no_of_process; i++) {
-      	 printf("process_id = %d : \n", i);
+      	 //printf("process_id = %d : \n", i);
         struct TreeNode* temp1 = leftTreeNode[i];
         struct TreeNode* temp2 = rightTreeNode[i];
 
-        printf("Tree1 : leftColor = %d, rightColor = %d\n", temp1->leftColor, temp1->rightColor);
-        printf("Tree2 : leftColor = %d, rightColor = %d\n\n", temp2->leftColor, temp2->rightColor);
+        //printf("Tree1 : parent = %d, leftColor = %d, rightColor = %d\n", temp1->parent->process_id, temp1->leftColor, temp1->rightColor);
+        //printf("Tree2 : parent = %d, leftColor = %d, rightColor = %d\n\n", temp2->parent->process_id, temp2->leftColor, temp2->rightColor);
     }
 
-	printf("argc = %d\n, argv[0] = %s\n, argv[1] = %s\n, argv[2] = %s\n", argc, argv[0], argv[1], argv[2]);
+//	printf("argc = %d\n, argv[0] = %s\n, argv[1] = %s\n, argv[2] = %s\n", argc, argv[0], argv[1], argv[2]);
 	
-	
+		
 	
     // RUN MPI
     int rank,p,index,cdone=0;
@@ -293,13 +298,13 @@ int main(int argc, char *argv[]) {
     int seed = time(NULL);
 	srand(seed);
 	//char inmsg[SIZE], outmsg[SIZE];
-	printf("point0\n");
+//	printf("point0\n");
 	MPI_Init(&argc,&argv);
 	printf("point0.2\n");
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	
-	printf ("point1\n");
+//	printf ("point1\n");
 	if(argc!=4){
 	  if(rank==0) printf("Usage: <program> <message_size> <nchunk>\n");
 		printf("error due to input\n");
@@ -331,7 +336,7 @@ int main(int argc, char *argv[]) {
 	outmsg[SIZE] = '\0';
 	msg[SIZE] = '\0';
 
-	printf("point2\n");
+//	printf("point2\n");
     int RUNS = 10;
     for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
@@ -357,17 +362,20 @@ int main(int argc, char *argv[]) {
 	
 		MPI_Irecv(msg, CSIZE, MPI_CHAR, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &req[0]);
 		MPI_Irecv(msg+CSIZE, CSIZE, MPI_CHAR, MPI_ANY_SOURCE, 1, MPI_COMM_WORLD, &req[1]);
-            MPI_Waitany(2, req, &index, &stt);
+//            	printf("Wait: rank = %d\n", rank);
+		MPI_Waitany(2, req, &index, &stt);
             if(index == MPI_UNDEFINED) {
                 printf("Unexpected error!\n");
                 MPI_Abort(MPI_COMM_WORLD, 1);
             }
-		printf("Process id %d wait over recv %d chunk\n", rank, stt.MPI_TAG);
+	//	printf("Recieved: Process id %d wait over recv %d chunk\n", rank, stt.MPI_TAG);
             int turn;
             int leftrecvd = -2;
             int rightrecvd = -1;
-		int leftsent = 0;
-		int rightsent = 0;
+		int leftleftsent = 0;
+		int leftrightsent = 0;
+		int rightleftsent = 0;
+		int rightrightsent = 0;
             if (index == 0) {
                 leftrecvd = 0;
                 struct TreeNode* temp = leftTreeNode[rank];
@@ -393,6 +401,7 @@ int main(int argc, char *argv[]) {
             }
             int recieved = 1;
             
+		
             //count no of childs
             int no_of_childs = 0;
 		int leftTreeChilds = 0;
@@ -415,8 +424,11 @@ int main(int argc, char *argv[]) {
                 no_of_childs += 1;
 		rightTreeChilds += 1;
             }
-            
-            while(recieved < CHUNK) {
+	
+            int checkflag = 1;
+            while(recieved < CHUNK || sent < (no_of_childs*CHUNK)/2) {
+//		printf("Process %d entered loop, turn = %d\n", rank, turn);
+		checkflag = 0;
                 if (turn == 0) {
 			turn = 1;
 		}
@@ -424,49 +436,54 @@ int main(int argc, char *argv[]) {
 			turn = 0;
 		}
 
-                if (leftrecvd != -2 && leftsent <= (CHUNK*leftTreeChilds)/2) {// left send
+                if (leftrecvd != -2) {// left send
                     struct TreeNode* temp = leftTreeNode[rank];
-                    if(temp->left_child != NULL && temp->leftColor == turn) {
+                    if(temp->left_child != NULL && temp->leftColor == turn && leftleftsent <= leftrecvd/2) {
                         MPI_Isend(msg+leftrecvd*CSIZE,CSIZE,MPI_CHAR,temp->left_child->process_id,leftrecvd,MPI_COMM_WORLD,&sreq[sent++]);
-			leftsent++;
-			printf("%d rank process sent %d chunk to %d rank process-a\n", rank, leftrecvd, temp->left_child->process_id);
+			leftleftsent++;
+			checkflag = 1;
+	//		printf("%d rank process sent %d chunk to %d rank process-a\n", rank, leftrecvd, temp->left_child->process_id);
                     }
-                    else if (temp->right_child != NULL && temp->rightColor == turn) {
+                    else if (temp->right_child != NULL && temp->rightColor == turn && leftrightsent <= leftrecvd/2) {
                         MPI_Isend(msg+leftrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,leftrecvd,MPI_COMM_WORLD,&sreq[sent++]);
-			leftsent++;
-			printf("%d rank process sent %d chunk to %d rank process-b\n", rank, leftrecvd, temp->right_child->process_id);
+			leftrightsent++;
+			checkflag =1;
+	//		printf("%d rank process sent %d chunk to %d rank process-b\n", rank, leftrecvd, temp->right_child->process_id);
                     }
                 }
-                if (rightrecvd != -1 && rightsent <= (CHUNK*rightTreeChilds)/2) { // right send
+                if (rightrecvd != -1) { // right send
                     struct TreeNode* temp = rightTreeNode[rank];
-                    if(temp->left_child != NULL && temp->leftColor == turn) {
+                    if(temp->left_child != NULL && temp->leftColor == turn && rightleftsent <= rightrecvd/2) {
                         MPI_Isend(msg+rightrecvd*CSIZE,CSIZE,MPI_CHAR,temp->left_child->process_id,rightrecvd,MPI_COMM_WORLD,&sreq[sent++]);
-			rightsent++;
-			printf("%d rank process sent %d chunk to %d rank process-c\n", rank, rightrecvd, temp->left_child->process_id);
+			rightleftsent++;
+			checkflag = 1;
+	//		printf("%d rank process sent %d chunk to %d rank process-c\n", rank, rightrecvd, temp->left_child->process_id);
                     }
-                    else if (temp->right_child != NULL && temp->rightColor == turn) {
+                    else if (temp->right_child != NULL && temp->rightColor == turn && rightrightsent <= rightrecvd/2) {
                         MPI_Isend(msg+rightrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,rightrecvd,MPI_COMM_WORLD,&sreq[sent++]);
-			rightsent++;
-			printf("%d rank process sent %d chunk to %d rank process-d\n", rank, rightrecvd, temp->right_child->process_id);
+			rightrightsent++;
+			checkflag = 1;
+//			printf("%d rank process sent %d chunk to %d rank process-d\n", rank, rightrecvd, temp->right_child->process_id);
                     }
                 }
 
                 // left tree
-                if ((leftTreeNode[rank]->parent->left_child->process_id == rank && leftTreeNode[rank]->parent->leftColor == turn)
-                 || (leftTreeNode[rank]->parent->right_child->process_id == rank && leftTreeNode[rank]->parent->rightColor == turn)) {
+                if ((leftTreeNode[rank]->parent->left_child != NULL && leftTreeNode[rank]->parent->left_child == leftTreeNode[rank] && leftTreeNode[rank]->parent->leftColor == turn)
+                 || (leftTreeNode[rank]->parent->right_child != NULL && leftTreeNode[rank]->parent->right_child == leftTreeNode[rank] && leftTreeNode[rank]->parent->rightColor == turn)) {
                    if (leftrecvd != -2) {
 			 j = leftrecvd + 2;
                     if (j < CHUNK) {
-			printf("process %d waiting for packet %ld from %d\n", rank, j, leftTreeNode[rank]->parent->process_id);
+	//		printf("Waiting: process %d waiting for packet %ld from %d\n", rank, j, leftTreeNode[rank]->parent->process_id);
                         int ierr = MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,leftTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&stt);
                         if (ierr == MPI_SUCCESS) {
-			    printf("Recieved: Process %d recieved packet %ld from %d\n", rank, j, leftTreeNode[rank]->parent->process_id);	
+	//		    printf("Recieved: Process %d recieved packet %ld from %d\n", rank, j, leftTreeNode[rank]->parent->process_id);	
 			    recieved += 1;
                             leftrecvd = j;
                         }
                         else {
                             printf("error recieving chunk no. %ld from left tree with node %d\n", j, rank);
                         }
+			checkflag = 1;
                     }
 			}
 		   else {
@@ -475,25 +492,27 @@ int main(int argc, char *argv[]) {
 			if (flag) {
 				recieved += 1;
 				leftrecvd = 0;
-				printf("%d rank process recvd 0 chunk", rank);
-			}		
+	//			printf("%d rank process recvd 0 chunk", rank);
+			}	
+			checkflag = 1;
 	       	   }
                 }
-                else if ((rightTreeNode[rank]->parent->left_child->process_id == rank && rightTreeNode[rank]->parent->leftColor == turn)
-                 || (rightTreeNode[rank]->parent->right_child->process_id == rank && rightTreeNode[rank]->parent->rightColor == turn)) {
+                if ((rightTreeNode[rank]->parent->left_child != NULL && rightTreeNode[rank]->parent->left_child == rightTreeNode[rank] && rightTreeNode[rank]->parent->leftColor == turn)
+                 || (rightTreeNode[rank]->parent->right_child != NULL && rightTreeNode[rank]->parent->right_child == rightTreeNode[rank] && rightTreeNode[rank]->parent->rightColor == turn)) {
                     if (rightrecvd != -1) {
 			j = rightrecvd + 2;
                     if (j < CHUNK) {
-			printf("process %d waiting for packet %ld from %d\n", rank, j, rightTreeNode[rank]->parent->process_id);
+	//		printf("Waiting: process %d waiting for packet %ld from %d\n", rank, j, rightTreeNode[rank]->parent->process_id);
                        int ierr =  MPI_Recv(msg+j*CSIZE,CSIZE,MPI_CHAR,rightTreeNode[rank]->parent->process_id,j,MPI_COMM_WORLD,&stt);
                         if (ierr == MPI_SUCCESS) {
-                            printf("Recieved: Process %d recved packet %ld from %d\n", rank, j, rightTreeNode[rank]->parent->process_id);
+          //                  printf("Recieved: Process %d recved packet %ld from %d\n", rank, j, rightTreeNode[rank]->parent->process_id);
 				recieved += 1;
                             rightrecvd = j;
                         }
                         else {
                             printf("error recieving chunk no. %ld from right tree with node %d\n", j, rank);
                         }
+			checkflag = 1;
                     }
 		   }
 		   else {
@@ -502,30 +521,35 @@ int main(int argc, char *argv[]) {
 			if (flag) {
 				recieved += 1;
 				rightrecvd = 1;
-				printf("%d rank process recvd 1 chunk\n", rank);
+	//			printf("%d rank process recvd 1 chunk\n", rank);
 			}	
+			checkflag = 1;
 		   }
                 }
             } // while loop ends
+	//printf("while loop ends\n");
 
         }// code for rank != no_of_processors ends
-        
+	//printf("\n");	
+	//printf("Finished: Process %d finishes the task and waiting for sends to finish\n", rank);        
         MPI_Waitall(sent,sreq,sstt);  // wait for all send to finish
 	MPI_Barrier(MPI_COMM_WORLD);
+//	printf("\n");
+	//printf("Computation\n");
 
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 		if(rank==0){
 			printf("Run %ld time %1.9lf\n", i+1,res);
 		} else {
-			//printf("Outmsg %s Inmsg %s\n", outmsg,msg);
+	//		printf("Outmsg %s Inmsg %s\n", outmsg,msg);
 			j=strcmp(outmsg,msg);
 			j!=0?printf("Error - msgs different\n"):0;
 			memset(msg,'$',SIZE);
 		}
     } // End of loop for runs
     MPI_Finalize();
-
+	
     return 0;
 }
 
