@@ -553,7 +553,7 @@ int main(int argc, char *argv[]) {
 	//printf("\n");	
 	//printf("Finished: Process %d finishes the task and waiting for sends to finish\n", rank);        
         MPI_Waitall(sent,sreq,sstt);  // wait for all send to finish
-	MPI_Barrier(MPI_COMM_WORLD);
+//	MPI_Barrier(MPI_COMM_WORLD);
 //	printf("\n");
 	//printf("Computation\n");
 
