@@ -188,8 +188,24 @@ void addParentColor(int node_id, int tree, int color) {
     }
 }
 int main(int argc, char *argv[]) {
-    int total_process, no_of_process;
-    total_process = atoi(argv[1]);
+  	int seed = time(NULL);
+	srand(seed);
+	
+	int rank,p,index,cdone=0;
+	long int sent,i,j,SIZE,CSIZE;
+	char *ptr;
+
+	int CHUNK;
+	MPI_Init(&argc,&argv);
+	//printf("point0.2\n");
+	MPI_Comm_size(MPI_COMM_WORLD, &p);
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+	double t01, t02, t03, t_construction, t_coloring;
+	t01 = MPI_Wtime(); 
+	
+	 int total_process, no_of_process;
+	 total_process = atoi(argv[1]);
 	no_of_process = total_process - 1;
 
     struct TreeNode *root, *root2, *top_node;
@@ -243,7 +259,7 @@ int main(int argc, char *argv[]) {
     	//printf("\n");
 	//printLevelOrder(top_node);
 	//printf("\n");
-
+	t02 = MPI_Wtime();
 	// coloring
 
 	if (top_node->leftColor == -1) {
@@ -274,35 +290,33 @@ int main(int argc, char *argv[]) {
 			addParentColor(temp2->right_child->process_id, 0, 0);
 		}
 	}
+
+	t03 = MPI_Wtime();
   // printf("Colored\n");
-    for (int i = 1; i <= no_of_process; i++) {
+   // for (int i = 1; i <= no_of_process; i++) {
       	 //printf("process_id = %d : \n", i);
-        struct TreeNode* temp1 = leftTreeNode[i];
-        struct TreeNode* temp2 = rightTreeNode[i];
+     //   struct TreeNode* t1emp1 = leftTreeNode[i];
+       // struct TreeNode* temp2 = rightTreeNode[i];
 
         //printf("Tree1 : parent = %d, leftColor = %d, rightColor = %d\n", temp1->parent->process_id, temp1->leftColor, temp1->rightColor);
         //printf("Tree2 : parent = %d, leftColor = %d, rightColor = %d\n\n", temp2->parent->process_id, temp2->leftColor, temp2->rightColor);
-    }
+    //}
 
 //	printf("argc = %d\n, argv[0] = %s\n, argv[1] = %s\n, argv[2] = %s\n", argc, argv[0], argv[1], argv[2]);
 	
-		
 	
-    // RUN MPI
-    int rank,p,index,cdone=0;
-    long int sent,i,j,SIZE,CSIZE;
-	char *ptr;
+	t03 = t03 - t02;
+	t02 = t02 - t01;
 
-	int CHUNK;
+	
+// RUN MPI
+    
 
-    int seed = time(NULL);
-	srand(seed);
+//    int seed = time(NULL);
+//	srand(seed);
 	//char inmsg[SIZE], outmsg[SIZE];
 //	printf("point0\n");
-	MPI_Init(&argc,&argv);
-	printf("point0.2\n");
-	MPI_Comm_size(MPI_COMM_WORLD, &p);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	
 	
 //	printf ("point1\n");
 	if(argc!=4){
@@ -337,31 +351,33 @@ int main(int argc, char *argv[]) {
 	msg[SIZE] = '\0';
 
 //	printf("point2\n");
-
+	int no_of_childs = 0;
 	if (rank != 0) {
 	//count no of childs
-            int no_of_childs = 0;
-		int leftTreeChilds = 0;
-		int rightTreeChilds = 0;
             struct TreeNode* t1 = leftTreeNode[rank];
             if (t1->left_child != NULL) {
                 no_of_childs += 1;
-		leftTreeChilds += 1;
             }
             if (t1->right_child != NULL) {
                 no_of_childs += 1;
-		leftTreeChilds += 1;
             }
             t1 = rightTreeNode[rank];
             if (t1->left_child != NULL) {
                 no_of_childs += 1;
-		rightTreeChilds += 1;
             }
             if (t1->right_child != NULL) {
                 no_of_childs += 1;
-		rightTreeChilds += 1;
             }
 	}
+	
+	MPI_Reduce(&t02, &t_construction, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+	MPI_Reduce(&t03, &t_coloring, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+	
+	if (rank == 0) {
+		printf("Tree Construction time = %1.9lf\n", t_construction);
+		printf("Tree Coloring time = %1.9lf\n", t_coloring);
+	}
+
     int RUNS = 10;
     for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
@@ -387,7 +403,7 @@ int main(int argc, char *argv[]) {
 	
 		MPI_Irecv(msg, CSIZE, MPI_CHAR, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &req[0]);
 		MPI_Irecv(msg+CSIZE, CSIZE, MPI_CHAR, MPI_ANY_SOURCE, 1, MPI_COMM_WORLD, &req[1]);
-//            	printf("Wait: rank = %d\n", rank);
+  //    	printf("Wait: rank = %d\n", rank);
 		MPI_Waitany(2, req, &index, &stt);
             if(index == MPI_UNDEFINED) {
                 printf("Unexpected error!\n");
@@ -543,7 +559,9 @@ int main(int argc, char *argv[]) {
 
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+	
 		if(rank==0){
+		
 			printf("Run %ld time %1.9lf\n", i+1,res);
 		} else {
 	//		printf("Outmsg %s Inmsg %s\n", outmsg,msg);
