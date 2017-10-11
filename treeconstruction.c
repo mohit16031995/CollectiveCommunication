@@ -337,6 +337,31 @@ int main(int argc, char *argv[]) {
 	msg[SIZE] = '\0';
 
 //	printf("point2\n");
+
+	if (rank != 0) {
+	//count no of childs
+            int no_of_childs = 0;
+		int leftTreeChilds = 0;
+		int rightTreeChilds = 0;
+            struct TreeNode* t1 = leftTreeNode[rank];
+            if (t1->left_child != NULL) {
+                no_of_childs += 1;
+		leftTreeChilds += 1;
+            }
+            if (t1->right_child != NULL) {
+                no_of_childs += 1;
+		leftTreeChilds += 1;
+            }
+            t1 = rightTreeNode[rank];
+            if (t1->left_child != NULL) {
+                no_of_childs += 1;
+		rightTreeChilds += 1;
+            }
+            if (t1->right_child != NULL) {
+                no_of_childs += 1;
+		rightTreeChilds += 1;
+            }
+	}
     int RUNS = 10;
     for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
@@ -402,28 +427,7 @@ int main(int argc, char *argv[]) {
             int recieved = 1;
             
 		
-            //count no of childs
-            int no_of_childs = 0;
-		int leftTreeChilds = 0;
-		int rightTreeChilds = 0;
-            struct TreeNode* t1 = leftTreeNode[rank];
-            if (t1->left_child != NULL) {
-                no_of_childs += 1;
-		leftTreeChilds += 1;
-            }
-            if (t1->right_child != NULL) {
-                no_of_childs += 1;
-		leftTreeChilds += 1;
-            }
-            t1 = rightTreeNode[rank];
-            if (t1->left_child != NULL) {
-                no_of_childs += 1;
-		rightTreeChilds += 1;
-            }
-            if (t1->right_child != NULL) {
-                no_of_childs += 1;
-		rightTreeChilds += 1;
-            }
+            
 	
             int checkflag = 1;
             while(recieved < CHUNK || sent < (no_of_childs*CHUNK)/2) {
