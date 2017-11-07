@@ -257,8 +257,8 @@ int main(int argc, char *argv[]) {
     	//printf("\n");
     	//printLevelOrder(root2);
     	//printf("\n");
-	//printLevelOrder(top_node);
-	//printf("\n");
+//	printLevelOrder(top_node);
+//	printf("\n");
 	t02 = MPI_Wtime();
 	// coloring
 
@@ -291,34 +291,13 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	t03 = MPI_Wtime();
-  // printf("Colored\n");
-   // for (int i = 1; i <= no_of_process; i++) {
-      	 //printf("process_id = %d : \n", i);
-     //   struct TreeNode* t1emp1 = leftTreeNode[i];
-       // struct TreeNode* temp2 = rightTreeNode[i];
-
-        //printf("Tree1 : parent = %d, leftColor = %d, rightColor = %d\n", temp1->parent->process_id, temp1->leftColor, temp1->rightColor);
-        //printf("Tree2 : parent = %d, leftColor = %d, rightColor = %d\n\n", temp2->parent->process_id, temp2->leftColor, temp2->rightColor);
-    //}
-
-//	printf("argc = %d\n, argv[0] = %s\n, argv[1] = %s\n, argv[2] = %s\n", argc, argv[0], argv[1], argv[2]);
-	
-	
+	t03 = MPI_Wtime();	
 	t03 = t03 - t02;
 	t02 = t02 - t01;
 
 	
 // RUN MPI
     
-
-//    int seed = time(NULL);
-//	srand(seed);
-	//char inmsg[SIZE], outmsg[SIZE];
-//	printf("point0\n");
-	
-	
-//	printf ("point1\n");
 	if(argc!=4){
 	  if(rank==0) printf("Usage: <program> <message_size> <nchunk>\n");
 		printf("error due to input\n");
@@ -350,23 +329,28 @@ int main(int argc, char *argv[]) {
 	outmsg[SIZE] = '\0';
 	msg[SIZE] = '\0';
 
-//	printf("point2\n");
 	int no_of_childs = 0;
+	int left_tree_childs = 0;
+	int right_tree_childs = 0;
 	if (rank != 0) {
 	//count no of childs
             struct TreeNode* t1 = leftTreeNode[rank];
             if (t1->left_child != NULL) {
                 no_of_childs += 1;
+		left_tree_childs += 1;
             }
             if (t1->right_child != NULL) {
                 no_of_childs += 1;
+		left_tree_childs += 1;
             }
             t1 = rightTreeNode[rank];
             if (t1->left_child != NULL) {
                 no_of_childs += 1;
+		right_tree_childs += 1;
             }
             if (t1->right_child != NULL) {
                 no_of_childs += 1;
+		right_tree_childs += 1;
             }
 	}
 	
@@ -422,7 +406,7 @@ int main(int argc, char *argv[]) {
                 struct TreeNode* temp = leftTreeNode[rank];
                 if (temp->parent->left_child == temp) {
                     turn = temp->parent->leftColor;
-                }
+                } 
                 else {
                     turn = temp->parent->rightColor;
                 }
@@ -446,7 +430,9 @@ int main(int argc, char *argv[]) {
             
 	
             int checkflag = 1;
-            while(recieved < CHUNK || sent < (no_of_childs*CHUNK)/2) {
+	    int oddChunks = CHUNK / 2;
+	    int evenChunks = CHUNK - oddChunks;
+            while(recieved < CHUNK || sent < (left_tree_childs*evenChunks + right_tree_childs*oddChunks )) {
 //		printf("Process %d entered loop, turn = %d\n", rank, turn);
 		checkflag = 0;
                 if (turn == 0) {
@@ -546,15 +532,9 @@ int main(int argc, char *argv[]) {
 			checkflag = 1;
 		   }
                 }
-            } // while loop ends
-	//printf("while loop ends\n");
-
-        }// code for rank != no_of_processors ends
-	//printf("\n");	
-	//printf("Finished: Process %d finishes the task and waiting for sends to finish\n", rank);        
+            } 
+        }      
         MPI_Waitall(sent,sreq,sstt);  // wait for all send to finish
-//	MPI_Barrier(MPI_COMM_WORLD);
-//	printf("\n");
 	//printf("Computation\n");
 
 		t2 = MPI_Wtime() - t1;
