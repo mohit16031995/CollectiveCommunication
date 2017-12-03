@@ -232,16 +232,23 @@ int main(int argc, char *argv[]) {
 			root2 = mirror(root, temp);
 			
 		}
-		struct TreeNode* temp_node = newNode(no_of_process, 0);
-		temp_node->left_child = root;
-		root->parent = temp_node;
-		root = temp_node;
-		leftTreeNode[no_of_process] = temp_node;
-		struct TreeNode* temp_node2 = newNode(no_of_process, 1);
-		temp_node2->left_child = root2;
-		root2->parent = temp_node2;
-		rightTreeNode[no_of_process] = temp_node2;
-		root2 = temp_node2;
+
+		struct TreeNode* temp_node = root;
+		while (temp_node->right_child != NULL) {
+			temp_node = temp_node->right_child;
+		}
+		
+		temp_node->right_child = newNode(no_of_process, 0);
+		temp_node->right_child->parent = temp_node;
+		
+		temp_node = root2;
+		while (temp_node->right_child != NULL) {
+			temp_node = temp_node->right_child;
+		}
+		
+		temp_node->right_child = newNode(no_of_process, 1);
+		temp_node->right_child->parent = temp_node;
+		
 	}
 	top_node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
 	top_node->process_id = 0;
@@ -252,14 +259,16 @@ int main(int argc, char *argv[]) {
 	root->parent = top_node;
 	top_node->leftColor = -1;
 	top_node->rightColor = -1;
-	
-    	//printLevelOrder(root);
-    	//printf("\n");
-    	//printLevelOrder(root2);
-    	//printf("\n");
-//	printLevelOrder(top_node);
-//	printf("\n");
+
 	t02 = MPI_Wtime();
+	/*if (rank == 0) {	
+    		printLevelOrder(root);
+    		printf("\n");
+    		printLevelOrder(root2);
+    		printf("\n");
+		printLevelOrder(top_node);
+		printf("\n");
+	}*/
 	// coloring
 
 	if (top_node->leftColor == -1) {
@@ -554,4 +563,3 @@ int main(int argc, char *argv[]) {
 	
     return 0;
 }
-
