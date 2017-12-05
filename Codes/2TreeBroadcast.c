@@ -332,7 +332,7 @@ int main(int argc, char *argv[]) {
 	double t1,t2,res;
 
 	for(i=0;i<SIZE;i++) {
-		outmsg[i] = 'A'+rand()%26;
+		outmsg[i] = 'A'+i%26;
 		if(rank==0) msg[i] = outmsg[i];
 	}
 	outmsg[SIZE] = '\0';
@@ -371,7 +371,7 @@ int main(int argc, char *argv[]) {
 		printf("Tree Coloring time = %1.9lf\n", t_coloring);
 	}
 
-    int RUNS = 10;
+    int RUNS = 100;
     for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
 		
