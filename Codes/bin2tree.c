@@ -6,7 +6,7 @@
 #include <math.h>
 #include <string.h>
 
-#define RUNS 100
+#define RUNS 1
 //#define SIZE 6
 //#define CHUNK 2
 //#define CSIZE SIZE/CHUNK
@@ -154,7 +154,7 @@ int main(int argc,char *argv[]){
 		}
 	}
 
-
+	double timings[2][50][515];
 	for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
 
@@ -173,13 +173,25 @@ int main(int argc,char *argv[]){
 		   for(j=0;j<CHUNK;j++) {
 			// left tree				
 			if(!(j%2)) { 
-				if(leftChildren) MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,leftPeers[0],j,MPI_COMM_WORLD,&sreq[count++]);
-				if(leftChildren==2) MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,leftPeers[1],j,MPI_COMM_WORLD,&sreq[count++]);
+				if(leftChildren) { 
+					MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,leftPeers[0],j,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][j][leftPeers[0]] = MPI_Wtime() - t1;
+				}
+				if(leftChildren==2) {
+					MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,leftPeers[1],j,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][j][leftPeers[1]] = MPI_Wtime() - t1;
+				}
 			}			
 			// right tree
 			else { 
-				if(rightChildren) MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,rightPeers[0],j,MPI_COMM_WORLD,&sreq[count++]);
-				if(rightChildren==2) MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,rightPeers[1],j,MPI_COMM_WORLD,&sreq[count++]);
+				if(rightChildren) {
+					MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,rightPeers[0],j,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][j][rightPeers[0]] = MPI_Wtime() - t1;
+				}
+				if(rightChildren==2) {
+					MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,rightPeers[1],j,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][j][rightPeers[1]] = MPI_Wtime() - t1;
+				}
 			}			
 		   }
 		}						
@@ -192,13 +204,26 @@ int main(int argc,char *argv[]){
                 		printf("Unexpected error!\n");
                 		MPI_Abort(MPI_COMM_WORLD, 1);
             		}
-
 			if(index%2) {  // right tree
-				if(rightChildren) MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,rightPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
-				if(rightChildren==2) MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,rightPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+				timings[0][index][recvToRight] = MPI_Wtime() - t1;
+				if(rightChildren) {
+					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,rightPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][index][rightPeers[0]] = MPI_Wtime() - t1;
+				}
+				if(rightChildren==2) {
+					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,rightPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][index][rightPeers[1]] = MPI_Wtime() - t1;
+				}
 			} else {
-				if(leftChildren) MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,leftPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
-				if(leftChildren==2) MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,leftPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+				timings[0][index][recvToLeft] = MPI_Wtime() - t1;
+				if(leftChildren) {
+					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,leftPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][index][leftPeers[0]] = MPI_Wtime() - t1;
+				}
+				if(leftChildren==2) {
+					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,leftPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+					timings[1][index][leftPeers[1]] = MPI_Wtime() - t1;
+				}
 			}
 			cdone++;
 		  }
@@ -209,12 +234,64 @@ int main(int argc,char *argv[]){
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 		if(rank==0){
-			printf("Run %d time %1.9lf\n", i+1,res);
+			printf("Run %ld time %1.9lf\n", i+1,res);
 		} else {
 			//printf("Outmsg %s Inmsg %s\n", outmsg,msg);
 			j=strcmp(outmsg,msg);
 			j!=0?printf("Error - msgs different\n"):0;
 			memset(msg,'$',SIZE);
+		}
+		MPI_Barrier(MPI_COMM_WORLD);
+		if (rank != 0) {
+			for (int ll = 0; ll < CHUNK; ll++) {
+				int from;
+				if (ll % 2) {
+					from = recvToRight;
+					if (rightChildren==2) {
+						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], rightPeers[0], timings[1][ll][rightPeers[0]], rightPeers[1], timings[1][ll][rightPeers[1]]);
+					}
+					else if (rightChildren) {
+						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], rightPeers[0], timings[1][ll][rightPeers[0]]);
+					}
+					else {
+						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from]);
+					}
+				}
+				else {
+					from = recvToLeft;
+					if (leftChildren == 2) {
+						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], leftPeers[0], timings[1][ll][leftPeers[0]], leftPeers[1], timings[1][ll][leftPeers[1]]);
+					}	
+					else if (leftChildren) {
+						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], leftPeers[0], timings[1][ll][leftPeers[0]]);
+					}	
+					else {
+						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from]);
+					}			
+				}
+			}
+		}
+		else {
+			for(int ll=0;ll<CHUNK;ll++) {
+			// left tree				
+			if(!(ll%2)) { 
+				if(leftChildren==2) {
+					printf("Logs, Process %d, Run %ld, chunk %d, left_sent %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, leftPeers[0], timings[1][ll][leftPeers[0]], leftPeers[1], timings[1][ll][leftPeers[1]]);
+				}
+				else if(leftChildren) { 
+					printf("Logs, Process %d, Run %ld, chunk %d, left_sent %d %1.9lf\n", rank, i+1, ll, leftPeers[0], timings[1][ll][leftPeers[0]]);
+				}
+			}			
+			// right tree
+			else { 
+				if(rightChildren==2) {
+					printf("Logs, Process %d, Run %ld, chunk %d, left_sent %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, rightPeers[0], timings[1][ll][rightPeers[0]], rightPeers[1], timings[1][ll][rightPeers[1]]);
+				}
+				else if(rightChildren) { 
+					printf("Logs, Process %d, Run %ld, chunk %d, left_sent %d %1.9lf\n", rank, i+1, ll, rightPeers[0], timings[1][ll][rightPeers[0]]);
+				}
+			}			
+		   }
 		}
 	}
 	MPI_Finalize();
