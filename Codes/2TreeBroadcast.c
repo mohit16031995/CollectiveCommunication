@@ -576,7 +576,7 @@ int main(int argc, char *argv[]) {
 		if(rank==0){
 		
 			printf("Run %ld time %1.9lf\n", i+1,res);
-			printf("Process %d Run %ld testing time %1.9lf\n", rank, i+1,total_test);
+			//printf("Process %d Run %ld testing time %1.9lf\n", rank, i+1,total_test);
 			
 			
 		} else {
