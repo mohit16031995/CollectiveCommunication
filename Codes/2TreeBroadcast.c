@@ -201,13 +201,16 @@ int main(int argc, char *argv[]) {
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-	double t01, t02, t03, t_construction, t_coloring;
+	double t01, t02, t03, t_construction, t_coloring, t_testing = 0;
 	t01 = MPI_Wtime(); 
 	
 	 int total_process, no_of_process;
 	 total_process = atoi(argv[1]);
 	no_of_process = total_process - 1;
-
+	
+	double timings[2][50][515];
+	// receive 0 and send 1
+	memset(timings, 0, sizeof(timings));
     struct TreeNode *root, *root2, *top_node;
 	if (no_of_process % 2 == 0) {
 		int h = ceil((log10(no_of_process+2.0)) / log10(2.0));
@@ -332,7 +335,7 @@ int main(int argc, char *argv[]) {
 	double t1,t2,res;
 
 	for(i=0;i<SIZE;i++) {
-		outmsg[i] = 'A'+rand()%26;
+		outmsg[i] = 'A'+i%26;
 		if(rank==0) msg[i] = outmsg[i];
 	}
 	outmsg[SIZE] = '\0';
@@ -341,25 +344,31 @@ int main(int argc, char *argv[]) {
 	int no_of_childs = 0;
 	int left_tree_childs = 0;
 	int right_tree_childs = 0;
+	int left_child_rank = -1, right_child_rank = -1;
 	if (rank != 0) {
 	//count no of childs
             struct TreeNode* t1 = leftTreeNode[rank];
             if (t1->left_child != NULL) {
                 no_of_childs += 1;
 		left_tree_childs += 1;
+		left_child_rank = t1->left_child->process_id;
             }
             if (t1->right_child != NULL) {
                 no_of_childs += 1;
 		left_tree_childs += 1;
+		right_child_rank = t1->right_child->process_id;
+		
             }
             t1 = rightTreeNode[rank];
             if (t1->left_child != NULL) {
                 no_of_childs += 1;
 		right_tree_childs += 1;
+		left_child_rank = t1->left_child->process_id;
             }
             if (t1->right_child != NULL) {
                 no_of_childs += 1;
 		right_tree_childs += 1;
+		right_child_rank = t1->right_child->process_id;
             }
 	}
 	
@@ -371,7 +380,7 @@ int main(int argc, char *argv[]) {
 		printf("Tree Coloring time = %1.9lf\n", t_coloring);
 	}
 
-    int RUNS = 10;
+    int RUNS = 1;
     for(i=0;i<RUNS;i++){
 		MPI_Barrier(MPI_COMM_WORLD);
 		
@@ -383,12 +392,12 @@ int main(int argc, char *argv[]) {
 			// left tree
                 if(!(j%2)) {
                     MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR, root->process_id,j,MPI_COMM_WORLD, &sreq[sent++]);
-			
+			timings[1][j][root->process_id] = MPI_Wtime()-t1;
                 }
 			// right tree
                 else {
                     MPI_Isend(outmsg+j*CSIZE,CSIZE,MPI_CHAR,root2->process_id,j,MPI_COMM_WORLD, &sreq[sent++]);
-			
+			timings[1][j][root2->process_id] = MPI_Wtime()-t1;
                 }
             }
 	}
@@ -412,6 +421,7 @@ int main(int argc, char *argv[]) {
 		int rightrightsent = 0;
             if (index == 0) {
                 leftrecvd = 0;
+		timings[0][0][leftTreeNode[rank]->parent->process_id] = MPI_Wtime()-t1;
                 struct TreeNode* temp = leftTreeNode[rank];
                 if (temp->parent->left_child == temp) {
                     turn = temp->parent->leftColor;
@@ -422,6 +432,7 @@ int main(int argc, char *argv[]) {
             }
             else if (index == 1) {
                 rightrecvd = 1;
+		timings[0][1][rightTreeNode[rank]->parent->process_id] = MPI_Wtime()-t1;
                 struct TreeNode* temp = rightTreeNode[rank];
                 if (temp->parent->left_child == temp) {
                     turn = temp->parent->leftColor;
@@ -458,11 +469,13 @@ int main(int argc, char *argv[]) {
 			leftleftsent++;
 			checkflag = 1;
 	//		printf("%d rank process sent %d chunk to %d rank process-a\n", rank, leftrecvd, temp->left_child->process_id);
+			timings[1][leftrecvd][temp->left_child->process_id] = MPI_Wtime()-t1;
                     }
                     else if (temp->right_child != NULL && temp->rightColor == turn && leftrightsent <= leftrecvd/2) {
                         MPI_Isend(msg+leftrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,leftrecvd,MPI_COMM_WORLD,&sreq[sent++]);
 			leftrightsent++;
 			checkflag =1;
+			timings[1][leftrecvd][temp->right_child->process_id] = MPI_Wtime()-t1;
 	//		printf("%d rank process sent %d chunk to %d rank process-b\n", rank, leftrecvd, temp->right_child->process_id);
                     }
                 }
@@ -472,12 +485,14 @@ int main(int argc, char *argv[]) {
                         MPI_Isend(msg+rightrecvd*CSIZE,CSIZE,MPI_CHAR,temp->left_child->process_id,rightrecvd,MPI_COMM_WORLD,&sreq[sent++]);
 			rightleftsent++;
 			checkflag = 1;
+			timings[1][rightrecvd][temp->left_child->process_id] = MPI_Wtime()-t1;
 	//		printf("%d rank process sent %d chunk to %d rank process-c\n", rank, rightrecvd, temp->left_child->process_id);
                     }
                     else if (temp->right_child != NULL && temp->rightColor == turn && rightrightsent <= rightrecvd/2) {
                         MPI_Isend(msg+rightrecvd*CSIZE,CSIZE,MPI_CHAR,temp->right_child->process_id,rightrecvd,MPI_COMM_WORLD,&sreq[sent++]);
 			rightrightsent++;
 			checkflag = 1;
+			timings[1][rightrecvd][temp->right_child->process_id] = MPI_Wtime()-t1;
 //			printf("%d rank process sent %d chunk to %d rank process-d\n", rank, rightrecvd, temp->right_child->process_id);
                     }
                 }
@@ -494,6 +509,8 @@ int main(int argc, char *argv[]) {
 	//		    printf("Recieved: Process %d recieved packet %ld from %d\n", rank, j, leftTreeNode[rank]->parent->process_id);	
 			    recieved += 1;
                             leftrecvd = j;
+			    timings[0][j][leftTreeNode[rank]->parent->process_id] = MPI_Wtime()-t1;
+				
                         }
                         else {
                             printf("error recieving chunk no. %ld from left tree with node %d\n", j, rank);
@@ -507,6 +524,7 @@ int main(int argc, char *argv[]) {
 			if (flag) {
 				recieved += 1;
 				leftrecvd = 0;
+			    timings[0][0][leftTreeNode[rank]->parent->process_id] = MPI_Wtime()-t1;
 	//			printf("%d rank process recvd 0 chunk", rank);
 			}	
 			checkflag = 1;
@@ -523,6 +541,7 @@ int main(int argc, char *argv[]) {
           //                  printf("Recieved: Process %d recved packet %ld from %d\n", rank, j, rightTreeNode[rank]->parent->process_id);
 				recieved += 1;
                             rightrecvd = j;
+			    timings[0][j][rightTreeNode[rank]->parent->process_id] = MPI_Wtime()-t1;
                         }
                         else {
                             printf("error recieving chunk no. %ld from right tree with node %d\n", j, rank);
@@ -531,32 +550,78 @@ int main(int argc, char *argv[]) {
                     }
 		   }
 		   else {
+			double t_temp = MPI_Wtime();
 			int flag;
 			MPI_Test(&req[1], &flag, &stt);
 			if (flag) {
 				recieved += 1;
 				rightrecvd = 1;
+			    	timings[0][1][rightTreeNode[rank]->parent->process_id] = MPI_Wtime()-t1;
 	//			printf("%d rank process recvd 1 chunk\n", rank);
 			}	
 			checkflag = 1;
+			t_temp = t_temp - MPI_Wtime();
+			t_testing += t_temp; 
 		   }
                 }
             } 
         }      
         MPI_Waitall(sent,sreq,sstt);  // wait for all send to finish
 	//printf("Computation\n");
-
+		double total_test;
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+		MPI_Reduce(&t_testing, &total_test, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 	
 		if(rank==0){
 		
 			printf("Run %ld time %1.9lf\n", i+1,res);
+			//printf("Process %d Run %ld testing time %1.9lf\n", rank, i+1,total_test);
+			
+			
 		} else {
 	//		printf("Outmsg %s Inmsg %s\n", outmsg,msg);
 			j=strcmp(outmsg,msg);
 			j!=0?printf("Error - msgs different\n"):0;
 			memset(msg,'$',SIZE);
+		}
+
+		MPI_Barrier(MPI_COMM_WORLD);
+		if (rank != 0) {
+		for (int ll = 0; ll < CHUNK; ll++) {
+			int from;
+			if (ll % 2 == 0) {
+				from = leftTreeNode[rank]->parent->process_id;
+			}
+			else {
+				from = rightTreeNode[rank]->parent->process_id;
+			}
+			if (left_child_rank != -1 && right_child_rank != -1 && timings[1][ll][left_child_rank] != 0.0 && timings[1][ll][right_child_rank] != 0.0) {
+				printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], left_child_rank, timings[1][ll][left_child_rank], right_child_rank, timings[1][ll][right_child_rank]);
+			}
+			else if(left_child_rank != -1 && timings[1][ll][left_child_rank] != 0.0) {
+				printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf\n", rank, i+1, ll, leftTreeNode[rank]->parent->process_id, timings[0][ll][leftTreeNode[rank]->parent->process_id], left_child_rank, timings[1][ll][left_child_rank]);
+			}
+			else if (right_child_rank != -1 && timings[1][ll][right_child_rank] != 0.0) {
+				printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, leftTreeNode[rank]->parent->process_id, timings[0][ll][leftTreeNode[rank]->parent->process_id], right_child_rank, timings[1][ll][right_child_rank]);
+			}
+			else {
+				printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from]);
+			}
+			//printf("\n");
+		}
+		}
+		else {
+			for(int ll=0;ll<CHUNK;ll++) {
+			// left tree
+				if(!(ll%2)) {
+					printf("Logs, Process %d, Run %ld, chunk %d, left_sent %d %1.9lf\n", rank, i+1, ll, root->process_id, timings[1][ll][root->process_id]);
+				}
+					// right tree
+				else {
+				   printf("Logs, Process %d, Run %ld, chunk %d, right_sent %d %1.9lf\n", rank, i+1, ll, root2->process_id, timings[1][ll][root2->process_id]);
+				}
+            		}
 		}
     } // End of loop for runs
     MPI_Finalize();
