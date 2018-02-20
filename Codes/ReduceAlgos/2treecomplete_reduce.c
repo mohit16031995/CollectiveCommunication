@@ -15,19 +15,16 @@
 
 int main(int argc,char *argv[]){
 	int rank, p, root = 0, index, cdone=0;
-	int vrank, vpeer, peer;
-	long int count,i,j,SIZE,CSIZE;
-	char *ptr;
-
+	long int count, i, j, k, SIZE, CSIZE, pseudo_index;
 	int CHUNK;
 
 	int parentLeft = -1;
     	int parentRight = -1;
 
-	int leftChildren = 0;
-	int rightChildren = 0;
+	int leftChildren = 1;
+	int rightChildren = 1;
 
- 	int leftPeers[2];
+ 	int leftPeers[2] = {1,-1};
 	int rightPeers[2];
 
 
@@ -37,6 +34,7 @@ int main(int argc,char *argv[]){
 
 	MPI_Init(&argc,&argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
+	rightPeers[0] = p-1;
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 	if(argc!=3){	 
@@ -52,6 +50,7 @@ int main(int argc,char *argv[]){
 	int *msg1 = malloc(SIZE*2 * sizeof(int));
 	int *selfmsg = malloc(SIZE * sizeof(int));
 	int *msg2 = msg1+CHUNK;
+	int ready[CHUNK] = {0};
 
 	// for  recvs 
 	MPI_Status stt;
@@ -75,7 +74,7 @@ int main(int argc,char *argv[]){
 	if (rank != 0) 						//if not root
 	{
 		parentLeft = rank / 2;
-		parentRight = (p - (int)floor((p-rank)/2))%p;
+		parentRight = (p - (p-rank)/2)%p;
 		if (2*rank < p) {
 			leftChildren = 1;
 			leftPeers[0] = (2*rank);
@@ -101,6 +100,8 @@ int main(int argc,char *argv[]){
 		MPI_Barrier(MPI_COMM_WORLD);
 
 		cdone=0; count=0;
+		for (k=0;k<CHUNK;k++)
+			ready[k]=0;
 		t1 = MPI_Wtime();
 		
 	// set up all recv from left and right tree
@@ -117,47 +118,51 @@ int main(int argc,char *argv[]){
 				MPI_Irecv(msg2+j*CSIZE,CSIZE,MPI_INT,rightPeers[1],j,MPI_COMM_WORLD,&req2[j]);
 			}
 
-	// setup all sends in left and right leaves	
-		if (!leftChildren) 
-			for (j=0;j<CHUNK;j+=2)
+	// setup all sends in left and right leaves
+		if (!leftChildren || !rightChildren)
+		for (j=0;j<CHUNK;j++) {	
+			if (!leftChildren && !(j%2)) 
 				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,parentLeft,j,MPI_COMM_WORLD,&sreq[j]);
-		if (!rightChildren)
-			for (j=1;j<CHUNK;j+=2)
+			if (!rightChildren && (j%2))
 				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,parentRight,j,MPI_COMM_WORLD,&sreq[j]);
+		}
 
-
-	// if not leaf -> check which recv finish and setup send for them
-		int chunks_to_recv = 		
+	// check which recv finish and setup send for them
+		int chunks_to_recv = ((CHUNKS+1)/2)*leftChildren + (CHUNK/2)*rightChildren;
 		if(rank!=root) 
-		  while(cdone < (CHUNK) {		
-			MPI_Waitany(CHUNK*2, req1, &index, &stt);
-	            	if(index == MPI_UNDEFINED) {
-                		printf("Unexpected error!\n");
-                		MPI_Abort(MPI_COMM_WORLD, 1);
-            		}
-			if(index%2) {  // right tree
-				timings[0][index][parentRight] = MPI_Wtime() - t1;
-				if(rightChildren) {
-					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_INT,rightPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
-					timings[1][index][rightPeers[0]] = MPI_Wtime() - t1;
+			while(cdone < (chunks_to_recv) {		
+				MPI_Waitany(CHUNK*2, req1, &index, &stt);
+				if(index == MPI_UNDEFINED) {
+					printf("Unexpected error!\n");
+					MPI_Abort(MPI_COMM_WORLD, 1);
 				}
-				if(rightChildren==2) {
-					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_INT,rightPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
-					timings[1][index][rightPeers[1]] = MPI_Wtime() - t1;
+				pseudo_index = (index>=CHUNK) ? (index-CHUNK)*CSIZE : index*CSIZE;
+				for (k=pseudo_index,j=index*CSIZE;k<pseudo_index+CSIZE;k++,j++) {
+					selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;
 				}
-			} else {
-				timings[0][index][parentLeft] = MPI_Wtime() - t1;
-				if(leftChildren) {
-					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_INT,leftPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
-					timings[1][index][leftPeers[0]] = MPI_Wtime() - t1;
+				if ( (pseudo_index%2) ? ++ready[pseudo_index] == rightChildren : ++ready[pseudo_index] == leftChildren )
+				{	//forward this chunk ;
+					if (!pseudo_index%2)
+						MPI_Isend(selfmsg+pseudo_index,CSIZE,MPI_INT,parentLeft,pseudo_index,MPI_COMM_WORLD,&sreq[count++]);
+					else
+						MPI_Isend(selfmsg+pseudo_index,CSIZE,MPI_INT,parentRight,pseudo_index,MPI_COMM_WORLD,&sreq[count++]);
 				}
-				if(leftChildren==2) {
-					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_INT,leftPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
-					timings[1][index][leftPeers[1]] = MPI_Wtime() - t1;
+				cdone++;
+			  }
+		else
+			while(cdone < (chunks_to_recv) {		
+				MPI_Waitany(CHUNK*2, req1, &index, &stt);
+				if(index == MPI_UNDEFINED) {
+					printf("Unexpected error!\n");
+					MPI_Abort(MPI_COMM_WORLD, 1);
 				}
-			}
-			cdone++;
-		  }
+				pseudo_index = (index>=CHUNK) ? (index-CHUNK)*CSIZE : index*CSIZE;
+				for (k=pseudo_index,j=index*CSIZE;k<pseudo_index+CSIZE;k++,j++) {
+					selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;
+				}
+				cdone++;
+			  }
+		
 
 
 		MPI_Waitall(count,sreq,sstt);  // wait for  all send to finish
