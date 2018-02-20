@@ -170,56 +170,12 @@ int main(int argc,char *argv[]){
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 		if(rank==0){
-			printf("Run %ld time %1.9lf\n", i+1,res);
-		} else {
-			//printf("selfmsg %s Inmsg %s\n", selfmsg,msg);
-			j=strcmp(selfmsg,msg);
-			j!=0?printf("Error - msgs different\n"):0;
-			memset(msg,'$',SIZE);
+			printf("Run %ld time %1.9lf\n\n", i+1,res);
+			for (i=0; i<SIZE; i++)
+				printf ("%d  ",msg[i]);
+			printf("\n");
 		}
 
-		MPI_Barrier(MPI_COMM_WORLD);
-		if (rank != 0) {
-			for  (int ll = 0; ll < CHUNK; ll++) {
-				int from;
-				if (ll % 2) {
-					from = parentRight;
-					if (rightChildren==2) {
-						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], rightPeers[0], timings[1][ll][rightPeers[0]], rightPeers[1], timings[1][ll][rightPeers[1]]);
-					}
-					else if (rightChildren) {
-						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], rightPeers[0], timings[1][ll][rightPeers[0]]);
-					}
-					else {
-						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from]);
-					}
-				}
-				else {
-					from = parentLeft;
-					if (leftChildren == 2) {
-						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf, right_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], leftPeers[0], timings[1][ll][leftPeers[0]], leftPeers[1], timings[1][ll][leftPeers[1]]);
-					}	
-					else if (leftChildren) {
-						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf, left_sent %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from], leftPeers[0], timings[1][ll][leftPeers[0]]);
-					}	
-					else {
-						printf("Logs, Process %d, Run %ld, chunk %d, received %d %1.9lf\n", rank, i+1, ll, from, timings[0][ll][from]);
-					}			
-				}
-			}
-		}
-		else {
-			for (int ll=0;ll<CHUNK;ll++) {
-			// left tree				
-			if(!(ll%2)) { 
-				printf("Logs, Process %d, Run %ld, chunk %d, left_sent %d %1.9lf\n", rank, i+1, ll, 1, timings[1][ll][1]);
-			}			
-			// right tree
-			else { 
-				printf("Logs, Process %d, Run %ld, chunk %d, left_sent %d %1.9lf\n", rank, i+1, ll, p-1, timings[1][ll][p-1]);
-			}			
-		  	}
-		}
 	}
 	MPI_Finalize();
 } 
