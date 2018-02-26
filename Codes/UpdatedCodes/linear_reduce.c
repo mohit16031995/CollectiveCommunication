@@ -68,14 +68,6 @@ int main(int argc,char *argv[]){
 
 	double t1,t2,res;
 
-	for (i=0;i<SIZE;i++) {
-		selfmsg[i] = (i%100 + rank%100)%100;
-		//if(rank==0) msg[i] = selfmsg[i];	
-	}
-	//selfmsg[SIZE] = '\0';	
-	//msg[SIZE] = '\0';
-
-
 	
 	parentLeft = (rank-1);
 	parentRight = (rank-1);
@@ -89,6 +81,10 @@ int main(int argc,char *argv[]){
 	for(i=0;i<RUNS;i++)
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
+		for (int ll=0;ll<SIZE;ll++) {
+			selfmsg[ll] = (ll%100 + rank%100)%100;
+			//if(rank==0) msg[i] = selfmsg[i];	
+		}
 		cdone=0; count=0;
 		for (k=0;k<CHUNK;k++)
 			ready[k]=0;

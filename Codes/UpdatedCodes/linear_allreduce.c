@@ -16,7 +16,7 @@
 int main(int argc,char *argv[]){
 	int rank, p, root = 0, index, cdone=0;
 	long int count, i, j, k, SIZE, CSIZE, logical_chunk_no;
-	int CHUNK;
+	long int CHUNK;
 	char* ptr;
 
 	int parentLeft = -1;
@@ -48,11 +48,11 @@ int main(int argc,char *argv[]){
 	CSIZE = SIZE/(CHUNK*(sizeof(int))); 
 	SIZE = CSIZE*CHUNK;
 
-	int *msg1 = malloc(SIZE*2 * sizeof(int));
-	int *selfmsg = malloc(SIZE * sizeof(int));
+	int *msg1 = malloc((SIZE*2+1) * sizeof(int));
+	int *selfmsg = malloc((SIZE+1) * sizeof(int));
 	int *msg2 = msg1+SIZE;
 	int ready[CHUNK];
-
+	int *Reducedmsg = malloc((SIZE+1) * sizeof(int));
 	// for  recvs 
 	MPI_Status stt;
 	MPI_Request *req1= calloc(CHUNK*2,sizeof(MPI_Request));
@@ -61,36 +61,32 @@ int main(int argc,char *argv[]){
 	for (i=0;i<CHUNK*2;i++)
 		req1[i] = MPI_REQUEST_NULL;
 	// for  send
-	MPI_Status sstt[CHUNK];
-	MPI_Request sreq[CHUNK];
+	MPI_Status sstt[CHUNK*2];
+	MPI_Request sreq[CHUNK*2];
+	MPI_Request req[CHUNK];
+
 	for (i=0;i<CHUNK;i++)
 		sreq[i] = MPI_REQUEST_NULL;
 
 	double t1,t2,res;
 
-	
+	for (i=0;i<SIZE;i++) {
+		selfmsg[i] = (i%100 + rank%100)%100;
+		//if(rank==0) msg[i] = selfmsg[i];	
+	}
 	//selfmsg[SIZE] = '\0';	
 	//msg[SIZE] = '\0';
 
 
-	
-		parentLeft = (rank-1) / 2;
-		parentRight = (rank-1) / 2;
-		if ((2*rank)+1 < p) {
+	parentLeft = (rank-1);
+	parentRight = (rank-1);
+	if (rank+1 < p) {
 			leftChildren = 1;
-			leftPeers[0] = (2*rank)+1;
+			leftPeers[0] = rank+1;
 			rightChildren = 1;
-			rightPeers[0] = (2*rank)+1;
-		}
-		if ((2*rank)+2 < p) {
-			leftChildren = 2;
-			leftPeers[1] = (2*rank)+2;
-			rightChildren = 2;
-			rightPeers[1] = (2*rank)+2;
-		}
-		
+			rightPeers[0] = rank+1;
+	}
 
-	//	double timings[2][50][515];
 
 	for (i=0;i<RUNS;i++)
 	{
@@ -160,16 +156,15 @@ int main(int argc,char *argv[]){
 				
 					for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
 					{
-						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;			
+						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;
 						j++;
 					}
-				
 				double t12 = MPI_Wtime()-t11;
 ////				printf("Calculation time 1 %d %1.9f\n", CSIZE, t12);
 				ready[logical_chunk_no]++;
 				if ( (logical_chunk_no%2) ? ready[logical_chunk_no]==rightChildren : ready[logical_chunk_no]==leftChildren )
 				{	//forward this chunk ;
-	////				printf("chunk no. %d is ready to forward from rank %d\n",logical_chunk_no,rank);
+////					printf("chunk no. %d is ready to forward from rank %d\n",logical_chunk_no,rank);
 					
 					if (!(logical_chunk_no%2))
 						MPI_Isend(selfmsg+logical_chunk_no,CSIZE,MPI_INT,parentLeft,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
@@ -196,12 +191,12 @@ int main(int argc,char *argv[]){
 				
 					for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
 					{
-						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;					
+						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;		
 						j++;
 					}
 			
 				double t12 = MPI_Wtime() - t11;
-	////			printf("Calculation time 2 %d %1.9f\n", CSIZE, t12);	
+////				printf("Calculation time 2 %d %1.9f\n", CSIZE, t12);	
 				cdone++;
 			}
 
@@ -209,6 +204,63 @@ int main(int argc,char *argv[]){
 
 		MPI_Waitall(count,sreq,sstt);  // wait for  all send to finish
 ////		printf("My work is done here, rank %d\n",rank);
+		if (rank == 0) {
+			//printf("Reduce Completed\n");
+		}
+				///////////////////////////////////////////////////////////////////////////BROADCAST////////////////////////////////////////
+		cdone=0; count=0;
+		// set up all recv from left and right tree
+		if(rank!=0) {// if not root setup all recvs
+		   for(j=0;j<CHUNK;j++) {
+			// left tree				
+			if(!(j%2)) MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentLeft,j,MPI_COMM_WORLD,&req[j]);			
+			// right tree
+			else MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentRight,j,MPI_COMM_WORLD,&req[j]);
+		   }
+		} else {  // if root then setup all send's
+		   for(j=0;j<CHUNK;j++) {
+			// left tree				
+			if(!(j%2)) { 
+				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,1,j,MPI_COMM_WORLD,&sreq[count++]);
+			}			
+			// right tree
+			else { 
+				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,1,j,MPI_COMM_WORLD,&sreq[count++]);
+			}			
+		   }
+		}						
+
+		//if not root -> check which recv finish and setup send for them		
+		if(rank!=root) 
+		  while(cdone < CHUNK) {	
+			
+			MPI_Waitany(CHUNK, req, &index, &stt);
+	            	if(index == MPI_UNDEFINED) {
+                		printf("Unexpected error!\n");
+                		MPI_Abort(MPI_COMM_WORLD, 1);
+            		}
+		//printf("22rank = %d chunk recvd = %d\n", rank, index);
+			if(index%2) {  // right tree
+				if(rightChildren) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+				}
+				if(rightChildren==2) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+				}
+			} else {
+				if(leftChildren) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+				}
+				if(leftChildren==2) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+				}
+			}
+			cdone++;
+		  }
+
+		//printf("rank = %d\n", rank);
+		MPI_Waitall(count,sreq,sstt);  // wait for all send to finish
+			
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
@@ -218,9 +270,10 @@ int main(int argc,char *argv[]){
 		if(rank==0)
 		{
 			printf("Run %ld time %1.9lf\n", i+1,res);
-			//for (i=0; i<SIZE; i++)
-			//	printf ("%d  ",selfmsg[i]);
-			//printf("\n");
+		//	for (int ii=0; ii<SIZE; ii++) {
+		//		printf("%d ", selfmsg[ii]);
+		//	}
+		//	printf("\n");
 		}
 
 	}

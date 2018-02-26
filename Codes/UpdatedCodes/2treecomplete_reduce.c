@@ -68,10 +68,7 @@ int main(int argc,char *argv[]){
 
 	double t1,t2,res;
 
-	for (i=0;i<SIZE;i++) {
-		selfmsg[i] = (i%100 + rank%100)%100;
-		//if(rank==0) msg[i] = selfmsg[i];	
-	}
+	
 	//selfmsg[SIZE] = '\0';	
 	//msg[SIZE] = '\0';
 
@@ -110,7 +107,10 @@ int main(int argc,char *argv[]){
 	for (i=0;i<RUNS;i++)
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
-
+		for (int ll=0;ll<SIZE;ll++) {
+			selfmsg[ll] = (ll%100 + rank%100)%100;
+			//if(rank==0) msg[i] = selfmsg[i];	
+		}
 		cdone=0; count=0;
 		for (k=0;k<CHUNK;k++)
 			ready[k]=0;
@@ -219,6 +219,7 @@ int main(int argc,char *argv[]){
 
 
 		MPI_Waitall(count,sreq,sstt);  // wait for  all send to finish
+		
 ////		printf("My work is done here, rank %d\n",rank);
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
@@ -229,9 +230,9 @@ int main(int argc,char *argv[]){
 		if(rank==0)
 		{
 			printf("Run %ld time %1.9lf\n", i+1,res);
-			//for (i=0; i<SIZE; i++)
-			//	printf ("%d  ",selfmsg[i]);
-			//printf("\n");
+		//	for (int ii=0; ii<SIZE; ii++)
+		//		printf ("%d  ",selfmsg[ii]);
+		//	printf("\n");
 		}
 
 	}
