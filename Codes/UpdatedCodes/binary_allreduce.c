@@ -19,14 +19,14 @@ int main(int argc,char *argv[]){
 	long int CHUNK;
 	char* ptr;
 
-	int parentLeft = -1;
-	int parentRight = -1;
+	int parentLeft = -1, parentLeft2 = -1;
+	int parentRight = -1, parentRight2 = -1;
 
-	int leftChildren = 0;
-	int rightChildren = 0;
+	int leftChildren = 0, leftChildren2 = 0;
+	int rightChildren = 0, rightChildren2 = 0;
 
-	int leftPeers[2];
-	int rightPeers[2];
+	int leftPeers[2], leftPeers2[2];
+	int rightPeers[2], rightPeers2[2];
 
 
 	int seed = time(NULL);
@@ -91,7 +91,23 @@ int main(int argc,char *argv[]){
 			rightChildren = 2;
 			rightPeers[1] = (2*rank)+2;
 		}
-		
+	if (rank != 0) {	
+	parentLeft2 = (p - ((p-rank-1)/2))%p;
+	parentRight2 = (p - ((p-rank-1)/2))%p;
+		if (p-((2*(p-rank))+1) < p && p-((2*(p-rank))+1) > 0) {
+			leftChildren2 = 1;
+			leftPeers2[0] = p-((2*(p-rank))+1);
+			rightChildren2 = 1;
+			rightPeers2[0] = p-((2*(p-rank))+1);
+		}
+		if (p-((2*(p-rank))+2) < p && p-((2*(p-rank))+2) > 0) {
+			leftChildren2 = 2;
+			leftPeers2[1] = p-((2*(p-rank))+2);
+			rightChildren2 = 2;
+			rightPeers2[1] = p-((2*(p-rank))+2);
+		}
+	}
+
 	//	double timings[2][50][515];
 
 	for (i=0;i<RUNS;i++)
@@ -219,15 +235,15 @@ int main(int argc,char *argv[]){
 		if(rank!=0) {// if not root setup all recvs
 		   for(j=0;j<CHUNK;j++) {
 			// left tree				
-			if(!(j%2)) MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentLeft,j,MPI_COMM_WORLD,&req[j]);			
+			if(!(j%2)) MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentLeft2,CHUNK+j,MPI_COMM_WORLD,&req[j]);			
 			// right tree
-			else MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentRight,j,MPI_COMM_WORLD,&req[j]);
+			else MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentRight2,CHUNK+j,MPI_COMM_WORLD,&req[j]);
 		   }
 		} else {  // if root then setup all send's
 		   for(j=0;j<CHUNK;j++) {
 				 
-				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,1,j,MPI_COMM_WORLD,&sreq[count++]);
-				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,2,j,MPI_COMM_WORLD,&sreq[count++]);
+				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,p-1,CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
+				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,p-2,CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
 					
 		   }
 		}						
@@ -243,18 +259,18 @@ int main(int argc,char *argv[]){
             		}
 		//printf("22rank = %d chunk recvd = %d\n", rank, index);
 			if(index%2) {  // right tree
-				if(rightChildren) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+				if(rightChildren2) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers2[0],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
-				if(rightChildren==2) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+				if(rightChildren2==2) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers2[1],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
 			} else {
-				if(leftChildren) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+				if(leftChildren2) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers2[0],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
-				if(leftChildren==2) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+				if(leftChildren2==2) {
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers2[1],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
 			}
 			cdone++;

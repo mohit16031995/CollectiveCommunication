@@ -231,22 +231,22 @@ int main(int argc,char *argv[]){
 				///////////////////////////////////////////////////////////////////////////BROADCAST////////////////////////////////////////
 		cdone=0; count=0;
 		// set up all recv from left and right tree
-		if(rank!=0) {// if not root setup all recvs
+		if(rank!=root) {// if not root setup all recvs
 		   for(j=0;j<CHUNK;j++) {
 			// left tree				
-			if(!(j%2)) MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentLeft,j,MPI_COMM_WORLD,&req[j]);			
+			if(!(j%2)) MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentLeft,CHUNK+j,MPI_COMM_WORLD,&req[j]);			
 			// right tree
-			else MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentRight,j,MPI_COMM_WORLD,&req[j]);
+			else MPI_Irecv(Reducedmsg+j*CSIZE,CSIZE,MPI_INT,parentRight,CHUNK+j,MPI_COMM_WORLD,&req[j]);
 		   }
 		} else {  // if root then setup all send's
 		   for(j=0;j<CHUNK;j++) {
 			// left tree				
 			if(!(j%2)) { 
-				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,1,j,MPI_COMM_WORLD,&sreq[count++]);
+				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,1,CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
 			}			
 			// right tree
 			else { 
-				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,p-1,j,MPI_COMM_WORLD,&sreq[count++]);
+				MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,p-1,CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
 			}			
 		   }
 		}						
@@ -261,19 +261,20 @@ int main(int argc,char *argv[]){
                 		MPI_Abort(MPI_COMM_WORLD, 1);
             		}
 		//printf("22rank = %d chunk recvd = %d\n", rank, index);
+			index = index;
 			if(index%2) {  // right tree
 				if(rightChildren) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[0],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
 				if(rightChildren==2) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,rightPeers[1],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
 			} else {
 				if(leftChildren) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[0],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
 				if(leftChildren==2) {
-					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
+					MPI_Isend(Reducedmsg+index*CSIZE,CSIZE,MPI_INT,leftPeers[1],CHUNK+index,MPI_COMM_WORLD,&sreq[count++]);
 				}
 			}
 			cdone++;
