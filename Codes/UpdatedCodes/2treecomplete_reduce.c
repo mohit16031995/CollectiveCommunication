@@ -212,7 +212,7 @@ int main(int argc,char *argv[]){
 					}
 			
 				double t12 = MPI_Wtime() - t11;
-				printf("Calculation time 2 %d %1.9f\n", CSIZE, t12);	
+//				printf("Calculation time 2 %d %1.9f\n", CSIZE, t12);	
 				cdone++;
 			}
 

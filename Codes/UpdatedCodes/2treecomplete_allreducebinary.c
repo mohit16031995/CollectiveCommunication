@@ -202,7 +202,7 @@ int main(int argc,char *argv[]){
 		rightPeers2[1] = (p/2)+1;
 	}
 	//	double timings[2][50][515];
-	printf("rank = %d parent = %d, leftChildren = %d leftchild = %d rightchild = %d\n", rank, parentLeft2, leftChildren2, leftPeers2[0], leftPeers2[1]);
+//	printf("rank = %d parent = %d, leftChildren = %d leftchild = %d rightchild = %d\n", rank, parentLeft2, leftChildren2, leftPeers2[0], leftPeers2[1]);
 	for (i=0;i<RUNS;i++)
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
