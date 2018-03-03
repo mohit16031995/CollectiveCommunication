@@ -12,10 +12,35 @@
 //#define CSIZE SIZE/CHUNK
 
 // Macros used in reduce collective
+int p = 0;
 
-
+int funcRP(int rank) {
+	if (rank==0)
+		return 0;
+	return (p - (p-rank)/2)%p;
+}
+int R2Br(int rank) {
+	if (rank==0)
+		return 0;
+	return ((((rank-1-((p-1)/2))+(p-1) ) % (p-1)) + 1);
+}
+int B2Rl(int rank) {
+	if (rank==0)
+		return 0;	
+	return ((((rank-1-((p-1)/2))+(p-1) ) % (p-1)) + 1);
+}
+int R2Bl(int rank) {
+	if (rank==0)
+		return 0;	
+	return ((((rank-1+((p-1)/2))+(p-1) ) % (p-1)) + 1);
+}
+int B2Rr(int rank) {
+	if (rank==0)
+		return 0;	
+	return ((((rank-1+((p-1)/2))+(p-1) ) % (p-1)) + 1);
+}
 int main(int argc,char *argv[]){
-	int rank,p, root = 0, index, cdone=0, cdone2 = 0;
+	int rank, root = 0, index, cdone=0, cdone2 = 0;
 	long int count, i, j, k, SIZE, CSIZE, logical_chunk_no;
 	long int CHUNK;
 	char* ptr;
@@ -91,13 +116,23 @@ int main(int argc,char *argv[]){
 
 	if (rank != 0) 						//if not root
 	{
-		parentLeft = rank-1;
-		parentRight = rank-1;
-		if (rank+1 < p) {
+		parentLeft = rank / 2;
+		parentRight = funcRP(rank);
+		if (2*rank < p) {
 			leftChildren = 1;
-			leftPeers[0] = rank+1;
+			leftPeers[0] = (2*rank);
+		}
+		if ((2*rank)+1 < p) {
+			leftChildren = 2;
+			leftPeers[1] = (2*rank)+1;
+		}
+		if (2*rank - p > 0) {
 			rightChildren = 1;
-			rightPeers[0] = rank+1;
+			rightPeers[0] = (2*rank - p);
+		}
+		if (2*rank-p-1 > 0) {
+			rightChildren = 2;
+			rightPeers[1] = (2*rank-p-1);
 		}
 	}
 	else
@@ -105,29 +140,69 @@ int main(int argc,char *argv[]){
 		leftChildren = 1;
 		rightChildren = 1;
 		leftPeers[0] = 1;
-		rightPeers[0] = 1;
+		rightPeers[0] = p-1;
 	}
 	
 	if (rank != 0) 						//if not root
 	{
-		parentLeft2 = (rank+1)%p;
-		parentRight2 = (rank+1)%p;
-		if (rank -1 > 0) {
-			leftChildren2 = 1;
-			leftPeers2[0] = rank-1;
-			rightChildren2 = 1;
-			rightPeers2[0] = rank -1;
+		if (rank <= (p/2) ) {
+			int vrank = (rank - (p/2));
+			if (rank == (p/2)) {
+				parentLeft2 = 0;
+				parentRight2 = 0;
+			}
+			else {
+				parentLeft2 = ((vrank+1)/2) + (p/2);
+				parentRight2 = ((vrank+1)/2) + (p/2);
+			}
+			if ((vrank*2)-1+(p/2) < p && (vrank*2)-1+(p/2) > 0) {
+				leftChildren2 = 1;
+				leftPeers2[0] = (vrank*2)-1+(p/2);
+				rightChildren2 = 1;
+				rightPeers2[0] = (vrank*2)-1+(p/2);
+			}
+			if (vrank*2-2+(p/2) < p && vrank*2-2+(p/2) > 0) {
+				leftChildren2 = 2;
+				leftPeers2[1] = (vrank*2)-2+(p/2);
+				rightChildren2 = 2;
+				rightPeers2[1] = (vrank*2)-2+(p/2);
+			}
+		}
+		else {
+			int vrank = rank - (p/2);
+			if (vrank == 1) {
+				parentLeft2 = 0;
+				parentRight2 = 0;	
+			}
+			else {
+				parentLeft2 = (vrank/2)+(p/2);
+				parentRight2 = (vrank/2)+(p/2);
+			}
+			if ((vrank*2)+(p/2) < p) {
+				leftChildren2 = 1;
+				leftPeers2[0] = vrank*2+(p/2);
+				rightChildren2 = 1;
+				rightPeers2[0] = vrank*2+(p/2);
+			}
+			if ((vrank*2)+(p/2)+1 < p) {
+				leftChildren2 = 2;
+				leftPeers2[1] = vrank*2+(p/2)+1;
+				rightChildren2 = 2;
+				rightPeers2[1] = vrank*2+(p/2)+1;
+			}
 		}
 	}
 	else
 	{
-		leftChildren2 = 1;
-		rightChildren2 = 1;
-		leftPeers2[0] = p-1;
-		rightPeers2[0] = p-1;
+		leftChildren2 = 2;
+		rightChildren2 = 2;
+		leftPeers2[0] = (p/2);
+		rightPeers2[0] = (p/2);
+		leftPeers2[1] = (p/2)+1;
+		rightPeers2[1] = (p/2)+1;
 	}
 	//	double timings[2][50][515];
-
+	printf("rank = %d parent = %d, leftChildren = %d leftchild = %d rightchild = %d\n", rank, parentLeft2, leftChildren2, leftPeers2[0], leftPeers2[1]);
 	for (i=0;i<RUNS;i++)
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
@@ -188,6 +263,7 @@ int main(int argc,char *argv[]){
 		{
 			while((cdone < (chunks_to_recv)) || (cdone2 < CHUNK)) 
 			{		
+				//printf("loop1");
 				MPI_Waitany(CHUNK*3, req, &index, &stt);
 				//printf("ok waiting, rank %d",rank);
 				if(index == MPI_UNDEFINED) 
@@ -242,6 +318,7 @@ int main(int argc,char *argv[]){
 		else
 			while(cdone < (chunks_to_recv)) 
 			{		
+				//printf("loop2");
 				MPI_Waitany(CHUNK*2, req, &index, &stt);
 				if(index == MPI_UNDEFINED) 
 				{
@@ -250,7 +327,6 @@ int main(int argc,char *argv[]){
 				}
 				logical_chunk_no = (index>=CHUNK) ? (index-CHUNK)*CSIZE : index*CSIZE;		
 				j=index*CSIZE;
-				
 				for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
 				{
 					selfmsg[k] = (msg1[j]+selfmsg[k]);		
@@ -266,15 +342,15 @@ int main(int argc,char *argv[]){
 				}			
 				// right tree
 				else { 
-					if (rightChildren)
+					if (rightChildren2)
 						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[0],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
-					if (rightChildren == 2)
+					if (rightChildren2 == 2)
 						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[1],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
-				}			
+				}				
 			}
 
 
-
+		
 		MPI_Waitall(count,sreq,sstt);  // wait for  all send to finish
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);

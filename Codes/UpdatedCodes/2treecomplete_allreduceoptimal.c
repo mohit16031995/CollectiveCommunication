@@ -246,7 +246,7 @@ int main(int argc,char *argv[]){
 				
 					for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
 					{
-						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;
+						selfmsg[k] = (msg1[j]+selfmsg[k]);
 						j++;
 					}
 					ready[logical_chunk_no]++;
@@ -298,18 +298,24 @@ int main(int argc,char *argv[]){
 				
 				for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
 				{
-					selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;		
+					selfmsg[k] = (msg1[j]+selfmsg[k]);		
 					j++;
 				}
 				cdone++;
 				j=logical_chunk_no/CSIZE;
 				if(!(j%2)) { 
-					MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,leftPeers2[0],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
+					if (leftChildren2)
+						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,leftPeers2[0],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
+					if (leftChildren2 == 2)
+						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,leftPeers2[1],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
 				}			
 				// right tree
 				else { 
-					MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[0],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
-				}			
+					if (rightChildren2)
+						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[0],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
+					if (rightChildren2 == 2)
+						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[1],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
+				}					
 			}
 
 

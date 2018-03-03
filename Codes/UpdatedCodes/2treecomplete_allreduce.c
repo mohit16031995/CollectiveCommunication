@@ -177,7 +177,7 @@ int main(int argc,char *argv[]){
 				
 					for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
 					{
-						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;
+						selfmsg[k] = (msg1[j]+selfmsg[k]);
 						j++;
 					}
 				double t12 = MPI_Wtime()-t11;
@@ -212,7 +212,7 @@ int main(int argc,char *argv[]){
 				
 					for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
 					{
-						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;		
+						selfmsg[k] = (msg1[j]+selfmsg[k]);		
 						j++;
 					}
 			

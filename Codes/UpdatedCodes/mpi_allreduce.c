@@ -5,11 +5,8 @@
 #include <stdlib.h>
 
 #define RUNS 100
-
+void MAX_DataSet(int *in, int *inout, int *len, MPI_Datatype *datatype);
 int main(int argc,char *argv[]){
-
-	
-
   int rank,nP, i;
   long int count,s;
   
@@ -20,7 +17,8 @@ int main(int argc,char *argv[]){
   MPI_Init(&argc,&argv);
   MPI_Comm_size(MPI_COMM_WORLD, &nP);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	
+	MPI_Op myOp;
+   MPI_Op_create((MPI_User_function*)MAX_DataSet, 1, &myOp);
 	if(argc!=2){
     	if(rank==0) printf("Usage: <program> <message_size>\n");
     	exit(0);
@@ -42,7 +40,7 @@ int main(int argc,char *argv[]){
     for(i=0;i<RUNS;i++) {      
       MPI_Barrier(MPI_COMM_WORLD);
       t1 = MPI_Wtime();
-      MPI_Allreduce(selfmsg, resmsg, count, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+      MPI_Allreduce(selfmsg, resmsg, count, MPI_INT, myOp, MPI_COMM_WORLD);
       t2 = MPI_Wtime() - t1; 
       MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
       if(rank==0){
@@ -52,4 +50,14 @@ int main(int argc,char *argv[]){
     //MPI_Barrier(MPI_COMM_WORLD);
     //}
   MPI_Finalize();
+}
+
+void MAX_DataSet(int *in, int *inout, int *len, MPI_Datatype *datatype)
+{
+    for (int i = 0; i < *len; i++)
+    {
+        *inout = *in + *inout;
+        in++;
+        inout++;
+    }
 }
