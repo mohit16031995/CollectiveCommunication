@@ -41,7 +41,7 @@ int main(int argc,char *argv[]){
 			//if(rank==0) msg[i] = selfmsg[i];	
 		}
       t1 = MPI_Wtime();
-      MPI_Reduce(selfmsg, resmsg, count, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+      MPI_Reduce(selfmsg, resmsg, count, MPI_INT, myOp, 0, MPI_COMM_WORLD);
       t2 = MPI_Wtime() - t1; 
       MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
       if(rank==0){

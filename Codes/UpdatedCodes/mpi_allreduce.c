@@ -40,7 +40,7 @@ int main(int argc,char *argv[]){
     for(i=0;i<RUNS;i++) {      
       MPI_Barrier(MPI_COMM_WORLD);
       t1 = MPI_Wtime();
-      MPI_Allreduce(selfmsg, resmsg, count, MPI_INT, myOp, MPI_COMM_WORLD);
+      MPI_Allreduce(selfmsg, resmsg, count, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
       t2 = MPI_Wtime() - t1; 
       MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
       if(rank==0){
