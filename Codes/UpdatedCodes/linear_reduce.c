@@ -82,7 +82,7 @@ int main(int argc,char *argv[]){
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
 		for (int ll=0;ll<SIZE;ll++) {
-			selfmsg[ll] = (ll%100 + rank%100)%100;
+			selfmsg[ll] = (ll + rank);
 			//if(rank==0) msg[i] = selfmsg[i];	
 		}
 		cdone=0; count=0;

@@ -30,7 +30,7 @@ int main(int argc,char *argv[]){
 	int *resmsg = malloc(count * (sizeof(int)));
 
 	for (i=0;i<count;i++) {
-		selfmsg[i] = (i%100 + rank%100)%100;
+		selfmsg[i] = (i + rank);
 		//if(rank==0) msg[i] = selfmsg[i];	
 	}
   //for(long int s=1;s<=1024*1024;s=s*1024) {
