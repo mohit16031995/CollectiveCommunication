@@ -34,12 +34,13 @@ int main(int argc,char *argv[]){
   //if(rank==0){
   //  printf("bcast %d %ld\n",nP,s);
   //}
-    for(i=0;i<RUNS;i++) {      
-      MPI_Barrier(MPI_COMM_WORLD);
-		for (int ll=0;ll<count;ll++) {
-			selfmsg[ll] = (ll + rank);
+	for (int ll=0;ll<count;ll++) {
+			selfmsg[ll] = 1;
 			//if(rank==0) msg[i] = selfmsg[i];	
 		}
+    for(i=0;i<RUNS;i++) {      
+      MPI_Barrier(MPI_COMM_WORLD);
+		
       t1 = MPI_Wtime();
       MPI_Reduce(selfmsg, resmsg, count, MPI_INT, myOp, 0, MPI_COMM_WORLD);
       t2 = MPI_Wtime() - t1; 

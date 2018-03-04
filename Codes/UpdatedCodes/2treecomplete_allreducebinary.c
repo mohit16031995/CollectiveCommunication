@@ -85,6 +85,7 @@ int main(int argc,char *argv[]){
 	CSIZE = len/CHUNK; 
 	SIZE = CSIZE*CHUNK;
 
+
 	int *msg1 = malloc((SIZE*2+1) * sizeof(int));
 	int *selfmsg = malloc((SIZE+1) * sizeof(int));
 	int *msg2 = msg1+SIZE;
@@ -201,15 +202,17 @@ int main(int argc,char *argv[]){
 		leftPeers2[1] = (p/2)+1;
 		rightPeers2[1] = (p/2)+1;
 	}
+
+	for (int ll=0;ll<SIZE;ll++) {
+			selfmsg[ll] = 1;
+			//if(rank==0) msg[i] = selfmsg[i];	
+		}
 	//	double timings[2][50][515];
 //	printf("rank = %d parent = %d, leftChildren = %d leftchild = %d rightchild = %d\n", rank, parentLeft2, leftChildren2, leftPeers2[0], leftPeers2[1]);
 	for (i=0;i<RUNS;i++)
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
-		for (int ll=0;ll<SIZE;ll++) {
-			selfmsg[ll] = (ll + rank);
-			//if(rank==0) msg[i] = selfmsg[i];	
-		}
+		
 		cdone=0; count=0, cdone2=0;
 		for (k=0;k<CHUNK;k++)
 			ready[k]=0;
@@ -286,9 +289,9 @@ int main(int argc,char *argv[]){
 						//printf("chunk no. %d is ready to forward from rank %d\n",logical_chunk_no,rank);
 					
 						if (!(logical_chunk_no%2))
-							MPI_Isend(selfmsg+logical_chunk_no,CSIZE,MPI_INT,parentLeft,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
+							MPI_Isend(selfmsg+logical_chunk_no*CSIZE,CSIZE,MPI_INT,parentLeft,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
 						else
-							MPI_Isend(selfmsg+logical_chunk_no,CSIZE,MPI_INT,parentRight,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
+							MPI_Isend(selfmsg+logical_chunk_no*CSIZE,CSIZE,MPI_INT,parentRight,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
 					}
 					cdone++;
 					//printf("cdone = %d, rank %d",cdone,rank);
@@ -329,7 +332,9 @@ int main(int argc,char *argv[]){
 				j=index*CSIZE;
 				for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
 				{
-					selfmsg[k] = (msg1[j]+selfmsg[k]);		
+					//printf("rank = %d selfmsg %d = %d\n", rank, k, selfmsg[k]);	
+					selfmsg[k] = (msg1[j]+selfmsg[k]);	
+					//printf("rank = %d selfmsg %d = %d\n", rank, k, selfmsg[k]);	
 					j++;
 				}
 				cdone++;
@@ -358,10 +363,13 @@ int main(int argc,char *argv[]){
 		if(rank==0)
 		{
 			printf("Run %ld time %1.9lf\n", i+1,res);
+			//for (int loop = 0; loop < SIZE; loop++) {
+			//	printf("rank = %d %d\n", rank, selfmsg[loop]);
+			//}
 		}
 		//else {
 		//	for (int loop = 0; loop < SIZE; loop++) {
-		//		printf("rank = %d %d\n", rank, Reducedmsg[loop]);
+		//		printf("rank = %d %d\n", rank, selfmsg[loop]);
 		//	}
 		//}
 	}
