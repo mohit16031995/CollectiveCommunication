@@ -1,0 +1,8 @@
+\BOOKMARK [1][-]{section*.2}{Abstract}{}% 1
+\BOOKMARK [1][-]{section.1}{1 Introduction}{}% 2
+\BOOKMARK [1][-]{section.2}{2 Proposed TwoTreeSimple}{}% 3
+\BOOKMARK [2][-]{subsection.2.1}{2.1 Construction}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.2}{2.2 TwoTreeSimple vs TwoTreeSanders}{section.2}% 5
+\BOOKMARK [1][-]{section.3}{3 Broadcast with TwoTreeSimple}{}% 6
+\BOOKMARK [1][-]{section.4}{4 Reduce with TwoTreeSimple}{}% 7
+\BOOKMARK [1][-]{section.5}{5 AllReduce with TwoTreeSimple}{}% 8
