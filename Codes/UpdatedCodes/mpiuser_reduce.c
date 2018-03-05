@@ -29,18 +29,20 @@ int main(int argc,char *argv[]){
  	int *selfmsg = malloc(count * (sizeof(int)));
 	int *resmsg = malloc(count * (sizeof(int)));
 
-	for (i=0;i<count;i++) {
-		selfmsg[i] = 1;
-		//if(rank==0) msg[i] = selfmsg[i];	
-	}
+	
   //for(long int s=1;s<=1024*1024;s=s*1024) {
   //if(rank==0){
   //  printf("bcast %d %ld\n",nP,s);
   //}
+	for (int ll=0;ll<count;ll++) {
+			selfmsg[ll] = 1;
+			//if(rank==0) msg[i] = selfmsg[i];	
+		}
     for(i=0;i<RUNS;i++) {      
       MPI_Barrier(MPI_COMM_WORLD);
+		
       t1 = MPI_Wtime();
-      MPI_Allreduce(selfmsg, resmsg, count, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+      MPI_Reduce(selfmsg, resmsg, count, MPI_INT, myOp, 0, MPI_COMM_WORLD);
       t2 = MPI_Wtime() - t1; 
       MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
       if(rank==0){

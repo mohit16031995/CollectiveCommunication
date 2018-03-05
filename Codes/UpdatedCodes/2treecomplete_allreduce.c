@@ -70,10 +70,10 @@ int main(int argc,char *argv[]){
 
 	double t1,t2,res;
 
-	for (i=0;i<SIZE;i++) {
-		selfmsg[i] = (i%100 + rank%100)%100;
+//	for (i=0;i<SIZE;i++) {
+	//	selfmsg[i] = (i%100 + rank%100)%100;
 		//if(rank==0) msg[i] = selfmsg[i];	
-	}
+	//}
 	//selfmsg[SIZE] = '\0';	
 	//msg[SIZE] = '\0';
 
@@ -108,14 +108,14 @@ int main(int argc,char *argv[]){
 	}
 
 	//	double timings[2][50][515];
-
+	for (int ll=0;ll<SIZE;ll++) {
+			selfmsg[ll] = 1;
+			//if(rank==0) msg[i] = selfmsg[i];	
+		}
 	for (i=0;i<RUNS;i++)
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
-		for (int ll=0;ll<SIZE;ll++) {
-			selfmsg[ll] = (ll%100 + rank%100)%100;
-			//if(rank==0) msg[i] = selfmsg[i];	
-		}
+		
 		cdone=0; count=0;
 		for (k=0;k<CHUNK;k++)
 			ready[k]=0;
@@ -177,7 +177,7 @@ int main(int argc,char *argv[]){
 				
 					for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
 					{
-						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;
+						selfmsg[k] = (msg1[j]+selfmsg[k]);
 						j++;
 					}
 				double t12 = MPI_Wtime()-t11;
@@ -188,9 +188,9 @@ int main(int argc,char *argv[]){
 ////					printf("chunk no. %d is ready to forward from rank %d\n",logical_chunk_no,rank);
 					
 					if (!(logical_chunk_no%2))
-						MPI_Isend(selfmsg+logical_chunk_no,CSIZE,MPI_INT,parentLeft,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
+						MPI_Isend(selfmsg+logical_chunk_no*CSIZE,CSIZE,MPI_INT,parentLeft,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
 					else
-						MPI_Isend(selfmsg+logical_chunk_no,CSIZE,MPI_INT,parentRight,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
+						MPI_Isend(selfmsg+logical_chunk_no*CSIZE,CSIZE,MPI_INT,parentRight,logical_chunk_no,MPI_COMM_WORLD,&sreq[count++]);
 				}
 				cdone++;
 				//printf("cdone = %d, rank %d",cdone,rank);
@@ -212,7 +212,7 @@ int main(int argc,char *argv[]){
 				
 					for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
 					{
-						selfmsg[k] = (msg1[j]%100+selfmsg[k]%100)%100;		
+						selfmsg[k] = (msg1[j]+selfmsg[k]);		
 						j++;
 					}
 			

@@ -85,6 +85,7 @@ int main(int argc,char *argv[]){
 	CSIZE = len/CHUNK; 
 	SIZE = CSIZE*CHUNK;
 
+
 	int *msg1 = malloc((SIZE*2+1) * sizeof(int));
 	int *selfmsg = malloc((SIZE+1) * sizeof(int));
 	int *msg2 = msg1+SIZE;
@@ -145,41 +146,73 @@ int main(int argc,char *argv[]){
 	
 	if (rank != 0) 						//if not root
 	{
-		parentLeft2 = R2Bl( B2Rl(rank) / 2);
-		parentRight2 = R2Br( funcRP( B2Rr(rank) ) );
-		if (2*B2Rl(rank) < p) {
-			leftChildren2 = 1;
-			leftPeers2[0] = R2Bl(2*B2Rl(rank));
+		if (rank <= (p/2) ) {
+			int vrank = (rank - (p/2));
+			if (rank == (p/2)) {
+				parentLeft2 = 0;
+				parentRight2 = 0;
+			}
+			else {
+				parentLeft2 = ((vrank+1)/2) + (p/2);
+				parentRight2 = ((vrank+1)/2) + (p/2);
+			}
+			if ((vrank*2)-1+(p/2) < p && (vrank*2)-1+(p/2) > 0) {
+				leftChildren2 = 1;
+				leftPeers2[0] = (vrank*2)-1+(p/2);
+				rightChildren2 = 1;
+				rightPeers2[0] = (vrank*2)-1+(p/2);
+			}
+			if (vrank*2-2+(p/2) < p && vrank*2-2+(p/2) > 0) {
+				leftChildren2 = 2;
+				leftPeers2[1] = (vrank*2)-2+(p/2);
+				rightChildren2 = 2;
+				rightPeers2[1] = (vrank*2)-2+(p/2);
+			}
 		}
-		if ((2*B2Rl(rank))+1 < p) {
-			leftChildren2 = 2;
-			leftPeers2[1] = R2Bl((2*B2Rl(rank))+1);
-		}
-		if (2*B2Rr(rank) - p > 0) {
-			rightChildren2 = 1;
-			rightPeers2[0] = R2Br(2*B2Rr(rank) - p);
-		}
-		if (2*B2Rr(rank)-p-1 > 0) {
-			rightChildren2 = 2;
-			rightPeers2[1] = R2Br(2*B2Rr(rank)-p-1);
+		else {
+			int vrank = rank - (p/2);
+			if (vrank == 1) {
+				parentLeft2 = 0;
+				parentRight2 = 0;	
+			}
+			else {
+				parentLeft2 = (vrank/2)+(p/2);
+				parentRight2 = (vrank/2)+(p/2);
+			}
+			if ((vrank*2)+(p/2) < p) {
+				leftChildren2 = 1;
+				leftPeers2[0] = vrank*2+(p/2);
+				rightChildren2 = 1;
+				rightPeers2[0] = vrank*2+(p/2);
+			}
+			if ((vrank*2)+(p/2)+1 < p) {
+				leftChildren2 = 2;
+				leftPeers2[1] = vrank*2+(p/2)+1;
+				rightChildren2 = 2;
+				rightPeers2[1] = vrank*2+(p/2)+1;
+			}
 		}
 	}
 	else
 	{
-		leftChildren2 = 1;
-		rightChildren2 = 1;
-		leftPeers2[0] = R2Bl(1);
-		rightPeers2[0] = R2Br(p-1);
+		leftChildren2 = 2;
+		rightChildren2 = 2;
+		leftPeers2[0] = (p/2);
+		rightPeers2[0] = (p/2);
+		leftPeers2[1] = (p/2)+1;
+		rightPeers2[1] = (p/2)+1;
 	}
-	//	double timings[2][50][515];
+
 	for (int ll=0;ll<SIZE;ll++) {
 			selfmsg[ll] = 1;
 			//if(rank==0) msg[i] = selfmsg[i];	
 		}
+	//	double timings[2][50][515];
+//	printf("rank = %d parent = %d, leftChildren = %d leftchild = %d rightchild = %d\n", rank, parentLeft2, leftChildren2, leftPeers2[0], leftPeers2[1]);
 	for (i=0;i<RUNS;i++)
 	{
 		MPI_Barrier(MPI_COMM_WORLD);
-	
+		
 		cdone=0; count=0, cdone2=0;
 		for (k=0;k<CHUNK;k++)
 			ready[k]=0;
@@ -233,6 +266,7 @@ int main(int argc,char *argv[]){
 		{
 			while((cdone < (chunks_to_recv)) || (cdone2 < CHUNK)) 
 			{		
+				//printf("loop1");
 				MPI_Waitany(CHUNK*3, req, &index, &stt);
 				//printf("ok waiting, rank %d",rank);
 				if(index == MPI_UNDEFINED) 
@@ -287,6 +321,7 @@ int main(int argc,char *argv[]){
 		else
 			while(cdone < (chunks_to_recv)) 
 			{		
+				//printf("loop2");
 				MPI_Waitany(CHUNK*2, req, &index, &stt);
 				if(index == MPI_UNDEFINED) 
 				{
@@ -295,10 +330,11 @@ int main(int argc,char *argv[]){
 				}
 				logical_chunk_no = (index>=CHUNK) ? (index-CHUNK)*CSIZE : index*CSIZE;		
 				j=index*CSIZE;
-				
 				for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
 				{
-					selfmsg[k] = (msg1[j]+selfmsg[k]);		
+					//printf("rank = %d selfmsg %d = %d\n", rank, k, selfmsg[k]);	
+					selfmsg[k] = (msg1[j]+selfmsg[k]);	
+					//printf("rank = %d selfmsg %d = %d\n", rank, k, selfmsg[k]);	
 					j++;
 				}
 				cdone++;
@@ -315,11 +351,11 @@ int main(int argc,char *argv[]){
 						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[0],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
 					if (rightChildren2 == 2)
 						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[1],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
-				}					
+				}				
 			}
 
 
-
+		
 		MPI_Waitall(count,sreq,sstt);  // wait for  all send to finish
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
@@ -327,10 +363,13 @@ int main(int argc,char *argv[]){
 		if(rank==0)
 		{
 			printf("Run %ld time %1.9lf\n", i+1,res);
+			//for (int loop = 0; loop < SIZE; loop++) {
+			//	printf("rank = %d %d\n", rank, selfmsg[loop]);
+			//}
 		}
 		//else {
 		//	for (int loop = 0; loop < SIZE; loop++) {
-		//		printf("rank = %d %d\n", rank, Reducedmsg[loop]);
+		//		printf("rank = %d %d\n", rank, selfmsg[loop]);
 		//	}
 		//}
 	}
