@@ -80,10 +80,6 @@ int main(int argc,char *argv[]){
 
 	double t1,t2,res;
 
-	for (i=0;i<SIZE;i++) {
-		selfmsg[i] = (i%100 + rank%100)%100;
-		//if(rank==0) msg[i] = selfmsg[i];	
-	}
 	//selfmsg[SIZE] = '\0';	
 	//msg[SIZE] = '\0';
 

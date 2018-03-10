@@ -103,13 +103,13 @@ int main(int argc,char *argv[]){
 	}
 
 	//	double timings[2][50][515];
-	for (int ll=0;ll<SIZE;ll++) {
+	
+	for (i=0;i<RUNS;i++)
+	{
+		for (int ll=0;ll<SIZE;ll++) {
 			selfmsg[ll] = 1;
 			//if(rank==0) msg[i] = selfmsg[i];	
 		}
-	for (i=0;i<RUNS;i++)
-	{
-		
 		MPI_Barrier(MPI_COMM_WORLD);
 		
 		cdone=0; count=0;
