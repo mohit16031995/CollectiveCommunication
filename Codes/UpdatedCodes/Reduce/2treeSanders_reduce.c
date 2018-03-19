@@ -335,6 +335,12 @@ int main(int argc,char *argv[]){
             }
 	
 	}
+	else {
+		leftChildren = 1;
+		rightChildren = 1;
+		leftPeers[0] = root->process_id;
+		rightPeers[0] = root2->process_id;
+	}
 	double t1,t2,res;
 	for (i=0;i<RUNS;i++)
 	{
@@ -469,5 +475,6 @@ int main(int argc,char *argv[]){
 		}
 
 	}
+
 	MPI_Finalize();
 } 
