@@ -6,7 +6,7 @@
 #include <math.h>
 #include <string.h>
 #include <omp.h>
-#define RUNS 50
+#define RUNS 100
 #define ifroot if(rank==0)
 //#define SIZE 6
 //#define CHUNK 2
@@ -226,14 +226,14 @@ printf("\n");
 		if(rank==0)
 		{
 			printf("Run %ld time %1.9lf\n", i+1,res);
-			for (int ii=0; ii<SIZE*p; ii++)
-				printf ("%d  ",start[ii]);
-			printf("\n");
+			//for (int ii=0; ii<SIZE*p; ii++)
+			//	printf ("%d  ",start[ii]);
+			//printf("\n");
 		}
 
 	}
-	if (rank==0) 
-		printf("Avg time = %lf",time/RUNS);
+//	if (rank==0) 
+//		printf("Avg time = %lf",time/RUNS);
 	MPI_Finalize();
 } 
 
