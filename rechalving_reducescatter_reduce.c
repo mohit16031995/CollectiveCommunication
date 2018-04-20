@@ -34,17 +34,21 @@ int main(int argc,char *argv[]){
 	}	
 
 	SIZEinbytes = strtol(argv[1], &ptr, 10);
+
+	int rounds=0;
+	rounds = (int)log2(p);
+	int originalp = p;
+	p = 1<<rounds;
+	int extra = originalp-p;
+
 	SIZE = SIZEinbytes/sizeof(int);		//no of elements in int array
+	if (SIZE%p!=0)
+		SIZE = SIZE + p - SIZE%p;
+	SIZEinbytes = SIZE*sizeof(int);
 	originalsize = SIZE;
 	int selfmsg[SIZE];
 	int recvmsg[SIZE];
 	
-	//no of steps
-	int rounds=0;
-	for (i=0,j=p; j>1; j=j>>1,i++);	//no of rounds. log base 2 p.
-	rounds = i;
-	//printf("i = %d",i);
-
 	// for  recvs 
 	MPI_Status stt;		//no of send/recv = no of rounds
 	MPI_Request req[rounds];
@@ -56,7 +60,7 @@ int main(int argc,char *argv[]){
 	for (i=0;i<rounds;i++)
 		sreq[i] = MPI_REQUEST_NULL;
 
-	double t1,t2,res,time=0;
+	double t1,t2,res,time=999999;
 
 	//2 power ith nodes on left and right
 	int right[rounds];
@@ -108,11 +112,38 @@ int main(int argc,char *argv[]){
 			selfmsg[ii] = rank;
 		}
 		t1 = MPI_Wtime();
+
+		if (extra != 0)
+		{
+			if (rank >= p)
+			{
+				//printf("send %db to %d tag %d, from rank %d\n", SIZE,rank-extra,rounds+1,rank);				
+				MPI_Send (selfmsg,SIZE,MPI_INT,rank-extra,rounds+1,MPI_COMM_WORLD);
+				t2 = MPI_Wtime() - t1;
+				MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+				continue;
+			}
+			else if (rank >= p-extra)
+			{
+				int recv_0[SIZE];
+				MPI_Status stt_0;
+				//printf("recv %db from %d tag %d, to rank %d\n", SIZE,rank+extra,rounds+1,rank);
+				MPI_Recv (recv_0,SIZE,MPI_INT,rank+extra,rounds+1,MPI_COMM_WORLD,&stt_0);
+				//printf("received\n");
+				for (int k=0; k<SIZE; k++)
+				{
+					selfmsg[k]+=recv_0[k];
+				}
+				//printf("%d\n",selfmsg[0]);
+			}
+		}
+		//MPI_Barrier(MPI_COMM_WORLD);
+		//printf("rank %d reached barrier\n",rank);
 		recvsize = SIZE>>1;
 		for (j=rounds-1; j>=0; j--,recvsize=recvsize>>1)
 		{
 			MPI_Irecv (recvmsg+recvsize,recvsize,MPI_INT,partner[j],j,MPI_COMM_WORLD,&req[j]);
-			//printf("rank %d to recv %d elements from %d at index %d at tag %d\n",rank,SIZE<<(rounds-j-1),partner[j],recvatindex[j],j);
+			//printf("rank %d to recv %d elements from %d at index %d at tag %d\n",rank,recvsize,partner[j],recvatindex[j],j);
 		}
 		if (partner[rounds-1]<rank) 
 		{	
@@ -131,7 +162,7 @@ int main(int argc,char *argv[]){
 //ifroot printf("ll=%d",ll);
 			
 		MPI_Isend (selfmsg+point,SIZE>>1,MPI_INT,partner[rounds-1],rounds-1,MPI_COMM_WORLD,&sreq[count++]);
-//		printf("rank %d to send %d elements to %d at index %d at tag %d\n",rank,SIZE,partner[rounds-1],collected,rounds-1);		
+		//printf("rank %d to send %d elements to %d at index %d at tag %d\n",rank,SIZE>>1,partner[rounds-1],collected,rounds-1);		
 		roundsdone=1;
 		recvsize = SIZE>>1;
 		for (int torecv=rounds-1; torecv>0; torecv--,recvsize=recvsize>>1)
@@ -164,9 +195,12 @@ int main(int argc,char *argv[]){
 				printf("Recvd round %d\n",torecv);
 			}*/
 			MPI_Isend (selfmsg+point,recvsize>>1,MPI_INT,partner[torecv-1],torecv-1,MPI_COMM_WORLD,&sreq[count++]);
+			//printf("rank %d to send %d elements to %d at index %d at tag %d\n",rank,recvsize>>1,partner[torecv-1],collected,torecv-1);		
 		}		
+		//printf("\t\trank %d before waitall 1\n",rank);
 		MPI_Waitall(rounds,req,sstt);
-	
+		//printf("\t\trank %d after waitall 1\n",rank);
+		
 		for (int k=0,t=ll; k<recvsize; k++,t++)
 		{
 			selfmsg[t]+=recvmsg[recvsize+k];
@@ -186,7 +220,8 @@ int main(int argc,char *argv[]){
 		selfresult = data[rank];
 		
 //	
-		MPI_Barrier(MPI_COMM_WORLD);
+		//MPI_Barrier(MPI_COMM_WORLD);
+		//printf("\t\trank %d completed rscatter\n",rank);
 		count=0;
 		int roundsdone=0, collected=rank, thisround=0, recvcount=0, sendsize=0; //collected represents location of the data we have collected till now
 		for (int ii=0; ii<SIZE*p; ii++)
@@ -206,34 +241,36 @@ int main(int argc,char *argv[]){
 			}
 			//printf("rank %d to recv %d elements from %d at index %d\n",rank,SIZE<<j,partner[j],recvatindex[j]);
 		}
-		
+		//printf("\t\trank %d before waitall 2\n",rank);
 		MPI_Waitall(recvcount,req,sstt);
+		//printf("\t\trank %d after waitall 2\n",rank);
 /*printf ("rank %d recvcount %d\n",rank,recvcount);
 for (int ii=0; ii<SIZE*p; ii++)
 printf ("%d  ",start[ii]);
 printf("\n");
 */		ifroot ; else 
 		MPI_Send (selfresult,sendsize,MPI_INT,partner[j],j,MPI_COMM_WORLD);
+		//printf("\t\t rank %d after last send\n",rank);
 		//MPI_Waitall(count,sreq,sstt);  // wait for  all send to finish
 		
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
-		time+=res;
+		if (res<time) time=res;
 				
 		//printf("rank %d run %d total %d\n",rank,i+1,selfmsg[ll]);
 		//for (int ii=0; ii<SIZE; ii++)
 		//	selfresult[ii]=selfmsg[ll+ii];
 		if(rank==0)
 		{
-			printf("Run %ld time %1.9lf\n", i+1,res);
+			printf("Run %d time %1.9lf\n", i+1,res);
 			//for (int ii=0; ii<SIZE*p; ii++)
 			//	printf ("%d  ",start[ii]);
 			//printf("\n");
 		}
 
 	}
-//	if (rank==0) 
-//		printf("Avg time = %lf",time/RUNS);
+	//if (rank==0) 
+	//	printf("Min time = %lf",time);
 	MPI_Finalize();
 } 
 
