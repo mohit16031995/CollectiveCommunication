@@ -123,7 +123,7 @@ int main(int argc,char *argv[]){
 
 		// set up all recv from left and right tree
 		if (leftChildren)				//if not leafleft setup all even recvs
-			for (j=0;j<CHUNK;j+=2) 
+			for (j=0;j<CHUNK;j+=2)
 			{
 				MPI_Irecv(msg1+j*CSIZE,CSIZE,MPI_INT,leftPeers[0],j,MPI_COMM_WORLD,&req1[j]);
 				if (leftChildren==2)

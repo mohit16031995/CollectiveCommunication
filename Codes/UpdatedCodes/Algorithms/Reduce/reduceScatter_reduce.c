@@ -24,15 +24,17 @@ int main(int argc,char *argv[]){
 	long int SIZE = strtol(argv[1], &ptr, 10);
 		
 	int vrank = rank;
-	unsigned pof2 = pow(2, floor(log2(p)));
+	int xy = floor(log2(p));
+	unsigned pof2 = pow(2, xy);
 
 	int len = SIZE / sizeof(int); 
 	int clen = (len / pof2);
+	//printf("len1 = %d, clen1= %d\n", len, clen);
 	int CSIZE = clen*sizeof(int);	
 	SIZE = CSIZE*pof2;
 	len = SIZE / sizeof(int);	
 
-
+	//printf("len = %d, clen= %d\n", len, clen);
 	//int *recvmsg = malloc(len * sizeof(int));
 	int recvmsg[len];
 	int selfmsg[len];
@@ -53,13 +55,13 @@ int main(int argc,char *argv[]){
 		t1 = MPI_Wtime();
 		int rem = p - pof2;
 		
-
+		
 		if (rank < 2 * rem) {
 			if(rank % 2 == 0) {
-			  	MPI_Send(selfmsg, len, MPI_INT, rank+1, 1, MPI_COMM_WORLD);
+			  	MPI_Send(&selfmsg, len, MPI_INT, rank+1, 1, MPI_COMM_WORLD);
 			  	vrank = -1;
 			} else {
-			  	MPI_Recv(recvmsg, len, MPI_INT, rank-1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+			  	MPI_Recv(&recvmsg, len, MPI_INT, rank-1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 				for (int ll = 0; ll < len; ll++) {
 					reducedmsg[ll] += recvmsg[ll];
 				}
@@ -143,6 +145,7 @@ int main(int argc,char *argv[]){
 		}
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+		//printf("%d %d\n", rank, reducedmsg[0]);
 		if(rank==0)
 		{
 			printf("Run %ld time %1.9lf\n", i+1,res);

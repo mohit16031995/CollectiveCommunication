@@ -41,7 +41,8 @@ int main(int argc,char *argv[]){
 
 		t1 = MPI_Wtime();
 		  int vrank = rank;
-		  unsigned pof2 = pow(2, floor(log2(p)));
+			int xy = floor(log2(p));
+		  unsigned pof2 = pow(2, xy);
 		  int rem = p - pof2;
 		  unsigned mask = 1;
 

@@ -158,11 +158,11 @@ int main(int argc,char *argv[]){
 				double t11 = MPI_Wtime();
 				j=index*CSIZE;
 				
-					for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
-					{
-						selfmsg[k] = (msg1[j]+selfmsg[k]);			
-						j++;
-					}
+				for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
+				{
+					selfmsg[k] = (msg1[j]+selfmsg[k]);			
+					j++;
+				}
 				
 				double t12 = MPI_Wtime()-t11;
 ////				printf("Calculation time 1 %d %1.9f\n", CSIZE, t12);

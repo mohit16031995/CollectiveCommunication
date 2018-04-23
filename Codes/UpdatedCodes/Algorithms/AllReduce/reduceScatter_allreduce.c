@@ -26,7 +26,8 @@ int main(int argc,char *argv[]){
 	long int SIZE = strtol(argv[1], &ptr, 10);
 		
 	int vrank = rank;
-	unsigned pof2 = pow(2, floor(log2(p)));
+	int xy = floor(log2(p));
+	unsigned pof2 = pow(2, xy);
 
 	int len = SIZE / sizeof(int); 
 	int clen = (len / pof2);
@@ -35,12 +36,12 @@ int main(int argc,char *argv[]){
 	len = SIZE / sizeof(int);	
 
 
-	//int *recvmsg = malloc(len * sizeof(int));
-	int recvmsg[len];
-	int selfmsg[len];
-	int reducedmsg[len];
-	//int *selfmsg = malloc(len * sizeof(int));
-	//int *reducedmsg = malloc(len * sizeof(int));
+	int *recvmsg = malloc(len * sizeof(int));
+	//int recvmsg[len];
+	//int selfmsg[len];
+	//int reducedmsg[len];
+	int *selfmsg = malloc(len * sizeof(int));
+	int *reducedmsg = malloc(len * sizeof(int));
 	
 	double t1,t2,res;
 	//printf("rank");
