@@ -7,11 +7,7 @@
 #include <string.h>
 #include <omp.h>
 #define RUNS 100
-//#define SIZE 6
-//#define CHUNK 2
-//#define CSIZE SIZE/CHUNK
 
-// Macros used in reduce collective
 
 int main(int argc,char *argv[]){
 	int rank, p, root = 0, index, cdone=0;
@@ -74,20 +70,20 @@ int main(int argc,char *argv[]){
 
 
 	
-		parentLeft = (rank-1) / 2;
-		parentRight = (rank-1) / 2;
-		if ((2*rank)+1 < p) {
-			leftChildren = 1;
-			leftPeers[0] = (2*rank)+1;
-			rightChildren = 1;
-			rightPeers[0] = (2*rank)+1;
-		}
-		if ((2*rank)+2 < p) {
-			leftChildren = 2;
-			leftPeers[1] = (2*rank)+2;
-			rightChildren = 2;
-			rightPeers[1] = (2*rank)+2;
-		}
+	parentLeft = (rank-1) / 2;
+	parentRight = (rank-1) / 2;
+	if ((2*rank)+1 < p) {
+		leftChildren = 1;
+		leftPeers[0] = (2*rank)+1;
+		rightChildren = 1;
+		rightPeers[0] = (2*rank)+1;
+	}
+	if ((2*rank)+2 < p) {
+		leftChildren = 2;
+		leftPeers[1] = (2*rank)+2;
+		rightChildren = 2;
+		rightPeers[1] = (2*rank)+2;
+	}
 		
 
 	//	double timings[2][50][515];

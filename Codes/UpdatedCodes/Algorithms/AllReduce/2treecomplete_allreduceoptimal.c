@@ -85,9 +85,9 @@ int main(int argc,char *argv[]){
 	CSIZE = len/CHUNK; 
 	SIZE = CSIZE*CHUNK;
 
-	int *msg1 = malloc((SIZE*2+1) * sizeof(int));
+	int *msg1 = malloc((SIZE+1) * sizeof(int));
 	int *selfmsg = malloc((SIZE+1) * sizeof(int));
-	int *msg2 = msg1+SIZE;
+	int *msg2 = malloc((SIZE+1) * sizeof(int));
 	int ready[CHUNK];
 	int *Reducedmsg = malloc((SIZE+1) * sizeof(int));
 	// for  recvs 
@@ -105,13 +105,6 @@ int main(int argc,char *argv[]){
 		sreq[i] = MPI_REQUEST_NULL;
 
 	double t1,t2,res;
-
-//	for (i=0;i<SIZE;i++) {
-//		selfmsg[i] = (i%100 + rank%100)%100;
-		//if(rank==0) msg[i] = selfmsg[i];	
-//	}
-	//selfmsg[SIZE] = '\0';	
-	//msg[SIZE] = '\0';
 
 
 	if (rank != 0) 						//if not root
@@ -172,6 +165,7 @@ int main(int argc,char *argv[]){
 		rightPeers2[0] = R2Br(p-1);
 	}
 	//	double timings[2][50][515];
+	//printf("rank%d leftChild %d leftA %d leftB %d rightChild %d rightA %d rightB %d\n", rank, leftChildren2, leftPeers2[0], leftPeers2[1], rightChildren2, rightPeers2[0], rightPeers2[1]);
 	for (int ll=0;ll<SIZE;ll++) {
 			selfmsg[ll] = 1;
 			//if(rank==0) msg[i] = selfmsg[i];	
@@ -242,12 +236,20 @@ int main(int argc,char *argv[]){
 				}
 				if (index < CHUNK*2) {
 					logical_chunk_no = (index>=CHUNK) ? (index-CHUNK) : index;
-					j=index*CSIZE;
-				
-					for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
-					{
-						selfmsg[k] = (msg1[j]+selfmsg[k]);
-						j++;
+					j=logical_chunk_no*CSIZE;
+					if (index < CHUNK) {					
+						for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
+						{
+							selfmsg[k] = (msg1[j]+selfmsg[k]);
+							j++;
+						}
+					}
+					else {
+						for (k=logical_chunk_no*CSIZE;k<(logical_chunk_no+1)*CSIZE;k++) 
+						{
+							selfmsg[k] = (msg2[j]+selfmsg[k]);
+							j++;
+						}
 					}
 					ready[logical_chunk_no]++;
 					if ( (logical_chunk_no%2) ? ready[logical_chunk_no]==rightChildren : ready[logical_chunk_no]==leftChildren )
@@ -294,15 +296,27 @@ int main(int argc,char *argv[]){
 					MPI_Abort(MPI_COMM_WORLD, 1);
 				}
 				logical_chunk_no = (index>=CHUNK) ? (index-CHUNK)*CSIZE : index*CSIZE;		
-				j=index*CSIZE;
-				
-				for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
-				{
-					selfmsg[k] = (msg1[j]+selfmsg[k]);		
-					j++;
+				j=logical_chunk_no;
+				if (index < CHUNK) {
+					for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
+					{
+						selfmsg[k] = (msg1[j]+selfmsg[k]);		
+						j++;
+					}
+				}
+				else {
+					for (k=logical_chunk_no;k<logical_chunk_no+CSIZE;k++) 
+					{
+						selfmsg[k] = (msg2[j]+selfmsg[k]);		
+						j++;
+					}
 				}
 				cdone++;
+				
 				j=logical_chunk_no/CSIZE;
+				ready[j]++;
+
+				if ( (j%2) ? ready[j]==rightChildren : ready[j]==leftChildren ) {
 				if(!(j%2)) { 
 					if (leftChildren2)
 						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,leftPeers2[0],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
@@ -316,11 +330,13 @@ int main(int argc,char *argv[]){
 					if (rightChildren2 == 2)
 						MPI_Isend(selfmsg+j*CSIZE,CSIZE,MPI_INT,rightPeers2[1],CHUNK+j,MPI_COMM_WORLD,&sreq[count++]);
 				}					
+				}
 			}
 
 
-
+		//printf("rank%d count%ld cdone=%d cdone2=%d\n", rank, count, cdone, cdone2);
 		MPI_Waitall(count,sreq,sstt);  // wait for  all send to finish
+		//aprintf("DDDDD%d\n", rank);
 		t2 = MPI_Wtime() - t1;
 		MPI_Reduce(&t2, &res, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
@@ -337,4 +353,5 @@ int main(int argc,char *argv[]){
 	//printf("out of loop RAnk = %d\n", rank);
 	MPI_Finalize();
 } 
+
 
