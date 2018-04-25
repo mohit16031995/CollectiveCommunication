@@ -1,0 +1,8 @@
+p = 32 s = 1048576 optimalChunks = 6 time = 0.990259
+p = 54 s = 1048576 optimalChunks = 6 time = 1.05273
+p = 64 s = 1048576 optimalChunks = 8 time = 1.13544
+p = 96 s = 1048576 optimalChunks = 6 time = 1.19799
+p = 128 s = 1048576 optimalChunks = 8 time = 1.25013
+p = 158 s = 1048576 optimalChunks = 6 time = 1.21973
+p = 188 s = 1048576 optimalChunks = 6 time = 1.24595
+p = 256 s = 1048576 optimalChunks = 11 time = 1.35764
