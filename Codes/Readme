@@ -1,0 +1,8 @@
+These are the implementations of collective algorithms.
+
+1. bintree - Pipelined Binary Tree.
+2. 2TreeComplete - Pipelined Two Tree(best implementation using complete tree).
+3. 2TreeBroadcast - Pipelined Two Tree (Using Sanders and Traff method given in paper "Two-Tree Algorithms for Full Bandwidth
+Broadcast, Reduction and Scan").
+4. linearPipeline - Pipelined linear tree algorithm.
+5. MPI_BCAST - using predefined functions in MPICH library.
