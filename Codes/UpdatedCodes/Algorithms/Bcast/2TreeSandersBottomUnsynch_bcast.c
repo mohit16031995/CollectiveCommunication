@@ -6,7 +6,7 @@
 #include <math.h>
 #include <string.h>
 
-#define RUNS 100
+#define RUNS 1
 #define max_processors 1000
 //#define SIZE 6
 //#define CHUNK 2
@@ -374,6 +374,8 @@ int main(int argc,char *argv[]){
                 		MPI_Abort(MPI_COMM_WORLD, 1);
             		}
 			if(index%2) {  // right tree
+				if (RUNS == 1)				
+					printf("Time %1.9lf rank %d recvd chunk %d from rank %d\n", MPI_Wtime()-t1, rank, index, recvToRight);
 				if(rightChildren) {
 					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,rightPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
 				}
@@ -381,6 +383,8 @@ int main(int argc,char *argv[]){
 					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,rightPeers[1],index,MPI_COMM_WORLD,&sreq[count++]);
 				}
 			} else {
+				if (RUNS == 1)				
+					printf("Time %1.9lf rank %d recvd chunk %d from rank %d\n", MPI_Wtime()-t1, rank, index, recvToLeft);
 				if(leftChildren) {
 					MPI_Isend(msg+index*CSIZE,CSIZE,MPI_CHAR,leftPeers[0],index,MPI_COMM_WORLD,&sreq[count++]);
 				}

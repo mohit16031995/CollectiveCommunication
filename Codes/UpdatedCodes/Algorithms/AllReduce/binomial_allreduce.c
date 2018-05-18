@@ -47,7 +47,7 @@ int main(int argc,char *argv[]){
         int peer = rank + p2r;
         if(peer < p && rank < p2r) {
           childs[no_childs] = peer;
-			no_childs += 1;
+		  no_childs += 1;
         }
 
         peer = rank - p2r;
