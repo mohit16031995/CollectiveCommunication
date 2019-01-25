@@ -1,0 +1,64 @@
+
+@book{hoefler_w.:_2007,
+	title = {W.: {Low}-{Overhead} {LogGP} {Parameter} {Assessment} for {Modern} {Interconnection} {Networks}},
+	shorttitle = {W.},
+	abstract = {Network performance measurement and prediction is very important to predict the running time of high performance computing applications. The LogP model family has been proven to be a viable tool to assess the communication performance of parallel architectures. However, nonintrusive LogP parameter assessment is still a very difficult task. We compare well known measurement methods for Log(G)P parameters and discuss their accuracy and network contention. Based on this, a new theoretically exact measurement method that does not saturate the network is derived and explained in detail. Our method only uses benchmarked values instead of computed parameters to compute other parameters to avoid propagation of firstorder errors. A methodology to detect protocol changes in the underlying communication subsystem is also proposed. The applicability of our method and the protocol change detection is shown for the low-level API as well as MPI implementations of different modern high performance interconnection networks. The whole method is implemented in the tool Netgauge and it is available as open source to the public. 1},
+	author = {Hoefler, Torsten and Lichei, Andre and Rehm, Wolfgang},
+	year = {2007},
+	note = {00000},
+	file = {Citeseer - Full Text PDF:/Users/iiita/Zotero/storage/TK59C5H2/Hoefler et al. - 2007 - W. Low-Overhead LogGP Parameter Assessment for Mo.pdf:application/pdf;Citeseer - Snapshot:/Users/iiita/Zotero/storage/6DX5IGD8/summary.html:text/html}
+}
+
+@article{sanders_two-tree_2009,
+	title = {Two-tree {Algorithms} for {Full} {Bandwidth} {Broadcast}, {Reduction} and {Scan}},
+	volume = {35},
+	issn = {0167-8191},
+	url = {http://dx.doi.org/10.1016/j.parco.2009.09.001},
+	doi = {10.1016/j.parco.2009.09.001},
+	abstract = {We present a new, simple algorithmic idea for the collective communication operations broadcast, reduction, and scan (prefix sums). The algorithms concurrently communicate over two binary trees which both span the entire network. By careful layout and communication scheduling, each tree communicates as efficiently as a single tree with exclusive use of the network. Our algorithms thus achieve up to twice the bandwidth of most previous algorithms. In particular, our approach beats all previous algorithms for reduction and scan. Experiments on clusters with Myrinet and InfiniBand interconnect show significant reductions in running time for all three operations sometimes even close to the best possible factor of two.},
+	number = {12},
+	urldate = {2017-10-30},
+	journal = {Parallel Comput.},
+	author = {Sanders, Peter and Speck, Jochen and Träff, Jesper Larsson},
+	month = dec,
+	year = {2009},
+	note = {00031},
+	keywords = {Bipartite-edge coloring, Broadcast, Message-passing parallel programming, Parallel prefix (scan), reduction},
+	pages = {581--594}
+}
+
+@article{thakur_optimization_2005,
+	title = {Optimization of {Collective} {Communication} {Operations} in {MPICH}},
+	volume = {19},
+	issn = {1094-3420},
+	url = {http://dx.doi.org/10.1177/1094342005051521},
+	doi = {10.1177/1094342005051521},
+	abstract = {We describe our work on improving the performance of collective communication operations in MPICH for clusters connected by switched networks. For each collective operation, we use multiple algorithms depending on the message size, with the goal of minimizing latency for short messages and minimizing bandwidth use for long messages. Although we have implemented new algorithms for all MPI Message Passing Interface collective operations, because of limited space we describe only the algorithms for allgather, broadcast, all-to-all, reduce-scatter, reduce, and allreduce. Performance results on a Myrinet-connected Linux cluster and an IBM SP indicate that, in all cases, the new algorithms significantly outperform the old algorithms used in MPICH on the Myrinet cluster, and, in many cases, they outperform the algorithms used in IBM's MPI on the SP. We also explore in further detail the optimization of two of the most commonly used collective operations, allreduce and reduce, particularly for long messages and nonpower-of-two numbers of processes. The optimized algorithms for these operations perform several times better than the native algorithms on a Myrinet cluster, IBM SP, and Cray T3E. Our results indicate that to achieve the best performance for a collective communication operation, one needs to use a number of different algorithms and select the right algorithm for a particular message size and number of processes.},
+	number = {1},
+	urldate = {2017-10-30},
+	journal = {Int. J. High Perform. Comput. Appl.},
+	author = {Thakur, Rajeev and Rabenseifner, Rolf and Gropp, William},
+	month = feb,
+	year = {2005},
+	note = {00462},
+	keywords = {message passing, Collective communication, reduction, MPI},
+	pages = {49--66}
+}
+
+@inproceedings{alexandrov_loggp:_1995,
+	address = {New York, NY, USA},
+	series = {{SPAA} '95},
+	title = {{LogGP}: {Incorporating} {Long} {Messages} into the {LogP} {Model}—{One} {Step} {Closer} {Towards} a {Realistic} {Model} for {Parallel} {Computation}},
+	isbn = {978-0-89791-717-9},
+	shorttitle = {{LogGP}},
+	url = {http://doi.acm.org/10.1145/215399.215427},
+	doi = {10.1145/215399.215427},
+	urldate = {2017-10-30},
+	booktitle = {Proceedings of the {Seventh} {Annual} {ACM} {Symposium} on {Parallel} {Algorithms} and {Architectures}},
+	publisher = {ACM},
+	author = {Alexandrov, Albert and Ionescu, Mihai F. and Schauser, Klaus E. and Scheiman, Chris},
+	year = {1995},
+	note = {00547},
+	pages = {95--105},
+	file = {ACM Full Text PDF:/Users/iiita/Zotero/storage/VGC3QAXI/Alexandrov et al. - 1995 - LogGP Incorporating Long Messages into the LogP M.pdf:application/pdf}
+}
