@@ -215,10 +215,18 @@ Text of abstract \ldots.
 
 \section{Introduction}
 %Efficient execution of processes and communication of data between them are two important goals of designing parallel applications for high performance computing system (HPC). Often, the performance of communication operations significantly affects the efficient execution of processes, and hence, the parallel application. 
-Collective operations are among the most important communication operations for parallel applications based on shared and distributed memory. Collective  operations involve all the processes in a communicator. A few examples of collective operations are: distributing identical data to all processes (i.e., broadcast), receiving different/identical data from all processes at the root process (i.e., gather/reduce) and also, to distribute the collected data (at the root) to all the processes (i.e., Allgather, Allreduce), etc. The Message Passing Interface (MPI) standard
-%, which is the de facto programming model of many top supercomputers in the world, 
-provides an implementation of commonly used collective operations. The primary objective of these operations is to decrease the runtime. Introduction changed.
-%Besides the runtime, other upcoming challenges are energy and memory consumption, especially for small battery powered devices and offloaded architectures respectively. 
+Collective operations are among the most important communication operations for parallel applications running on large scale high performance computing systems. In general, all of the processes in a parallel application are involved in a collective operation either to send and/or receive data from other processes. A few widely used collective operations are: distributing identical data to all processes (i.e., broadcast), receiving different/identical data from all processes at the root process (i.e., gather/reduce) and also, to distribute the collected data (at the root) to all the processes (i.e., Allgather, Allreduce), etc.  Typically, acceleration of a parallel application involves optimizing collective operations.
+
+Many virtual topologies have been used in the past for runtime optimization of collective operations \cite{hoefler-moor-collectives}. Among them, pipelined tree algorithms have been observed to reduce the runtime of various collectives which involves medium to large message sizes. The message to be sent (or received) is divided into small chunks and is distributed in a pipeline along the edges of the virtual topology.  Binary and linear trees are commonly used as virtual topologies for medium and large message sizes respectively. 
+
+Sanders et. al. in \cite{sanders_two-tree_2009} observed that in binary tree, the leaf nodes utilize only half of their bandwidth. When these nodes are receiving (in broadcast), they never send any message and while sending (in gather, reduce) no receive operation is performed. To fully utilize the bandwidth of these nodes, they proposed a two-tree based approach (referred as TwoTreeS in the paper). To perform a collective, instead of one, two binary trees are used. The inner nodes of one tree becomes the outer nodes in the other tree and hence, bandwidth of all the nodes can be fully utilized. 
+
+The construction of TwoTreeS is rather complex and depends on perfect synchronization of send and receive operations in both the trees. In each round, a process is receiving in one tree and sending to some other process in the second tree. In a large communication network, perfect synchronization of send/receive operations in both the trees is not possible because of variable number of hops among processes   and also due to traffic from other applications sharing the communication infrastructure. However, this synchronization becomes an overhead and does not allow to fully optimize the bandwidth with the two trees. In this paper, we propose simple construction of two trees that does not require any synchronization and implement three widely used collectives broadcast, reduce and allreduce using the proposed two tree construction. 
+
+
+
+
+%The Message Passing Interface (MPI) provides an implementation of commonly used collective operations.
 
 %terminology: Sander's Two-Tree = TwoTreeS, Our Two-Tree = TwoTreeC.  Maybe T$_1$ and T$_2$ so that it is easy to refer to them throughout the rest of the paper?
 
