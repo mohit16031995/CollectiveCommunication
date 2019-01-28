@@ -68,7 +68,7 @@
 \usepackage{color}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{algorithm}
+%\usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{wrapfig}
 
@@ -99,6 +99,10 @@
 \par\vskip 1.5ex \@plus .2ex
 \@afterheading}
 \makeatother
+
+\newif\ifcmts
+\cmtstrue % comment out to hide answers
+
 
 \begin{document}
 
@@ -223,14 +227,22 @@ Sanders et. al. in \cite{sanders_two-tree_2009} observed that in binary tree, th
 
 The construction of TwoTreeS is rather complex and depends on perfect synchronization of send and receive operations in both the trees. In each round, a process is receiving in one tree and sending to some other process in the second tree. In a large communication network, perfect synchronization of send/receive operations in both the trees is not possible because of variable number of hops among processes   and also due to traffic from other applications sharing the communication infrastructure. However, this synchronization becomes an overhead and does not allow to fully optimize the bandwidth with the two trees. In this paper, we propose simple construction of two trees that does not require any synchronization and implement three widely used collectives broadcast, reduce and allreduce using the proposed two tree construction. 
 
+We make the following major contributions:
 
+\begin{itemize}
+\item A runtime efficient implementation of broadcast, reduce and allreduce collectives with an easy to implement two tree topology.
+\item A close to lower bound and stable implementation of allreduce collective for power of two and non power of two cases.
+\item An exhaustive experimental evaluation of the proposed collectives on state-of-the-art high performance computing (HPC) system Piz Daint. \ifcmts \{\textcolor{blue}{todo}\} other HPC systems \fi
+\item An empirical and simulator based calculation of number of chunks based on LogGP \cite{alexandrov_loggp:_1995} model.
+\ifcmts \item \{\textcolor{blue}{todo}\} Speed-up of training deep learning models using the proposed allreduce implementation. \fi
+\end{itemize}
 
 
 %The Message Passing Interface (MPI) provides an implementation of commonly used collective operations.
 
 %terminology: Sander's Two-Tree = TwoTreeS, Our Two-Tree = TwoTreeC.  Maybe T$_1$ and T$_2$ so that it is easy to refer to them throughout the rest of the paper?
 
-%\section{Overview}
+
 %In Section \ref{sec:Model} we briefly explain the cost model LogGP \#ref\# that we have used in the analysis of our algorithms. Section \ref{sec:Topology} details the structure of our version of the two-tree topology adapted from Sanders and Traff's two-tree \#ref\#. Section \ref{sec:Operations} and its subsections illustrate how the two-tree is worked upon to carry out three basic collective operations: broadcast, reduce and all-reduce. Since this is a pipelined implementation, Section \ref{sec:Chunks} explains the process of calculation of the optimal number of chunks that we divide the message into for pipelining purpose. Section \ref{sec:Results} concludes with experimental results for all three operations.\\
 
 %ToDo add: 1.explain all three operations.\\2.explain bandwidth drawback of binary tree.\\3.explain need for calculating optimal number of chunks in  pipeline.\\
