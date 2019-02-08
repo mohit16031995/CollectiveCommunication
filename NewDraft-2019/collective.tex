@@ -278,7 +278,7 @@ The main idea behind TwoTreeS is to maximize the bandwidth utilization in a coll
 \end{figure}
 
 % \begin{figure}[h] \centering \includegraphics[width=0.5\textwidth]{images/twoTreeC.eps} \caption{\label{fig:twoTrees}} \end{figure}
- 
+
 %\section{TwoTreeComplete}\label{sec:TwoTreeComplete}
 %As discussed in the section\ref{sec:Motivation} the sanders implementation of the tree has some disadvantage, so on the basis of those shortcomings we have proposed a simpler yet better implementation of the two tree algorithm. The idea is same which is to use two binary trees with nodes in one nodes as inner nodes in other, the difference lies in the way these trees are constructed. As the name suggests the binary tree we have created are complete binary trees, the design is simple and we have used no explicit synchronization. How the topology is to be constructed how we have calculated the number of chunks for different parameters is what we aare going to discuss in these subsections.
 
@@ -344,7 +344,6 @@ The main idea behind TwoTreeS is to maximize the bandwidth utilization in a coll
 \end{algorithmic}
 \end{algorithm}
 
-\textcolor{green}{TODO: @Megha} add how this is improvement over TwoTreeS.
 \begin{itemize}
 \item  There is no overhead due to synchronization, because we perform no explicit synchronization. Throughout all of the implementation, all the send and receive operations used are non-blocking.
 \item  Both the trees are balanced. This especially improves the performance of reduce and all-reduce because communication starts at the leaf nodes in both of these.
@@ -352,11 +351,10 @@ The main idea behind TwoTreeS is to maximize the bandwidth utilization in a coll
 \end{itemize}
 
 
- 
 \section{Collective Operations}\label{sec:Operations}
 The TwoTreeC topology discussed in previous section \ref{sec:Topology} is used to implement Broadcast, Reduce and All-Reduce operations. This section describes how each of these is accomplished in detail.
 
-\textcolor{blue}{TODO: @Mohit} LogGP analysis for each of these approaches.
+\ifcmts \{\textcolor{blue}{todo @Mohit LogGP analysis for each of these approaches.}\}
 
 \subsection{Broadcast}
 In Broadcast operation a message from root process is received at all other processes in the communicator. This root process is assumed to be the process with rank 0 and is the root of the two-tree constructed previously. The root node divides its data into a number of equal sized chunks, then one by one sends each odd-numbered chunk to the root of right tree and each even-numbered chunk to root of left tree.\\
@@ -403,20 +401,36 @@ Reduce operation starts with the leaf nodes by sending message chunks to the par
 \subsection{All-Reduce}
 All-reduce operation can be implemented as combination of broadcast and reduce operation, in a way that first the message is reduced to root node and then the result is broadcast-ed to all other nodes. The previously stated design for the two tree was the first implementation used for all-reduce. Although good results were achieved but we realized that further improvements might be possible by making some modifications to the topology. When the exact same topology is used for both reduce and broadcast, leaf nodes are the first to finish the reduction part but are the last to receive the broadcast-ed reduced message. Hence we experimented with using different topologies for reduce phase and broadcast phase.
 
-\textcolor{red}{TODO: @Sir} lower bound 
+\ifcmts \{\textcolor{red}{todo @Sir lower bound}\}
 
 \subsubsection{TwoTreeC + Reordered TwoTreeC}
 The bandwidth of leaf nodes in reduce phase could be utilized further and so in this implementation of all-reduce operation, the reduction part uses the topology defined in algorithm \ref{alg:TwoTreeComp} and for the broadcast part a new topology is defined as described in the algorithm \ref{alg:ReorderedTwoTree}. This topology is created in a way that nodes finishing the reduce part using previous topology will be closer to the root.\\
 
-\subsection{Reordered TwoTreeC}
-This tree is similar to the TwoTreeC(see \ref{sec:TwoTreeComplete}) as in it consists of two complete binary trees T$_{1}$ and T$_{2}$ both constructed using $P-1$ processes, only difference is in the ordering of T$_{1}$ and T$_{2}$. The numbering is done as follows:
+\subsubsection{Reordered TwoTreeC}
+This tree is similar to the TwoTreeC(see \ref{sec:Topology}) as in it consists of two complete binary trees T$_{1}$ and T$_{2}$ both constructed using $P-1$ processes, only difference is in the ordering of T$_{1}$ and T$_{2}$. The numbering is done as follows:
  \begin{description}
      \item[$\bullet$]T$_{1}$ is numbered in level wise, in increasing order(circular in range $1...P-1$) starting form $\left \lceil{\dfrac{P}{2}}\right \rceil$
      \item[$\bullet$] T$_{2}$ is numbered in level wise, in decreasing order(circular in range $1...P-1$) starting form $\left \lfloor{\dfrac{P}{2}}\right\rfloor $
  \end{description}
+Figure \ref{fig:reordered} shows a reordered TwoTreeC for 20 processes.
 
-%new comment
-\textcolor{blue}{TODO: @Megha} figure to show reordered tree
+ \begin{figure}[h]
+ 
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.5\linewidth, height=4cm]{images/reordered-twoTreeC-T1.eps} 
+\caption{T1}
+\label{fig:RT1}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.5\linewidth, height=4cm]{images/reordered-twoTreeC-T2.eps}
+\caption{T2}
+\label{fig:RT2}
+\end{subfigure}
+ 
+\caption{Reordered TwoTreeC: 20 nodes}
+\label{fig:reordered}
+\end{figure}
+
 
 \begin{algorithm}[htp]
 \algsetup{linenosize=\tiny}
@@ -502,15 +516,130 @@ the results of the simulator was not always similar to the actual experimentatio
 
 \section{Experimental Configuration and Parameters}\label{sec:Config}
 
-\textcolor{blue}{TODO: @Mohit} LogGP parameter values, other details like single process per node, etc.
+
+\ifcmts \{\textcolor{blue}{todo @Mohit LogGP parameter values, other details like single process per node, etc.}\}
 
 \section{Results}\label{sec:Results}
 Mention and briefly explain all the implementations compared: linear pipeline, pipelined binary tree, our pipelined two tree, mpi standard library, scatter-gather. Conclude how our approach outperformes the rest on larger data sizes.
 
-\textcolor{blue}{TODO: @Mohit} plots
+\ifcmts \{\textcolor{blue}{todo @Mohit plots}\}
 
 \subsection{Broadcast}
+
+Message Sizes : 256B, 512B, 1MB, 3MB, 5MB, 7MB
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/bcast_comp_262144B.png}
+  \caption{Broadcast-256B}
+  \label{bcast-selected-256B}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/bcast_comp_524288B.png}
+  \caption{Broadcast-512B}
+  \label{bcast-selected-512B}
+\end{subfigure}
+\caption{Broadcast results for small sized messages}
+\label{graph-bcast-small-selected}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/bcast_all_1048576B.png}
+  \caption{Broadcast-1MB}
+  \label{bcast-selected-3MB}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/bcast_all_3145728B.png}
+  \caption{Broadcast-3MB}
+  \label{bcast-selected-3MB}
+\end{subfigure}
+\caption{Broadcast results for medium sized messages}
+\label{graph-bcast-medium1-selected}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/bcast_all_5242880B.png}
+  \caption{Broadcast-5MB}
+  \label{bcast-selected-5MB}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/bcast_all_7430032B.png}
+  \caption{Broadcast-7MB}
+  \label{bcast-selected-7MB}
+\end{subfigure}
+\caption{Broadcast results for medium sized messages}
+\label{graph-bcast-medium2-selected}
+\end{figure}
+
 \subsection{Reduce}
+
+Message Sizes : 256B, 512B, 1MB, 3MB, 5MB, 7MB
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Results/reduce_comp_262144B.png}
+  \caption{Reduce - 256B}
+  \label{reduce-selected-256B}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Results/reduce_comp_524288B.png}
+  \caption{Reduce - 512B}
+  \label{reduce-selected-512B}
+\end{subfigure}
+\caption{Reduce results for small sized messages}
+\label{graph-reduce-small-selected}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Results/Reduce_all_1048576B.png}
+  \caption{Reduce - 1MB}
+  \label{reduce-selected-1MB}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Results/Reduce_all_3145728B.png}
+  \caption{Reduce - 3MB}
+  \label{reduce-selected-3MB}
+\end{subfigure}
+\caption{Reduce results for medium sized messages}
+\label{graph-reduce-medium1-selected}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Results/Reduce_all_5242880B.png}
+  \caption{Reduce - 5MB}
+  \label{reduce-selected-5MB}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=0.8\linewidth]{images/Results/Reduce_all_7340032B.png}
+  \caption{Reduce - 7MB}
+  \label{reduce-selected-7MB}
+\end{subfigure}
+\caption{Reduce results for medium sized messages}
+\label{graph-reduce-medium2-selected}
+\end{figure}
+
 \subsection{All-Reduce}
 
 % Text of paper \ldots
