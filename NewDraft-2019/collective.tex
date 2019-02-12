@@ -86,7 +86,7 @@
 \usepackage{subcaption} %% For complex figures with subfigures/subcaptions
                         %% http://ctan.org/pkg/subcaption
                         
-                        
+   \begin{document}                     
 
 \newcommand{\pluseq}{\mathrel{+}=}
 \newcommand{\asteq}{\mathrel{*}=}
@@ -104,7 +104,7 @@
 \cmtstrue % comment out to hide answers
 
 
-\begin{document}
+%\begin{document}
 
 %% Title information
 \title[Short Title]{Full Title}         %% [Short Title] is optional;
@@ -219,6 +219,7 @@ Text of abstract \ldots.
 
 \section{Introduction}
 %Efficient execution of processes and communication of data between them are two important goals of designing parallel applications for high performance computing system (HPC). Often, the performance of communication operations significantly affects the efficient execution of processes, and hence, the parallel application. 
+OOOOOOOOOOOOOOOOOO
 Collective operations are among the most important communication operations for parallel applications running on large scale high performance computing systems. In general, all of the processes in a parallel application are involved in a collective operation either to send and/or receive data from other processes. A few widely used collective operations are: distributing identical data to all processes (i.e., broadcast), receiving different/identical data from all processes at the root process (i.e., gather/reduce) and also, to distribute the collected data (at the root) to all the processes (i.e., Allgather, Allreduce), etc.  Typically, acceleration of a parallel application involves optimizing collective operations.
 
 Many virtual topologies have been used in the past for runtime optimization of collective operations \cite{hoefler-moor-collectives}. Among them, pipelined tree algorithms have been observed to reduce the runtime of various collectives which involves medium to large message sizes. The message to be sent (or received) is divided into small chunks and is distributed in a pipeline along the edges of the virtual topology.  Binary and linear trees are commonly used as virtual topologies for medium and large message sizes respectively. 
@@ -505,14 +506,15 @@ Figure \ref{fig:reordered} shows a reordered TwoTreeC for 20 processes.
 \subsubsection{TwoTreeC + TwoTreeS}
 As seen in the previous optimization, all-reduce operation can be improved using different algorithms for the sub parts reduce and broadcast. So similarly here this version of all-reduce operation uses the TwoTreeS for the first part $i.e.$ reduce and uses the TwoTreeC for the second part $i.e.$ broadcast.
 
-\section{Calculation of Chunks}\label{sec:Chunks}
-Calculating the chunks value for different algorithms and for different parameters was also very challenging. We have used several methods to calculate the optimal values of the chunks for each algorithm and different number of processes.
+\section{Calculation of Number of Chunks}\label{sec:Chunks}
+Since the algorithms are pipelined, it is important to calculate the optimal number of chunks to divide the message into. The number of chunks and hence the size of each chunk are important factors affecting runtime. %Calculating the chunks value for different algorithms and for different parameters was also very challenging. 
+We have used several methods to calculate the optimal values of the chunks for each algorithm and different number of processes.
 \subsection{Mathematical Approach}
-In the initial phase of the research when we were mostly working on the broadcast operation, we tried to calculate the number of chunks by using a mathematical formula for calculating the run time of the algorithm and by minimizing the run time. This worked well for simple enough implementations.
+In the initial phase of the research when work was mostly concentrated on the broadcast operation, number of chunks was calculated using a mathematical expression for the run time of the algorithm and by minimizing the run time. This worked well for simple enough implementations.
 \subsection{Simulation Tool}
-Then as we made different implementations and also started to analyze other operations it gets complicated and we switched our mode of calculating chunks to using the simulator. We started to calculate chunk values using the simulator tool LogGOPSim, a fast simulation framework for parallel algorithms at large-scale for calculating the optimal number of chunks. Using the simulator we got a good idea about the behaviour of our algorithms on changing the number of chunks which was very helpful in making many optimization.
+Later on as progress was made on different implementations, as well as other operations, it gets complicated. We switched our mode of calculating chunks to using a simulator LogGOPSim, a fast simulation framework for parallel algorithms at large-scale for calculating the optimal number of chunks. The simulator gave a good idea about the behaviour of our algorithms on changing the number of chunks which was very helpful in making many further optimizations.
 \subsection{Experimentation}
-the results of the simulator was not always similar to the actual experimentation. Hence we needed a better solution. Finally we decided that instead of using one method we will use the values from both the methods and also add some more random values(+10, +20, -10, -20) so as to cover a big range and then choose the best out of them for different number of processes and message sizes. This way we insures that the values we used are much closer to the right values.
+The results of the simulator were not always similar to the actual experimentation. A better approach was needed. Finally, instead of using one method, we use results from both the methods and also add some more random values\((\pm10\%, \pm20\%)\) so as to cover a larger range and then choose the best out of them for different number of processes and message sizes. This way we ensure that the values we used are much closer to the best values.
 
 \section{Experimental Configuration and Parameters}\label{sec:Config}
 
