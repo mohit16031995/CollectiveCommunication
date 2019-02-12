@@ -224,9 +224,9 @@ Collective operations are among the most important communication operations for 
 
 Many virtual topologies have been used in the past for runtime optimization of collective operations \cite{hoefler-moor-collectives}. Among them, pipelined tree algorithms have been observed to reduce the runtime of various collectives which involves medium to large message sizes. The message to be sent (or received) is divided into small chunks and is distributed in a pipeline along the edges of the virtual topology.  Binary and linear trees are commonly used as virtual topologies for medium and large message sizes respectively. 
 
-Sanders et. al. in \cite{sanders_two-tree_2009} observed that in binary tree, the leaf nodes utilize only half of their bandwidth. When these nodes are receiving (in broadcast), they never send any message and while sending (in gather, reduce) no receive operation is performed. To fully utilize the bandwidth of these nodes, they proposed a two-tree based approach (referred as TwoTreeS in the paper). To perform a collective, instead of one, two binary trees are used. The inner nodes of one tree becomes the outer nodes in the other tree and hence, bandwidth of all the nodes can be fully utilized. 
+Sanders et. al. in \cite{sanders_two-tree_2009} observed that in a binary tree, the leaf nodes utilize only half of their bandwidth. When these nodes are receiving (in broadcast), they never send any message and while sending (in gather, reduce) no receive operation is performed. To fully utilize the bandwidth of these nodes, they proposed a two-tree based approach (referred as TwoTreeS in the paper). To perform a collective, instead of one, two binary trees are used. The inner nodes of one tree becomes the outer nodes in the other tree and hence, bandwidth of all the nodes can be fully utilized. 
 
-The construction of TwoTreeS is rather complex and depends on perfect synchronization of send and receive operations in both the trees. In each round, a process is receiving in one tree and sending to some other process in the second tree. In a large communication network, perfect synchronization of send/receive operations in both the trees is not possible because of variable number of hops among processes   and also due to traffic from other applications sharing the communication infrastructure. However, this synchronization becomes an overhead and does not allow to fully optimize the bandwidth with the two trees. In this paper, we propose simple construction of two trees that does not require any synchronization and implement three widely used collectives broadcast, reduce and allreduce using the proposed two tree construction. 
+The construction of TwoTreeS is rather complex and depends on perfect synchronization of send and receive operations in both the trees. The algorithm divides the communication in rounds. In each round, a process is receiving in one tree (referred as $T_1$) and sending to some other process in the second tree (referred as $T_2$). In a large communication network, perfect synchronization of send/receive operations in both the trees is not possible because of variable number of hops among processes and also due to traffic from other applications sharing the communication infrastructure. However, performing the communication in rounds to achieve synchronization becomes an overhead and does not allow to fully optimize the bandwidth with two trees. In this paper, we propose a simple construction of two trees named as TwoTreeC that does not depend on any synchronization. We implement three widely used collectives: broadcast, reduce and allreduce using the proposed TwoTreeC algorithm. 
 
 We make the following major contributions:
 
@@ -250,31 +250,43 @@ We make the following major contributions:
 
 
 \section{Motivation}\label{sec:Motivation}
-The main idea behind TwoTreeS is to maximize the bandwidth utilization in a collective. They used a pair of binary trees such that leaf nodes in one tree become inner nodes in the other one, and the message to be communicated is halved between the two trees.  They also describe a scheduling algorithm through colouring of edges. Our implementation of their algorithm, as expected, performed better than the binary tree. However, we recognized several issues:
+The main idea behind two trees algorithm is to maximize the bandwidth utilization in a collective by using two binary trees referred as $T_1$ and $T_2$. The TwoTreeS algorithm constructs both $T_1$ and $T_2$ in such a way that the inorder traversal of $T_1$ is same in reverse of the inorder traversal of $T_2$. With this approach, the leafs of $T_1$ becomes the inner nodes of $T_2$. The message to be communicated is halved between the two trees and the halved message is sent by dividing it into smaller chunks to achieve efficiency. Hence, theoretically, doubling the bandwidth utilization than binary trees. To impose an indirect synchronization, the edges in both the trees are coloured to ensure that each node is receiving from some node in one tree and at the same time sending to some other node in the other tree. For each node, this send and receive operation together is called as a round and the entire communication is a collection of rounds. However, because of being a pipelined algorithm, sending of a chunk (part of the message) in a round depends on receiving the same chunk in the previous round. Following we highlight major drawbacks of the TwoTreeS approach.
 
 \begin{description}
-    \item[$\bullet$]The major drawback of TwoTreeS is the overhead of synchronization due to colouring of edges. Colouring ensures that the communication goes round by round in a synchronized way. The synchronization might add delays due to underlying network traffic. We have implemented TwoTreeS both with synchronization and without, results clearly state that the overhead of synchronization is more than its benefit.
-    \item[$\bullet$]TwoTreeS does not ensure proper balancing of tree, which could result in reduced bandwidth utilization in cases with non power of two number of processes. Effects were evident especially in reduce and all-reduce when one sub-tree becomes significantly shorter than the other. Figure \ref{fig:twoTreeS} illustrates this imbalance for 21 processes.
+    \item[$\bullet$]The major drawback of TwoTreeS is the overhead of indirect synchronization due to the colouring of edges. Colouring ensures that the communication goes round by round in a synchronized way. However, synchronization might add delays due to underlying network traffic. We have implemented TwoTreeS both with synchronization and without, results clearly state that the overhead of synchronization is more than its benefit.
+    \item[$\bullet$]TwoTreeS does not ensure proper balancing of tree, which could result in reduced bandwidth utilization in cases with non power of two number of processes. Effects were evident especially in reduce and allreduce when one sub-tree becomes significantly shorter than the other. Figure \ref{fig:twoTreeS} illustrates this imbalance for $21$ processes.
     \item[$\bullet$]In a particular case of total \(2^n+1\) processes, the two trees are constructed such that they have a full binary tree of \(2^n-1\) processes, and one extra node at the top. This extra node thus only has one child. Hence, extra latency is added to the pipeline.
-    \item[$\bullet$]The topology construction is quite complex. If we consider tree construction time in our analysis, then it is an overhead as well.
+    \item[$\bullet$]The topology construction time for TwoTreeS is relatively higher, especially, the colouring algorithm.
 \end{description}
 
+The potential of two trees mechanism in general and issues concerning TwoTreeS implementation has motivated the development of the proposed algorithm, TwoTreeC. We discuss the construction of two trees with TwoTreeC in the next section.
 % \begin{figure}[h] \centering \includegraphics[width=0.5\textwidth]{images/unbalanced-twotreeS.eps} \caption{\label{fig:twoTree}}\end{figure}
 
-\begin{figure}[h]
+%\begin{figure}[h]
+% 
+%\begin{subfigure}{0.49\textwidth}
+%\includegraphics[scale=0.4]{images/unbalanced-S-T1-gap.eps} 
+%\caption{$T_1$ in TwoTreeS}
+%\label{fig:ST1}
+%\end{subfigure}%
+%\hfill
+%\begin{subfigure}{0.49\textwidth}
+%\includegraphics[scale=0.4]{images/unbalanced-S-T2-gap.eps}
+%\caption{$T_2$ in TwoTreeS}
+%\label{fig:ST2}
+%\end{subfigure}
+% 
+%\caption{TwoTreeS \cite{sanders_two-tree_2009} two trees}
+%\label{fig:twoTreeS}
+%\end{figure}
+
+\begin{figure}[t]
  
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.4\linewidth, height=4cm]{images/unbalanced-S-T1-gap.eps} 
-\caption{Caption1}
-\label{fig:ST1}
-\end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.4\linewidth, height=4cm]{images/unbalanced-S-T2-gap.eps}
-\caption{Caption 2}
-\label{fig:ST2}
-\end{subfigure}
- 
-\caption{Caption for this figure with two images}
+\begin{tabular}{cc}
+\includegraphics[scale=0.47]{images/unbalanced-S-T1-gap.eps}  & \hspace{0.4cm} \includegraphics[scale=0.47]{images/unbalanced-S-T2-gap.eps} \\ \\
+(a) $T_1$ & (b) $T_2$ \\
+\end{tabular}
+\caption{TwoTreeS \cite{sanders_two-tree_2009} two trees }
 \label{fig:twoTreeS}
 \end{figure}
 
@@ -283,29 +295,39 @@ The main idea behind TwoTreeS is to maximize the bandwidth utilization in a coll
 %\section{TwoTreeComplete}\label{sec:TwoTreeComplete}
 %As discussed in the section\ref{sec:Motivation} the sanders implementation of the tree has some disadvantage, so on the basis of those shortcomings we have proposed a simpler yet better implementation of the two tree algorithm. The idea is same which is to use two binary trees with nodes in one nodes as inner nodes in other, the difference lies in the way these trees are constructed. As the name suggests the binary tree we have created are complete binary trees, the design is simple and we have used no explicit synchronization. How the topology is to be constructed how we have calculated the number of chunks for different parameters is what we aare going to discuss in these subsections.
 
-\section{Topology - Pipelined Two-Tree Complete}\label{sec:Topology}
- We construct two complete binary trees T$_{1}$ and T$_{2}$ each using $P-1$ processes. These two trees are then assigned as left and right sub-tree of a root process. T$_{1}$ and T$_{2}$ are constructed as follows:
+\section{Two Tree Complete (TwoTreeC)}\label{sec:TwoTreeC}
+The idea behind TwoTreeC is rather very simple. We construct two complete binary trees $T_1$ and $T_2$ each using $P-1$ (excluding root process) processes. These two trees are then assigned as left and right sub-tree of the root process. $T_1$ and $T_2$ are constructed as follows:
 \begin{description}
-    \item[$\bullet$]These trees are designed in such a way that leaf nodes in one tree are the inner nodes in the other and vice-versa.
-    \item[$\bullet$]T$_{1}$(left tree) is numbered in level wise, left to right, increasing order starting form $0$.
-    \item[$\bullet$]T$_{2}$(right tree) is numbered in level wise, left to right, decreasing order starting form $P-2$.
+    \item[$\bullet$]The trees are designed in such a way that leaf nodes in one tree are the inner nodes in the other and vice-versa.
+    \item[$\bullet$]$T_1$(left tree) is numbered level wise, left to right, with increasing process id's starting form $0$.
+    \item[$\bullet$]$T_2$(right tree) is numbered level wise, left to right, with decreasing process id's starting form $P-2$.
 \end{description}
- Here $P$ is the total number of processes. A TwoTreeC is shown in Figure \ref{fig:twoTreeC} for 21 total processes. Tree Construction is shown in Algorithm \ref{alg:TwoTreeComp}. The trees are distributed. Each process only computes its parent and children in left tree and in right tree. Each process except root appears in both left and right trees. Therefore, $leftParent$ is used to denote parent of current process in left tree, and $rightParent$ is the parent of current process in right tree. $leftChild[]$ and $rightChild[]$ similarly denote the children of current node in left tree and in right tree respectively.\\
+Here $P$ is the total number of processes. An example $T_1$ and $T_2$ for $21$ processes using TwoTreeC is shown in figure \ref{fig:twoTreeC}. Each process independently uses Algorithm \ref{alg:TwoTreeComp} to compute its parent and children in $T_1$ and $T_2$. With the exception of the root process, the remaining processes appear in both left and right trees. Therefore, $leftParent$ is used to denote parent of current process in left tree, and $rightParent$ is the parent of current process in right tree. $leftChild[]$ and $rightChild[]$ similarly denote the children of current node in left and right tree respectively. 
  
- \begin{figure}[h]
+% \begin{figure}[h]
+% 
+%\begin{subfigure}{0.5\textwidth}
+%\includegraphics[width=0.5\linewidth, height=4cm]{images/complete-T1-gap.eps} 
+%\caption{Caption1}
+%\label{fig:CT1}
+%\end{subfigure}
+%\begin{subfigure}{0.5\textwidth}
+%\includegraphics[width=0.5\linewidth, height=4cm]{images/complete-T2-gap.eps}
+%\caption{Caption 2}
+%\label{fig:CT2}
+%\end{subfigure}
+% 
+%\caption{Caption for this figure with two images}
+%\label{fig:twoTreeC}
+%\end{figure}
+
+\begin{figure}[t]
  
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.5\linewidth, height=4cm]{images/complete-T1-gap.eps} 
-\caption{Caption1}
-\label{fig:CT1}
-\end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.5\linewidth, height=4cm]{images/complete-T2-gap.eps}
-\caption{Caption 2}
-\label{fig:CT2}
-\end{subfigure}
- 
-\caption{Caption for this figure with two images}
+\begin{tabular}{cc}
+\includegraphics[scale=0.46]{images/complete-T1-gap.eps} &  \includegraphics[scale=0.46]{images/complete-T2-gap.eps} \\ \\
+(a) $T_1$ & (b) $T_2$ \\
+\end{tabular}
+\caption{TwoTreeC two trees}
 \label{fig:twoTreeC}
 \end{figure}
 
@@ -345,20 +367,17 @@ The main idea behind TwoTreeS is to maximize the bandwidth utilization in a coll
 \end{algorithmic}
 \end{algorithm}
 
-\begin{itemize}
-\item  There is no overhead due to synchronization, because we perform no explicit synchronization. Throughout all of the implementation, all the send and receive operations used are non-blocking.
-\item  Both the trees are balanced. This especially improves the performance of reduce and all-reduce because communication starts at the leaf nodes in both of these.
-\item  TwoTreeC is simple to construct, it only takes O(1) time on each process.
-\end{itemize}
+TwoTreeC implementation addresses all the observed issues with TwoTreeS. There is no overhead due to colouring or synchronization, because we perform no explicit/implicit synchronization. The construction of trees takes only O(1) time on each process.
+%Throughout all of the implementation, all the send and receive operations used are non-blocking.
+Both the trees are relatively balanced than TwoTreeS. The impact of balancing has been seen in performance gain of reduce and allreduce collectives since, the communication begins at the leaf nodes in both of the collectives.
 
-
-\section{Collective Operations}\label{sec:Operations}
-The TwoTreeC topology discussed in previous section \ref{sec:Topology} is used to implement Broadcast, Reduce and All-Reduce operations. This section describes how each of these is accomplished in detail.
+\section{Collectives with TwoTreeC}\label{sec:Operations}
+The TwoTreeC topology discussed above is used to implement broadcast, reduce and allreduce operations. This section describes how each of these is accomplished in detail.
 
 \ifcmts \{\textcolor{blue}{todo @Mohit LogGP analysis for each of these approaches.}\}
 
 \subsection{Broadcast}
-In Broadcast operation a message from root process is received at all other processes in the communicator. This root process is assumed to be the process with rank 0 and is the root of the two-tree constructed previously. The root node divides its data into a number of equal sized chunks, then one by one sends each odd-numbered chunk to the root of right tree and each even-numbered chunk to root of left tree.\\
+In broadcast collective, a message from the root process is received at all other processes in the communicator. This root process is assumed to be the process with rank 0 and is the root of the two-tree constructed previously. The root node divides its data into a number of equal sized chunks, then one by one sends each odd-numbered chunk to the root of right tree and each even-numbered chunk to root of left tree.\\
 Non-root processes expect odd numbered chunks from $leftParent$ and upon receiving, forward them to their $leftChild[0]$ and $leftChild[1]$. Same task is performed in right tree. In the end, each process has received all the chunks, odd ones in right tree and even ones in left tree. The algorithm to implement broadcast operation using two-tree topology is as shown in the algorithm \ref{alg:broadcastImpl}
 
 \begin{algorithm}
@@ -528,20 +547,20 @@ Mention and briefly explain all the implementations compared: linear pipeline, p
 
 \subsection{Broadcast}
 
-Message Sizes : 256B, 512B, 1MB, 3MB, 5MB, 7MB
+Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 
 \begin{figure}
 \centering
 \begin{subfigure}{.25\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{images/Results/bcast_comp_262144B.png}
-  \caption{Broadcast-256B}
+  \caption{Broadcast-256KB}
   \label{bcast-selected-256B}
 \end{subfigure}%
 \begin{subfigure}{.25\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{images/Results/bcast_comp_524288B.png}
-  \caption{Broadcast-512B}
+  \caption{Broadcast-512KB}
   \label{bcast-selected-512B}
 \end{subfigure}
 \caption{Broadcast results for small sized messages}
@@ -586,20 +605,20 @@ Message Sizes : 256B, 512B, 1MB, 3MB, 5MB, 7MB
 
 \subsection{Reduce}
 
-Message Sizes : 256B, 512B, 1MB, 3MB, 5MB, 7MB
+Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 
 \begin{figure}
 \centering
 \begin{subfigure}{.25\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{images/Results/reduce_comp_262144B.png}
-  \caption{Reduce - 256B}
+  \caption{Reduce - 256KB}
   \label{reduce-selected-256B}
 \end{subfigure}%
 \begin{subfigure}{.25\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{images/Results/reduce_comp_524288B.png}
-  \caption{Reduce - 512B}
+  \caption{Reduce - 512KB}
   \label{reduce-selected-512B}
 \end{subfigure}
 \caption{Reduce results for small sized messages}
