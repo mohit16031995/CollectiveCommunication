@@ -1,0 +1,197 @@
+LogIRecv: 0.000001192 rank 5 called irecv for chunk 1 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000001192 rank 5 called irecv for chunk 1 from 1 in run 6 8_5242880_9
+LogIRecv: 0.000002146 rank 5 called irecv for chunk 3 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 5 called irecv for chunk 3 from 1 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 5 called irecv for chunk 5 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 5 called irecv for chunk 5 from 1 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 5 called irecv for chunk 7 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 5 called irecv for chunk 7 from 1 in run 6 8_5242880_9
+LogISend: 0.000006199 rank 5 called isend for chunk 0 to 2 in run 6 8_5242880_9
+LogISend: 0.000474215 rank 5 called isend for chunk 1 to 7 in run 6 8_5242880_9
+LogIRecv: 0.000000000 rank 3 called irecv for chunk 0 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 3 called irecv for chunk 0 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 3 called irecv for chunk 2 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000001907 rank 3 called irecv for chunk 2 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000002861 rank 3 called irecv for chunk 4 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000002861 rank 3 called irecv for chunk 4 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000003815 rank 3 called irecv for chunk 6 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000003815 rank 3 called irecv for chunk 6 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 3 called irecv for chunk 8 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 3 called irecv for chunk 8 from 7 in run 6 8_5242880_9
+LogISend: 0.000641823 rank 3 called isend for chunk 0 to 1 in run 6 8_5242880_9
+LogISend: 0.000006914 rank 3 called isend for chunk 1 to 6 in run 6 8_5242880_9
+LogISend: 0.000710964 rank 3 called isend for chunk 2 to 1 in run 6 8_5242880_9
+LogISend: 0.000007868 rank 3 called isend for chunk 3 to 6 in run 6 8_5242880_9
+LogISend: 0.000904799 rank 3 called isend for chunk 4 to 1 in run 6 8_5242880_9
+LogISend: 0.000009775 rank 3 called isend for chunk 5 to 6 in run 6 8_5242880_9
+LogISend: 0.000955820 rank 3 called isend for chunk 6 to 1 in run 6 8_5242880_9
+LogISend: 0.000010967 rank 3 called isend for chunk 7 to 6 in run 6 8_5242880_9
+LogISend: 0.001075983 rank 3 called isend for chunk 8 to 1 in run 6 8_5242880_9
+LogReceived: 0.000102997 rank 3 received chunk 0 (9) from 7 in run 6 8_5242880_9
+LogReceived: 0.000184774 rank 3 received chunk 2 (11) from 7 in run 6 8_5242880_9
+LogReceived: 0.000268936 rank 3 received chunk 4 (13) from 7 in run 6 8_5242880_9
+LogReceived: 0.000355005 rank 3 received chunk 6 (15) from 7 in run 6 8_5242880_9
+LogReceived: 0.000443935 rank 3 received chunk 8 (17) from 7 in run 6 8_5242880_9
+LogReceived: 0.000593901 rank 3 received chunk 0 (0) from 6 in run 6 8_5242880_9
+LogReceived: 0.000662804 rank 3 received chunk 2 (2) from 6 in run 6 8_5242880_9
+LogReceived: 0.000857830 rank 3 received chunk 4 (4) from 6 in run 6 8_5242880_9
+LogReceived: 0.000907898 rank 3 received chunk 6 (6) from 6 in run 6 8_5242880_9
+LogReceived: 0.001029968 rank 3 received chunk 8 (8) from 6 in run 6 8_5242880_9
+LogEndTime: 0.001592875 rank 3 finished run 6 8_5242880_9
+LogIRecv: 0.000000000 rank 7 called irecv for chunk 1 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 7 called irecv for chunk 1 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 7 called irecv for chunk 3 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000002146 rank 7 called irecv for chunk 3 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 7 called irecv for chunk 5 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 7 called irecv for chunk 5 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 7 called irecv for chunk 7 from 6 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 7 called irecv for chunk 7 from 5 in run 6 8_5242880_9
+LogISend: 0.000005960 rank 7 called isend for chunk 0 to 3 in run 6 8_5242880_9
+LogISend: 0.000941038 rank 7 called isend for chunk 1 to 0 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 6 called irecv for chunk 1 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 6 called irecv for chunk 1 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000001907 rank 6 called irecv for chunk 3 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000001907 rank 6 called irecv for chunk 3 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000002861 rank 6 called irecv for chunk 5 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000002861 rank 6 called irecv for chunk 5 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000003815 rank 6 called irecv for chunk 7 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 6 called irecv for chunk 7 from 3 in run 6 8_5242880_9
+LogISend: 0.000005960 rank 6 called isend for chunk 0 to 3 in run 6 8_5242880_9
+LogISend: 0.000633001 rank 6 called isend for chunk 1 to 7 in run 6 8_5242880_9
+LogIRecv: 0.000000000 rank 1 called irecv for chunk 0 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 1 called irecv for chunk 0 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000000954 rank 1 called irecv for chunk 2 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000002146 rank 1 called irecv for chunk 2 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000002146 rank 1 called irecv for chunk 4 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 1 called irecv for chunk 4 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 1 called irecv for chunk 6 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 1 called irecv for chunk 6 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 1 called irecv for chunk 8 from 2 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 1 called irecv for chunk 8 from 3 in run 6 8_5242880_9
+LogIRecv: 0.000002861 rank 2 called irecv for chunk 0 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 2 called irecv for chunk 0 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 2 called irecv for chunk 2 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 2 called irecv for chunk 2 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 2 called irecv for chunk 4 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000005960 rank 2 called irecv for chunk 4 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000006914 rank 2 called irecv for chunk 6 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000006914 rank 2 called irecv for chunk 6 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000007868 rank 2 called irecv for chunk 8 from 4 in run 6 8_5242880_9
+LogIRecv: 0.000010014 rank 2 called irecv for chunk 8 from 5 in run 6 8_5242880_9
+LogIRecv: 0.000000000 rank 0 called irecv for chunk 0 from 1 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 0 called irecv for chunk 1 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000001192 rank 0 called irecv for chunk 2 from 1 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 0 called irecv for chunk 3 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000001192 rank 0 called irecv for chunk 4 from 1 in run 6 8_5242880_9
+LogIRecv: 0.000004053 rank 0 called irecv for chunk 5 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000002146 rank 0 called irecv for chunk 6 from 1 in run 6 8_5242880_9
+LogIRecv: 0.000005007 rank 0 called irecv for chunk 7 from 7 in run 6 8_5242880_9
+LogIRecv: 0.000003099 rank 0 called irecv for chunk 8 from 1 in run 6 8_5242880_9
+LogReceived: 0.001040220 rank 0 received chunk 1 (1) from 7 in run 6 8_5242880_9
+LogReceived: 0.001178026 rank 0 received chunk 3 (3) from 7 in run 6 8_5242880_9
+LogReceived: 0.001244068 rank 0 received chunk 0 (0) from 1 in run 6 8_5242880_9
+LogReceived: 0.001312017 rank 0 received chunk 2 (2) from 1 in run 6 8_5242880_9
+LogReceived: 0.001447201 rank 0 received chunk 4 (4) from 1 in run 6 8_5242880_9
+LogReceived: 0.001557112 rank 0 received chunk 5 (5) from 7 in run 6 8_5242880_9
+LogReceived: 0.001629114 rank 0 received chunk 6 (6) from 1 in run 6 8_5242880_9
+LogReceived: 0.001688004 rank 0 received chunk 7 (7) from 7 in run 6 8_5242880_9
+LogReceived: 0.001797199 rank 0 received chunk 8 (8) from 1 in run 6 8_5242880_9
+LogEndTime: 0.001842022 rank 0 finished run 6 8_5242880_9
+LogISend: 0.000008106 rank 5 called isend for chunk 2 to 2 in run 6 8_5242880_9
+LogISend: 0.000555038 rank 5 called isend for chunk 3 to 7 in run 6 8_5242880_9
+LogISend: 0.000009060 rank 5 called isend for chunk 4 to 2 in run 6 8_5242880_9
+LogISend: 0.000644207 rank 5 called isend for chunk 5 to 7 in run 6 8_5242880_9
+LogISend: 0.000010014 rank 5 called isend for chunk 6 to 2 in run 6 8_5242880_9
+LogISend: 0.000759125 rank 5 called isend for chunk 7 to 7 in run 6 8_5242880_9
+LogISend: 0.000012159 rank 5 called isend for chunk 8 to 2 in run 6 8_5242880_9
+LogReceived: 0.000100136 rank 5 received chunk 1 (10) from 1 in run 6 8_5242880_9
+LogReceived: 0.000184059 rank 5 received chunk 3 (12) from 1 in run 6 8_5242880_9
+LogReceived: 0.000269175 rank 5 received chunk 5 (14) from 1 in run 6 8_5242880_9
+LogReceived: 0.000352144 rank 5 received chunk 7 (16) from 1 in run 6 8_5242880_9
+LogReceived: 0.000426054 rank 5 received chunk 1 (1) from 2 in run 6 8_5242880_9
+LogISend: 0.000007153 rank 7 called isend for chunk 2 to 3 in run 6 8_5242880_9
+LogISend: 0.001101017 rank 7 called isend for chunk 3 to 0 in run 6 8_5242880_9
+LogISend: 0.000008106 rank 7 called isend for chunk 4 to 3 in run 6 8_5242880_9
+LogISend: 0.001446962 rank 7 called isend for chunk 5 to 0 in run 6 8_5242880_9
+LogISend: 0.000010014 rank 7 called isend for chunk 6 to 3 in run 6 8_5242880_9
+LogISend: 0.001577139 rank 7 called isend for chunk 7 to 0 in run 6 8_5242880_9
+LogISend: 0.000010967 rank 7 called isend for chunk 8 to 3 in run 6 8_5242880_9
+LogReceived: 0.000576973 rank 7 received chunk 1 (10) from 5 in run 6 8_5242880_9
+LogReceived: 0.000721931 rank 7 received chunk 3 (12) from 5 in run 6 8_5242880_9
+LogReceived: 0.000893116 rank 7 received chunk 1 (1) from 6 in run 6 8_5242880_9
+LogReceived: 0.000956059 rank 7 received chunk 5 (14) from 5 in run 6 8_5242880_9
+LogReceived: 0.001053095 rank 7 received chunk 3 (3) from 6 in run 6 8_5242880_9
+LogISend: 0.001111031 rank 1 called isend for chunk 0 to 0 in run 6 8_5242880_9
+LogISend: 0.000005960 rank 1 called isend for chunk 1 to 5 in run 6 8_5242880_9
+LogISend: 0.001183033 rank 1 called isend for chunk 2 to 0 in run 6 8_5242880_9
+LogISend: 0.000008106 rank 1 called isend for chunk 3 to 5 in run 6 8_5242880_9
+LogISend: 0.001374960 rank 1 called isend for chunk 4 to 0 in run 6 8_5242880_9
+LogISend: 0.000009060 rank 1 called isend for chunk 5 to 5 in run 6 8_5242880_9
+LogISend: 0.001549006 rank 1 called isend for chunk 6 to 0 in run 6 8_5242880_9
+LogISend: 0.000010967 rank 1 called isend for chunk 7 to 5 in run 6 8_5242880_9
+LogISend: 0.001719952 rank 1 called isend for chunk 8 to 0 in run 6 8_5242880_9
+LogReceived: 0.000798941 rank 1 received chunk 0 (9) from 3 in run 6 8_5242880_9
+LogReceived: 0.000988960 rank 1 received chunk 2 (11) from 3 in run 6 8_5242880_9
+LogReceived: 0.001062155 rank 1 received chunk 0 (0) from 2 in run 6 8_5242880_9
+LogISend: 0.000771046 rank 2 called isend for chunk 0 to 1 in run 6 8_5242880_9
+LogISend: 0.000011921 rank 2 called isend for chunk 1 to 5 in run 6 8_5242880_9
+LogISend: 0.000838041 rank 2 called isend for chunk 2 to 1 in run 6 8_5242880_9
+LogISend: 0.000012875 rank 2 called isend for chunk 3 to 5 in run 6 8_5242880_9
+LogISend: 0.000946999 rank 2 called isend for chunk 4 to 1 in run 6 8_5242880_9
+LogISend: 0.000014067 rank 2 called isend for chunk 5 to 5 in run 6 8_5242880_9
+LogISend: 0.001035929 rank 2 called isend for chunk 6 to 1 in run 6 8_5242880_9
+LogISend: 0.000015974 rank 2 called isend for chunk 7 to 5 in run 6 8_5242880_9
+LogISend: 0.001148939 rank 2 called isend for chunk 8 to 1 in run 6 8_5242880_9
+LogReceived: 0.000172853 rank 2 received chunk 0 (0) from 4 in run 6 8_5242880_9
+LogReceived: 0.000308990 rank 2 received chunk 2 (2) from 4 in run 6 8_5242880_9
+LogReceived: 0.000429869 rank 2 received chunk 4 (4) from 4 in run 6 8_5242880_9
+LogISend: 0.000007868 rank 6 called isend for chunk 2 to 3 in run 6 8_5242880_9
+LogISend: 0.000739813 rank 6 called isend for chunk 3 to 7 in run 6 8_5242880_9
+LogISend: 0.000008821 rank 6 called isend for chunk 4 to 3 in run 6 8_5242880_9
+LogISend: 0.000922918 rank 6 called isend for chunk 5 to 7 in run 6 8_5242880_9
+LogISend: 0.000009775 rank 6 called isend for chunk 6 to 3 in run 6 8_5242880_9
+LogISend: 0.001009941 rank 6 called isend for chunk 7 to 7 in run 6 8_5242880_9
+LogISend: 0.000011921 rank 6 called isend for chunk 8 to 3 in run 6 8_5242880_9
+LogReceived: 0.000190973 rank 6 received chunk 1 (1) from 4 in run 6 8_5242880_9
+LogReceived: 0.000331879 rank 6 received chunk 3 (3) from 4 in run 6 8_5242880_9
+LogReceived: 0.000461817 rank 6 received chunk 5 (5) from 4 in run 6 8_5242880_9
+LogReceived: 0.000514984 rank 6 received chunk 7 (7) from 4 in run 6 8_5242880_9
+LogReceived: 0.000583887 rank 6 received chunk 1 (10) from 3 in run 6 8_5242880_9
+LogReceived: 0.000506163 rank 5 received chunk 3 (3) from 2 in run 6 8_5242880_9
+LogReceived: 0.000596046 rank 5 received chunk 5 (5) from 2 in run 6 8_5242880_9
+LogReceived: 0.000710011 rank 5 received chunk 7 (7) from 2 in run 6 8_5242880_9
+LogEndTime: 0.001150131 rank 5 finished run 6 8_5242880_9
+LogReceived: 0.001147985 rank 7 received chunk 7 (16) from 5 in run 6 8_5242880_9
+LogReceived: 0.001400948 rank 7 received chunk 5 (5) from 6 in run 6 8_5242880_9
+LogReceived: 0.001531124 rank 7 received chunk 7 (7) from 6 in run 6 8_5242880_9
+LogEndTime: 0.001688957 rank 7 finished run 6 8_5242880_9
+LogReceived: 0.001135111 rank 1 received chunk 2 (2) from 2 in run 6 8_5242880_9
+LogReceived: 0.001232147 rank 1 received chunk 4 (13) from 3 in run 6 8_5242880_9
+LogReceived: 0.001327038 rank 1 received chunk 4 (4) from 2 in run 6 8_5242880_9
+LogReceived: 0.001420021 rank 1 received chunk 6 (15) from 3 in run 6 8_5242880_9
+LogReceived: 0.001501083 rank 1 received chunk 6 (6) from 2 in run 6 8_5242880_9
+LogReceived: 0.001592159 rank 1 received chunk 8 (17) from 3 in run 6 8_5242880_9
+LogReceived: 0.001672983 rank 1 received chunk 8 (8) from 2 in run 6 8_5242880_9
+LogEndTime: 0.001798153 rank 1 finished run 6 8_5242880_9
+LogReceived: 0.000509977 rank 2 received chunk 6 (6) from 4 in run 6 8_5242880_9
+LogReceived: 0.000557899 rank 2 received chunk 8 (8) from 4 in run 6 8_5242880_9
+LogReceived: 0.000722885 rank 2 received chunk 0 (9) from 5 in run 6 8_5242880_9
+LogReceived: 0.000788927 rank 2 received chunk 2 (11) from 5 in run 6 8_5242880_9
+LogReceived: 0.000899076 rank 2 received chunk 4 (13) from 5 in run 6 8_5242880_9
+LogReceived: 0.000987053 rank 2 received chunk 6 (15) from 5 in run 6 8_5242880_9
+LogReceived: 0.001101971 rank 2 received chunk 8 (17) from 5 in run 6 8_5242880_9
+LogEndTime: 0.001671076 rank 2 finished run 6 8_5242880_9
+LogReceived: 0.000689983 rank 6 received chunk 3 (12) from 3 in run 6 8_5242880_9
+LogReceived: 0.000873804 rank 6 received chunk 5 (14) from 3 in run 6 8_5242880_9
+LogReceived: 0.000959873 rank 6 received chunk 7 (16) from 3 in run 6 8_5242880_9
+LogEndTime: 0.001530886 rank 6 finished run 6 8_5242880_9
+LogISend: 0.000000954 rank 4 called isend for chunk 0 to 2 in run 6 8_5242880_9
+LogISend: 0.000001907 rank 4 called isend for chunk 1 to 6 in run 6 8_5242880_9
+LogISend: 0.000004053 rank 4 called isend for chunk 2 to 2 in run 6 8_5242880_9
+LogISend: 0.000005007 rank 4 called isend for chunk 3 to 6 in run 6 8_5242880_9
+LogISend: 0.000005960 rank 4 called isend for chunk 4 to 2 in run 6 8_5242880_9
+LogISend: 0.000006914 rank 4 called isend for chunk 5 to 6 in run 6 8_5242880_9
+LogISend: 0.000009060 rank 4 called isend for chunk 6 to 2 in run 6 8_5242880_9
+LogISend: 0.000010014 rank 4 called isend for chunk 7 to 6 in run 6 8_5242880_9
+LogISend: 0.000010967 rank 4 called isend for chunk 8 to 2 in run 6 8_5242880_9
+LogEndTime: 0.000562906 rank 4 finished run 6 8_5242880_9

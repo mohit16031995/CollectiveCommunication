@@ -1,0 +1,8 @@
+rank = 2, leftParent = 4, rightParent = 1, leftleftChild = 1, leftRightChild = 3, rightLeftChild = -1, rightRightChild = -1
+rank = 0, leftParent = -1, rightParent = -1, leftleftChild = 4, leftRightChild = -1, rightLeftChild = 3, rightRightChild = -1
+rank = 6, leftParent = 4, rightParent = 5, leftleftChild = 5, leftRightChild = 7, rightLeftChild = -1, rightRightChild = -1
+rank = 7, leftParent = 6, rightParent = 1, leftleftChild = -1, leftRightChild = -1, rightLeftChild = -1, rightRightChild = -1
+rank = 4, leftParent = 0, rightParent = 5, leftleftChild = 2, leftRightChild = 6, rightLeftChild = -1, rightRightChild = -1
+rank = 5, leftParent = 6, rightParent = 3, leftleftChild = -1, leftRightChild = -1, rightLeftChild = 4, rightRightChild = 6
+rank = 1, leftParent = 2, rightParent = 3, leftleftChild = -1, leftRightChild = -1, rightLeftChild = 7, rightRightChild = 2
+rank = 3, leftParent = 2, rightParent = 0, leftleftChild = -1, leftRightChild = -1, rightLeftChild = 1, rightRightChild = 5

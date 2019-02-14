@@ -1,0 +1,267 @@
+2TreeSandersOld_reduce 8 5242880 9
+rank = 3, leftParent = 2, rightParent = 0, leftleftChild = -1, leftRightChild = -1, rightLeftChild = 5, rightRightChild = 1
+######## RUN 6 at rank 3 start########
+Log: Time 0.002674818 Rank 3 received chunk 1 (actual 10) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003180981 Rank 3 received chunk 3 (actual 12) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003448963 Rank 3 received chunk 5 (actual 14) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003777027 Rank 3 received chunk 1 (actual 1) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004204988 Rank 3 received chunk 7 (actual 16) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004606009 Rank 3 received chunk 3 (actual 3) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004874945 Rank 3 received chunk 5 (actual 5) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005169868 Rank 3 received chunk 7 (actual 7) run 6 nP 8 size 5242880 chunks 9
+######## RUN 6 at rank 3 end########
+######## RUN 11 at rank 3 start########
+rank = 0, leftParent = -1, rightParent = -1, leftleftChild = 4, leftRightChild = -1, rightLeftChild = 3, rightRightChild = -1
+Run 1 time 0.059367895
+Run 2 time 0.007135868
+Run 3 time 0.006670952
+Run 4 time 0.006919146
+Run 5 time 0.006967068
+######## RUN 6 at rank 0 start########
+Log: Time 0.004279852 Rank 0 received chunk 1 (actual 1) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004601955 Rank 0 received chunk 0 (actual 0) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005097866 Rank 0 received chunk 2 (actual 2) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005388975 Rank 0 received chunk 3 (actual 3) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005686045 Rank 0 received chunk 5 (actual 5) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005981922 Rank 0 received chunk 7 (actual 7) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.006285906 Rank 0 received chunk 4 (actual 4) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.006551981 Rank 0 received chunk 6 (actual 6) run 6 nP 8 size 5242880 chunks 9
+rank = 2, leftParent = 4, rightParent = 1, leftleftChild = 1, leftRightChild = 3, rightLeftChild = -1, rightRightChild = -1
+######## RUN 6 at rank 2 start########
+Log: Time 0.000349045 Rank 2 received chunk 0 (actual 9) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.000687122 Rank 2 received chunk 2 (actual 11) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001024008 Rank 2 received chunk 4 (actual 13) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001363993 Rank 2 received chunk 6 (actual 15) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001794100 Rank 2 received chunk 8 (actual 17) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002623081 Rank 2 received chunk 0 (actual 0) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003179073 Rank 2 received chunk 2 (actual 2) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003456116 Rank 2 received chunk 4 (actual 4) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003688097 Rank 2 received chunk 6 (actual 6) run 6 nP 8 size 5242880 chunks 9
+rank = 6, leftParent = 4, rightParent = 5, leftleftChild = 5, leftRightChild = 7, rightLeftChild = -1, rightRightChild = -1
+######## RUN 6 at rank 6 start########
+Log: Time 0.000875950 Rank 6 received chunk 0 (actual 9) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001554966 Rank 6 received chunk 2 (actual 11) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001996994 Rank 6 received chunk 4 (actual 13) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002361059 Rank 6 received chunk 6 (actual 15) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002658129 Rank 6 received chunk 0 (actual 0) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002999067 Rank 6 received chunk 2 (actual 2) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003353119 Rank 6 received chunk 4 (actual 4) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003951073 Rank 6 received chunk 6 (actual 6) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004369974 Rank 6 received chunk 8 (actual 8) run 6 nP 8 size 5242880 chunks 9
+rank = 7, leftParent = 6, rightParent = 1, leftleftChild = -1, leftRightChild = -1, rightLeftChild = -1, rightRightChild = -1
+######## RUN 6 at rank 7 start########
+######## RUN 6 at rank 7 end########
+######## RUN 11 at rank 7 start########
+######## RUN 11 at rank 7 end########
+######## RUN 16 at rank 7 start########
+######## RUN 16 at rank 7 end########
+rank = 5, leftParent = 6, rightParent = 3, leftleftChild = -1, leftRightChild = -1, rightLeftChild = 6, rightRightChild = 4
+######## RUN 6 at rank 5 start########
+Log: Time 0.000879049 Rank 5 received chunk 1 (actual 1) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001496077 Rank 5 received chunk 3 (actual 3) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001801014 Rank 5 received chunk 5 (actual 5) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002106190 Rank 5 received chunk 7 (actual 7) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002474070 Rank 5 received chunk 1 (actual 10) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002954006 Rank 5 received chunk 3 (actual 12) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003401041 Rank 5 received chunk 5 (actual 14) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004033089 Rank 5 received chunk 7 (actual 16) run 6 nP 8 size 5242880 chunks 9
+######## RUN 6 at rank 5 end########
+######## RUN 11 at rank 5 start########
+rank = 1, leftParent = 2, rightParent = 3, leftleftChild = -1, leftRightChild = -1, rightLeftChild = 2, rightRightChild = 7
+######## RUN 6 at rank 1 start########
+Log: Time 0.000350952 Rank 1 received chunk 1 (actual 10) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.000688076 Rank 1 received chunk 3 (actual 12) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001024961 Rank 1 received chunk 5 (actual 14) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001360893 Rank 1 received chunk 7 (actual 16) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001667023 Rank 1 received chunk 1 (actual 1) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.001955032 Rank 1 received chunk 3 (actual 3) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002283096 Rank 1 received chunk 5 (actual 5) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.002625942 Rank 1 received chunk 7 (actual 7) run 6 nP 8 size 5242880 chunks 9
+######## RUN 6 at rank 1 end########
+######## RUN 11 at rank 1 start########
+rank = 4, leftParent = 0, rightParent = 5, leftleftChild = 2, leftRightChild = 6, rightLeftChild = -1, rightRightChild = -1
+######## RUN 6 at rank 4 start########
+Log: Time 0.003190994 Rank 4 received chunk 0 (actual 0) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.003813028 Rank 4 received chunk 0 (actual 9) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004180908 Rank 4 received chunk 2 (actual 11) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004550934 Rank 4 received chunk 2 (actual 2) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004897833 Rank 4 received chunk 4 (actual 13) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005237818 Rank 4 received chunk 4 (actual 4) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005590916 Rank 4 received chunk 6 (actual 6) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.005870819 Rank 4 received chunk 6 (actual 15) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.006225824 Rank 4 received chunk 8 (actual 8) run 6 nP 8 size 5242880 chunks 9
+Log: Time 0.004110098 Rank 2 received chunk 8 (actual 8) run 6 nP 8 size 5242880 chunks 9
+######## RUN 6 at rank 2 end########
+######## RUN 11 at rank 2 start########
+Log: Time 0.000349998 Rank 2 received chunk 0 (actual 9) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.000672102 Rank 2 received chunk 0 (actual 0) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.000993013 Rank 2 received chunk 2 (actual 2) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001237154 Rank 2 received chunk 4 (actual 4) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001520157 Rank 2 received chunk 6 (actual 6) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001893997 Rank 2 received chunk 2 (actual 11) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002254009 Rank 2 received chunk 4 (actual 13) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002745152 Rank 2 received chunk 6 (actual 15) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003087997 Rank 2 received chunk 8 (actual 17) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.007056952 Rank 0 received chunk 8 (actual 8) run 6 nP 8 size 5242880 chunks 9
+######## RUN 6 at rank 0 end########
+Run 6 time 0.007247925
+Run 7 time 0.007313967
+Run 8 time 0.007122040
+Run 9 time 0.007264853
+Run 10 time 0.007029057
+######## RUN 11 at rank 0 start########
+Log: Time 0.003754139 Rank 0 received chunk 1 (actual 1) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004646063 Rank 0 received chunk 0 (actual 0) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004987955 Rank 0 received chunk 3 (actual 3) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.005240917 Rank 0 received chunk 2 (actual 2) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.005527020 Rank 0 received chunk 5 (actual 5) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.005821943 Rank 0 received chunk 7 (actual 7) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.006087065 Rank 0 received chunk 4 (actual 4) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.006324053 Rank 0 received chunk 6 (actual 6) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002403021 Rank 3 received chunk 1 (actual 1) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002837896 Rank 3 received chunk 3 (actual 3) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003230095 Rank 3 received chunk 1 (actual 10) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003530979 Rank 3 received chunk 5 (actual 5) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003913879 Rank 3 received chunk 7 (actual 7) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004234076 Rank 3 received chunk 3 (actual 12) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004591942 Rank 3 received chunk 5 (actual 14) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.005014896 Rank 3 received chunk 7 (actual 16) run 11 nP 8 size 5242880 chunks 9
+######## RUN 11 at rank 3 end########
+######## RUN 16 at rank 3 start########
+Log: Time 0.002573013 Rank 3 received chunk 1 (actual 10) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003160000 Rank 3 received chunk 1 (actual 1) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004735947 Rank 6 received chunk 8 (actual 17) run 6 nP 8 size 5242880 chunks 9
+######## RUN 6 at rank 6 end########
+######## RUN 11 at rank 6 start########
+Log: Time 0.000645876 Rank 6 received chunk 0 (actual 9) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001168966 Rank 6 received chunk 2 (actual 11) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001723766 Rank 6 received chunk 4 (actual 13) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002151966 Rank 6 received chunk 6 (actual 15) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002936840 Rank 6 received chunk 0 (actual 0) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003293991 Rank 6 received chunk 2 (actual 2) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003955841 Rank 6 received chunk 4 (actual 4) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004315853 Rank 6 received chunk 6 (actual 6) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004740000 Rank 6 received chunk 8 (actual 8) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003471136 Rank 2 received chunk 8 (actual 8) run 11 nP 8 size 5242880 chunks 9
+######## RUN 11 at rank 2 end########
+######## RUN 16 at rank 2 start########
+Log: Time 0.000329971 Rank 2 received chunk 0 (actual 0) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.000630140 Rank 2 received chunk 2 (actual 2) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.000928164 Rank 2 received chunk 4 (actual 4) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001219988 Rank 2 received chunk 6 (actual 6) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001500130 Rank 2 received chunk 8 (actual 8) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001878977 Rank 2 received chunk 0 (actual 9) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002305984 Rank 2 received chunk 2 (actual 11) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002732992 Rank 2 received chunk 4 (actual 13) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003148079 Rank 2 received chunk 6 (actual 15) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.006561995 Rank 0 received chunk 8 (actual 8) run 11 nP 8 size 5242880 chunks 9
+######## RUN 11 at rank 0 end########
+Run 11 time 0.006757975
+Run 12 time 0.006336927
+Run 13 time 0.007265091
+Run 14 time 0.006479025
+Run 15 time 0.007527828
+######## RUN 16 at rank 0 start########
+Log: Time 0.003819942 Rank 0 received chunk 1 (actual 1) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004436016 Rank 0 received chunk 3 (actual 3) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004731894 Rank 0 received chunk 0 (actual 0) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.005277872 Rank 0 received chunk 2 (actual 2) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.005578995 Rank 0 received chunk 5 (actual 5) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.007266998 Rank 0 received chunk 4 (actual 4) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.007451057 Rank 0 received chunk 7 (actual 7) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.007926941 Rank 0 received chunk 6 (actual 6) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.006630898 Rank 4 received chunk 8 (actual 17) run 6 nP 8 size 5242880 chunks 9
+######## RUN 6 at rank 4 end########
+######## RUN 11 at rank 4 start########
+Log: Time 0.001472950 Rank 4 received chunk 0 (actual 0) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002820015 Rank 4 received chunk 2 (actual 2) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003392935 Rank 4 received chunk 4 (actual 4) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003910065 Rank 4 received chunk 6 (actual 6) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004144907 Rank 4 received chunk 0 (actual 9) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004527092 Rank 4 received chunk 2 (actual 11) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.005101919 Rank 4 received chunk 8 (actual 8) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.005296946 Rank 4 received chunk 4 (actual 13) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.005635023 Rank 4 received chunk 6 (actual 15) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.000352144 Rank 1 received chunk 1 (actual 10) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.000777006 Rank 1 received chunk 3 (actual 12) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001205206 Rank 1 received chunk 5 (actual 14) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001605034 Rank 1 received chunk 7 (actual 16) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002436161 Rank 1 received chunk 1 (actual 1) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003293037 Rank 1 received chunk 3 (actual 3) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.003870010 Rank 1 received chunk 5 (actual 5) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.004365206 Rank 1 received chunk 7 (actual 7) run 11 nP 8 size 5242880 chunks 9
+######## RUN 11 at rank 1 end########
+######## RUN 16 at rank 1 start########
+Log: Time 0.000442982 Rank 1 received chunk 1 (actual 10) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.000873089 Rank 1 received chunk 3 (actual 12) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003559828 Rank 3 received chunk 3 (actual 12) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003939867 Rank 3 received chunk 3 (actual 3) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004310846 Rank 3 received chunk 5 (actual 14) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004669905 Rank 3 received chunk 7 (actual 16) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004974842 Rank 3 received chunk 5 (actual 5) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.005285978 Rank 3 received chunk 7 (actual 7) run 16 nP 8 size 5242880 chunks 9
+######## RUN 16 at rank 3 end########
+Log: Time 0.005103827 Rank 6 received chunk 8 (actual 17) run 11 nP 8 size 5242880 chunks 9
+######## RUN 11 at rank 6 end########
+######## RUN 16 at rank 6 start########
+Log: Time 0.000599146 Rank 6 received chunk 0 (actual 9) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001178026 Rank 6 received chunk 2 (actual 11) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001785040 Rank 6 received chunk 4 (actual 13) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002187014 Rank 6 received chunk 6 (actual 15) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002486229 Rank 6 received chunk 0 (actual 0) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002782106 Rank 6 received chunk 2 (actual 2) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003350019 Rank 6 received chunk 4 (actual 4) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003921032 Rank 6 received chunk 6 (actual 6) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004248142 Rank 6 received chunk 8 (actual 8) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.000354052 Rank 5 received chunk 1 (actual 10) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.000694036 Rank 5 received chunk 3 (actual 12) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001034021 Rank 5 received chunk 5 (actual 14) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001373053 Rank 5 received chunk 7 (actual 16) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.001796961 Rank 5 received chunk 1 (actual 1) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002120972 Rank 5 received chunk 3 (actual 3) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002498865 Rank 5 received chunk 5 (actual 5) run 11 nP 8 size 5242880 chunks 9
+Log: Time 0.002881050 Rank 5 received chunk 7 (actual 7) run 11 nP 8 size 5242880 chunks 9
+######## RUN 11 at rank 5 end########
+######## RUN 16 at rank 5 start########
+Log: Time 0.000600815 Rank 5 received chunk 1 (actual 1) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001178980 Rank 5 received chunk 3 (actual 3) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003717184 Rank 2 received chunk 8 (actual 17) run 16 nP 8 size 5242880 chunks 9
+######## RUN 16 at rank 2 end########
+Log: Time 0.008162975 Rank 0 received chunk 8 (actual 8) run 16 nP 8 size 5242880 chunks 9
+######## RUN 16 at rank 0 end########
+Run 16 time 0.008358955
+Run 17 time 0.007050991
+Run 18 time 0.006771088
+Run 19 time 0.006771803
+Run 20 time 0.007334948
+Log: Time 0.006017923 Rank 4 received chunk 8 (actual 17) run 11 nP 8 size 5242880 chunks 9
+######## RUN 11 at rank 4 end########
+######## RUN 16 at rank 4 start########
+Log: Time 0.002825975 Rank 4 received chunk 0 (actual 0) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003511906 Rank 4 received chunk 2 (actual 2) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004059076 Rank 4 received chunk 0 (actual 9) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004369974 Rank 4 received chunk 4 (actual 4) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004772902 Rank 4 received chunk 2 (actual 11) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.005096912 Rank 4 received chunk 6 (actual 6) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.005470991 Rank 4 received chunk 4 (actual 13) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.005764008 Rank 4 received chunk 8 (actual 8) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.006143093 Rank 4 received chunk 6 (actual 15) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001303911 Rank 1 received chunk 5 (actual 14) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.001678944 Rank 1 received chunk 7 (actual 16) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002000093 Rank 1 received chunk 1 (actual 1) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002672911 Rank 1 received chunk 3 (actual 3) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003057003 Rank 1 received chunk 5 (actual 5) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003506899 Rank 1 received chunk 7 (actual 7) run 16 nP 8 size 5242880 chunks 9
+######## RUN 16 at rank 1 end########
+Log: Time 0.004617214 Rank 6 received chunk 8 (actual 17) run 16 nP 8 size 5242880 chunks 9
+######## RUN 16 at rank 6 end########
+Log: Time 0.001749992 Rank 5 received chunk 5 (actual 5) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002058983 Rank 5 received chunk 7 (actual 7) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.002461910 Rank 5 received chunk 1 (actual 10) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003057957 Rank 5 received chunk 3 (actual 12) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.003546953 Rank 5 received chunk 5 (actual 14) run 16 nP 8 size 5242880 chunks 9
+Log: Time 0.004180908 Rank 5 received chunk 7 (actual 16) run 16 nP 8 size 5242880 chunks 9
+######## RUN 16 at rank 5 end########
+Log: Time 0.006500006 Rank 4 received chunk 8 (actual 17) run 16 nP 8 size 5242880 chunks 9
+######## RUN 16 at rank 4 end########
+

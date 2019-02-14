@@ -1,0 +1,197 @@
+LogIRecv:	 0.00000 0.00000    rank 3 IRECV               chunk 0 from 6
+LogIRecv:	 0.00000 0.00000    rank 7 IRECV               chunk 1 from 6
+LogIRecv:	 0.00000 0.00000    rank 1 IRECV               chunk 0 from 2
+LogIRecv:	 0.00000 0.00000    rank 0 IRECV               chunk 0 from 1
+LogIRecv:	 0.00954 0.00954    rank 3 IRECV               chunk 0 from 7
+LogIRecv:	 0.00954 0.00000    rank 3 IRECV               chunk 2 from 6
+LogIRecv:	 0.00954 0.00000    rank 7 IRECV               chunk 1 from 5
+LogIRecv:	 0.00954 0.00000    rank 7 IRECV               chunk 3 from 6
+LogIRecv:	 0.00954 0.00000    rank 6 IRECV               chunk 1 from 4
+LogIRecv:	 0.00954 0.00000    rank 6 IRECV               chunk 1 from 3
+LogIRecv:	 0.00954 0.00000    rank 1 IRECV               chunk 0 from 3
+LogIRecv:	 0.00954 0.00000    rank 1 IRECV               chunk 2 from 2
+LogISend:	 0.00954 0.00000    rank 4      ISEND          chunk 0 to   2
+LogIRecv:	 0.01192 0.00238    rank 5 IRECV               chunk 1 from 2
+LogIRecv:	 0.01192 0.00000    rank 5 IRECV               chunk 1 from 1
+LogIRecv:	 0.01192 0.00000    rank 0 IRECV               chunk 2 from 1
+LogIRecv:	 0.01192 0.00000    rank 0 IRECV               chunk 4 from 1
+LogIRecv:	 0.01907 0.00715    rank 3 IRECV               chunk 2 from 7
+LogIRecv:	 0.01907 0.00000    rank 6 IRECV               chunk 3 from 4
+LogIRecv:	 0.01907 0.00000    rank 6 IRECV               chunk 3 from 3
+LogISend:	 0.01907 0.00000    rank 4      ISEND          chunk 1 to   6
+LogIRecv:	 0.02146 0.00239    rank 5 IRECV               chunk 3 from 2
+LogIRecv:	 0.02146 0.00000    rank 7 IRECV               chunk 3 from 5
+LogIRecv:	 0.02146 0.00000    rank 1 IRECV               chunk 2 from 3
+LogIRecv:	 0.02146 0.00000    rank 1 IRECV               chunk 4 from 2
+LogIRecv:	 0.02146 0.00000    rank 0 IRECV               chunk 6 from 1
+LogIRecv:	 0.02861 0.00715    rank 3 IRECV               chunk 4 from 6
+LogIRecv:	 0.02861 0.00000    rank 3 IRECV               chunk 4 from 7
+LogIRecv:	 0.02861 0.00000    rank 6 IRECV               chunk 5 from 4
+LogIRecv:	 0.02861 0.00000    rank 6 IRECV               chunk 5 from 3
+LogIRecv:	 0.02861 0.00000    rank 2 IRECV               chunk 0 from 4
+LogIRecv:	 0.03099 0.00238    rank 5 IRECV               chunk 3 from 1
+LogIRecv:	 0.03099 0.00000    rank 5 IRECV               chunk 5 from 2
+LogIRecv:	 0.03099 0.00000    rank 7 IRECV               chunk 5 from 6
+LogIRecv:	 0.03099 0.00000    rank 7 IRECV               chunk 5 from 5
+LogIRecv:	 0.03099 0.00000    rank 1 IRECV               chunk 4 from 3
+LogIRecv:	 0.03099 0.00000    rank 1 IRECV               chunk 6 from 2
+LogIRecv:	 0.03099 0.00000    rank 0 IRECV               chunk 1 from 7
+LogIRecv:	 0.03099 0.00000    rank 0 IRECV               chunk 8 from 1
+LogIRecv:	 0.03815 0.00716    rank 3 IRECV               chunk 6 from 6
+LogIRecv:	 0.03815 0.00000    rank 3 IRECV               chunk 6 from 7
+LogIRecv:	 0.03815 0.00000    rank 6 IRECV               chunk 7 from 4
+LogIRecv:	 0.04053 0.00238    rank 5 IRECV               chunk 5 from 1
+LogIRecv:	 0.04053 0.00000    rank 5 IRECV               chunk 7 from 2
+LogIRecv:	 0.04053 0.00000    rank 7 IRECV               chunk 7 from 6
+LogIRecv:	 0.04053 0.00000    rank 7 IRECV               chunk 7 from 5
+LogIRecv:	 0.04053 0.00000    rank 1 IRECV               chunk 6 from 3
+LogIRecv:	 0.04053 0.00000    rank 1 IRECV               chunk 8 from 2
+LogIRecv:	 0.04053 0.00000    rank 2 IRECV               chunk 0 from 5
+LogIRecv:	 0.04053 0.00000    rank 2 IRECV               chunk 2 from 4
+LogIRecv:	 0.04053 0.00000    rank 0 IRECV               chunk 3 from 7
+LogIRecv:	 0.04053 0.00000    rank 0 IRECV               chunk 5 from 7
+LogISend:	 0.04053 0.00000    rank 4      ISEND          chunk 2 to   2
+LogIRecv:	 0.05007 0.00954    rank 5 IRECV               chunk 7 from 1
+LogIRecv:	 0.05007 0.00000    rank 3 IRECV               chunk 8 from 6
+LogIRecv:	 0.05007 0.00000    rank 3 IRECV               chunk 8 from 7
+LogIRecv:	 0.05007 0.00000    rank 6 IRECV               chunk 7 from 3
+LogIRecv:	 0.05007 0.00000    rank 1 IRECV               chunk 8 from 3
+LogIRecv:	 0.05007 0.00000    rank 2 IRECV               chunk 2 from 5
+LogIRecv:	 0.05007 0.00000    rank 2 IRECV               chunk 4 from 4
+LogIRecv:	 0.05007 0.00000    rank 0 IRECV               chunk 7 from 7
+LogISend:	 0.05007 0.00000    rank 4      ISEND          chunk 3 to   6
+LogISend:	 0.05960 0.00953    rank 7      ISEND          chunk 0 to   3
+LogISend:	 0.05960 0.00000    rank 6      ISEND          chunk 0 to   3
+LogIRecv:	 0.05960 0.00000    rank 2 IRECV               chunk 4 from 5
+LogISend:	 0.05960 0.00000    rank 1      ISEND          chunk 1 to   5
+LogISend:	 0.05960 0.00000    rank 4      ISEND          chunk 4 to   2
+LogISend:	 0.06199 0.00239    rank 5      ISEND          chunk 0 to   2
+LogISend:	 0.06914 0.00715    rank 3      ISEND          chunk 1 to   6
+LogIRecv:	 0.06914 0.00000    rank 2 IRECV               chunk 6 from 4
+LogIRecv:	 0.06914 0.00000    rank 2 IRECV               chunk 6 from 5
+LogISend:	 0.06914 0.00000    rank 4      ISEND          chunk 5 to   6
+LogISend:	 0.07153 0.00239    rank 7      ISEND          chunk 2 to   3
+LogISend:	 0.07868 0.00715    rank 3      ISEND          chunk 3 to   6
+LogIRecv:	 0.07868 0.00000    rank 2 IRECV               chunk 8 from 4
+LogISend:	 0.07868 0.00000    rank 6      ISEND          chunk 2 to   3
+LogISend:	 0.08106 0.00238    rank 5      ISEND          chunk 2 to   2
+LogISend:	 0.08106 0.00000    rank 7      ISEND          chunk 4 to   3
+LogISend:	 0.08106 0.00000    rank 1      ISEND          chunk 3 to   5
+LogISend:	 0.08821 0.00715    rank 6      ISEND          chunk 4 to   3
+LogISend:	 0.09060 0.00239    rank 5      ISEND          chunk 4 to   2
+LogISend:	 0.09060 0.00000    rank 1      ISEND          chunk 5 to   5
+LogISend:	 0.09060 0.00000    rank 4      ISEND          chunk 6 to   2
+LogISend:	 0.09775 0.00715    rank 3      ISEND          chunk 5 to   6
+LogISend:	 0.09775 0.00000    rank 6      ISEND          chunk 6 to   3
+LogIRecv:	 0.10014 0.00239    rank 2 IRECV               chunk 8 from 5
+LogISend:	 0.10014 0.00000    rank 5      ISEND          chunk 6 to   2
+LogISend:	 0.10014 0.00000    rank 7      ISEND          chunk 6 to   3
+LogISend:	 0.10014 0.00000    rank 4      ISEND          chunk 7 to   6
+LogISend:	 0.10967 0.00953    rank 3      ISEND          chunk 7 to   6
+LogISend:	 0.10967 0.00000    rank 7      ISEND          chunk 8 to   3
+LogISend:	 0.10967 0.00000    rank 1      ISEND          chunk 7 to   5
+LogISend:	 0.10967 0.00000    rank 4      ISEND          chunk 8 to   2
+LogISend:	 0.11921 0.00954    rank 2      ISEND          chunk 1 to   5
+LogISend:	 0.11921 0.00000    rank 6      ISEND          chunk 8 to   3
+LogISend:	 0.12159 0.00238    rank 5      ISEND          chunk 8 to   2
+LogISend:	 0.12875 0.00716    rank 2      ISEND          chunk 3 to   5
+LogISend:	 0.14067 0.01192    rank 2      ISEND          chunk 5 to   5
+LogISend:	 0.15974 0.01907    rank 2      ISEND          chunk 7 to   5
+LogReceived:	 1.00136 0.84162    rank 5           RECVD   chunk 1 (10) from 1
+LogReceived:	 1.02997 0.02861    rank 3           RECVD   chunk 0 (9) from 7
+LogReceived:	 1.72853 0.69856    rank 2           RECVD   chunk 0 (0) from 4
+LogReceived:	 1.84059 0.11206    rank 5           RECVD   chunk 3 (12) from 1
+LogReceived:	 1.84774 0.00715    rank 3           RECVD   chunk 2 (11) from 7
+LogReceived:	 1.90973 0.06199    rank 6           RECVD   chunk 1 (1) from 4
+LogReceived:	 2.68936 0.77963    rank 3           RECVD   chunk 4 (13) from 7
+LogReceived:	 2.69175 0.00239    rank 5           RECVD   chunk 5 (14) from 1
+LogReceived:	 3.08990 0.39815    rank 2           RECVD   chunk 2 (2) from 4
+LogReceived:	 3.31879 0.22889    rank 6           RECVD   chunk 3 (3) from 4
+LogReceived:	 3.52144 0.20265    rank 5           RECVD   chunk 7 (16) from 1
+LogReceived:	 3.55005 0.02861    rank 3           RECVD   chunk 6 (15) from 7
+LogReceived:	 4.26054 0.71049    rank 5           RECVD   chunk 1 (1) from 2
+LogReceived:	 4.29869 0.03815    rank 2           RECVD   chunk 4 (4) from 4
+LogReceived:	 4.43935 0.14066    rank 3           RECVD   chunk 8 (17) from 7
+LogReceived:	 4.61817 0.17882    rank 6           RECVD   chunk 5 (5) from 4
+LogISend:	 4.74215 0.12398    rank 5      ISEND          chunk 1 to   7
+LogReceived:	 5.06163 0.31948    rank 5           RECVD   chunk 3 (3) from 2
+LogReceived:	 5.09977 0.03814    rank 2           RECVD   chunk 6 (6) from 4
+LogReceived:	 5.14984 0.05007    rank 6           RECVD   chunk 7 (7) from 4
+LogISend:	 5.55038 0.40054    rank 5      ISEND          chunk 3 to   7
+LogReceived:	 5.57899 0.02861    rank 2           RECVD   chunk 8 (8) from 4
+LogEndTime:	 5.62906 0.05007    rank 4 finished run 6 8_5242880_9
+LogReceived:	 5.76973 0.14067    rank 7           RECVD   chunk 1 (10) from 5
+LogReceived:	 5.83887 0.06914    rank 6           RECVD   chunk 1 (10) from 3
+LogReceived:	 5.93901 0.10014    rank 3           RECVD   chunk 0 (0) from 6
+LogReceived:	 5.96046 0.02145    rank 5           RECVD   chunk 5 (5) from 2
+LogISend:	 6.33001 0.36955    rank 6      ISEND          chunk 1 to   7
+LogISend:	 6.41823 0.08822    rank 3      ISEND          chunk 0 to   1
+LogISend:	 6.44207 0.02384    rank 5      ISEND          chunk 5 to   7
+LogReceived:	 6.62804 0.18597    rank 3           RECVD   chunk 2 (2) from 6
+LogReceived:	 6.89983 0.27179    rank 6           RECVD   chunk 3 (12) from 3
+LogReceived:	 7.10011 0.20028    rank 5           RECVD   chunk 7 (7) from 2
+LogISend:	 7.10964 0.00953    rank 3      ISEND          chunk 2 to   1
+LogReceived:	 7.21931 0.10967    rank 7           RECVD   chunk 3 (12) from 5
+LogReceived:	 7.22885 0.00954    rank 2           RECVD   chunk 0 (9) from 5
+LogISend:	 7.39813 0.16928    rank 6      ISEND          chunk 3 to   7
+LogISend:	 7.59125 0.19312    rank 5      ISEND          chunk 7 to   7
+LogISend:	 7.71046 0.11921    rank 2      ISEND          chunk 0 to   1
+LogReceived:	 7.88927 0.17881    rank 2           RECVD   chunk 2 (11) from 5
+LogReceived:	 7.98941 0.10014    rank 1           RECVD   chunk 0 (9) from 3
+LogISend:	 8.38041 0.39100    rank 2      ISEND          chunk 2 to   1
+LogReceived:	 8.57830 0.19789    rank 3           RECVD   chunk 4 (4) from 6
+LogReceived:	 8.73804 0.15974    rank 6           RECVD   chunk 5 (14) from 3
+LogReceived:	 8.93116 0.19312    rank 7           RECVD   chunk 1 (1) from 6
+LogReceived:	 8.99076 0.05960    rank 2           RECVD   chunk 4 (13) from 5
+LogISend:	 9.04799 0.05723    rank 3      ISEND          chunk 4 to   1
+LogReceived:	 9.07898 0.03099    rank 3           RECVD   chunk 6 (6) from 6
+LogISend:	 9.22918 0.15020    rank 6      ISEND          chunk 5 to   7
+LogISend:	 9.41038 0.18120    rank 7      ISEND          chunk 1 to   0
+LogISend:	 9.46999 0.05961    rank 2      ISEND          chunk 4 to   1
+LogISend:	 9.55820 0.08821    rank 3      ISEND          chunk 6 to   1
+LogReceived:	 9.56059 0.00239    rank 7           RECVD   chunk 5 (14) from 5
+LogReceived:	 9.59873 0.03814    rank 6           RECVD   chunk 7 (16) from 3
+LogReceived:	 9.87053 0.27180    rank 2           RECVD   chunk 6 (15) from 5
+LogReceived:	 9.88960 0.01907    rank 1           RECVD   chunk 2 (11) from 3
+LogISend:	 10.09941 0.20981    rank 6      ISEND          chunk 7 to   7
+LogReceived:	 10.29968 0.20027    rank 3           RECVD   chunk 8 (8) from 6
+LogISend:	 10.35929 0.05961    rank 2      ISEND          chunk 6 to   1
+LogReceived:	 10.40220 0.04291    rank 0           RECVD   chunk 1 (1) from 7
+LogReceived:	 10.53095 0.12875    rank 7           RECVD   chunk 3 (3) from 6
+LogReceived:	 10.62155 0.09060    rank 1           RECVD   chunk 0 (0) from 2
+LogISend:	 10.75983 0.13828    rank 3      ISEND          chunk 8 to   1
+LogISend:	 11.01017 0.25034    rank 7      ISEND          chunk 3 to   0
+LogReceived:	 11.01971 0.00954    rank 2           RECVD   chunk 8 (17) from 5
+LogISend:	 11.11031 0.09060    rank 1      ISEND          chunk 0 to   0
+LogReceived:	 11.35111 0.24080    rank 1           RECVD   chunk 2 (2) from 2
+LogReceived:	 11.47985 0.12874    rank 7           RECVD   chunk 7 (16) from 5
+LogISend:	 11.48939 0.00954    rank 2      ISEND          chunk 8 to   1
+LogEndTime:	 11.50131 0.01192    rank 5 finished run 6 8_5242880_9
+LogReceived:	 11.78026 0.27895    rank 0           RECVD   chunk 3 (3) from 7
+LogISend:	 11.83033 0.05007    rank 1      ISEND          chunk 2 to   0
+LogReceived:	 12.32147 0.49114    rank 1           RECVD   chunk 4 (13) from 3
+LogReceived:	 12.44068 0.11921    rank 0           RECVD   chunk 0 (0) from 1
+LogReceived:	 13.12017 0.67949    rank 0           RECVD   chunk 2 (2) from 1
+LogReceived:	 13.27038 0.15021    rank 1           RECVD   chunk 4 (4) from 2
+LogISend:	 13.74960 0.47922    rank 1      ISEND          chunk 4 to   0
+LogReceived:	 14.00948 0.25988    rank 7           RECVD   chunk 5 (5) from 6
+LogReceived:	 14.20021 0.19073    rank 1           RECVD   chunk 6 (15) from 3
+LogISend:	 14.46962 0.26941    rank 7      ISEND          chunk 5 to   0
+LogReceived:	 14.47201 0.00239    rank 0           RECVD   chunk 4 (4) from 1
+LogReceived:	 15.01083 0.53882    rank 1           RECVD   chunk 6 (6) from 2
+LogEndTime:	 15.30886 0.29803    rank 6 finished run 6 8_5242880_9
+LogReceived:	 15.31124 0.00238    rank 7           RECVD   chunk 7 (7) from 6
+LogISend:	 15.49006 0.17882    rank 1      ISEND          chunk 6 to   0
+LogReceived:	 15.57112 0.08106    rank 0           RECVD   chunk 5 (5) from 7
+LogISend:	 15.77139 0.20027    rank 7      ISEND          chunk 7 to   0
+LogReceived:	 15.92159 0.15020    rank 1           RECVD   chunk 8 (17) from 3
+LogEndTime:	 15.92875 0.00716    rank 3 finished run 6 8_5242880_9
+LogReceived:	 16.29114 0.36239    rank 0           RECVD   chunk 6 (6) from 1
+LogEndTime:	 16.71076 0.41962    rank 2 finished run 6 8_5242880_9
+LogReceived:	 16.72983 0.01907    rank 1           RECVD   chunk 8 (8) from 2
+LogReceived:	 16.88004 0.15021    rank 0           RECVD   chunk 7 (7) from 7
+LogEndTime:	 16.88957 0.00953    rank 7 finished run 6 8_5242880_9
+LogISend:	 17.19952 0.30995    rank 1      ISEND          chunk 8 to   0
+LogReceived:	 17.97199 0.77247    rank 0           RECVD   chunk 8 (8) from 1
+LogEndTime:	 17.98153 0.00954    rank 1 finished run 6 8_5242880_9
+LogEndTime:	 18.42022 0.43869    rank 0 finished run 6 8_5242880_9
