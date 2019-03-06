@@ -299,8 +299,9 @@ The idea behind TwoTreeC is rather very simple. We construct two complete binary
     \item[$\bullet$]$T_1$(left tree) is numbered level wise, left to right, with increasing process id's starting from $0$.
     \item[$\bullet$]$T_2$(right tree) is numbered level wise, left to right, with decreasing process id's starting from $P-1$.
 \end{description}
-Here $P$ is the total number of processes. An example $T_1$ and $T_2$ for $20$ processes using TwoTreeC is shown in figure \ref{fig:twoTreeC}. Each process independently uses Algorithm \ref{alg:TwoTreeComp} to compute its parent and children in $T_1$ and $T_2$. With the exception of the root process, the remaining processes appear in both left and right trees. Therefore, $leftParent$ is used to denote parent of current process in left tree, and $rightParent$ is the parent of current process in right tree. $leftChild[]$ and $rightChild[]$ similarly denote the children of current node in left and right tree respectively. 
- 
+Here $P$ is the total number of processes. An example $T_1$ and $T_2$ for $20$ processes using TwoTreeC is shown in figure \ref{fig:twoTreeC}. Each process independently uses Algorithm \ref{alg:TwoTreeComp} to compute its parent and children in $T_1$ and $T_2$. With the exception of the root process, the remaining processes appear in both left and right trees. Therefore, $leftParent$ is used to denote parent of current process in left tree, and $rightParent$ is the parent of current process in right tree. $leftChild[]$ and $rightChild[]$ similarly denote the children of current node in left and right tree respectively. \\
+%rough explanation for nonzero root
+In case the root of a rooted collective is not the process ranked $0$ but some process $k$ instead, then each process assumes a false rank $(rank-k)\%P$ and finds the false ranks of its parents and children using the same algorithm. Then it translates the false ranks back to original ranks.
 % \begin{figure}[h]
 % 
 %\begin{subfigure}{0.5\textwidth}
@@ -668,6 +669,60 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \end{figure}
 
 \subsection{All-Reduce}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/allreduce_comp1_262144B.png}
+  \caption{Reduce - 256KB}
+  \label{reduce-selected-256B}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/allreduce_comp1_524288B.png}
+  \caption{Reduce - 512KB}
+  \label{reduce-selected-512B}
+\end{subfigure}
+\caption{Reduce results for small sized messages}
+\label{graph-reduce-small-selected}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_1048576B.png}
+  \caption{Reduce - 1MB}
+  \label{reduce-selected-1MB}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_3145728B.png}
+  \caption{Reduce - 3MB}
+  \label{reduce-selected-3MB}
+\end{subfigure}
+\caption{Reduce results for medium sized messages}
+\label{graph-reduce-medium1-selected}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_5242880B.png}
+  \caption{Reduce - 5MB}
+  \label{reduce-selected-5MB}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_7340032B.png}
+  \caption{Reduce - 7MB}
+  \label{reduce-selected-7MB}
+\end{subfigure}
+\caption{Reduce results for medium sized messages}
+\label{graph-reduce-medium2-selected}
+\end{figure}
 
 % Text of paper \ldots
 
@@ -1056,3 +1111,4 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 % Text of appendix \ldots
 
 \end{document}
+
