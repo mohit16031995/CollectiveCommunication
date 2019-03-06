@@ -57,7 +57,7 @@ int main(int argc,char *argv[]){
 
 	SIZE = strtol(argv[1], &ptr, 10);
 	CHUNK = atoi(argv[2]);
-	CSIZE = SIZE/(CHUNK*(sizeof(int))); 
+	CSIZE = ceil(SIZE/(CHUNK*(sizeof(int))*1.0)); 
 	long int sizeInBytes = SIZE;
 	SIZE = CSIZE*CHUNK;
 
