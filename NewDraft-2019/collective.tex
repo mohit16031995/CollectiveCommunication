@@ -675,16 +675,16 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \begin{subfigure}{.25\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{images/Results/AllReduce/allreduce_comp1_262144B.png}
-  \caption{Reduce - 256KB}
+  \caption{All-Reduce - 256KB}
   \label{reduce-selected-256B}
 \end{subfigure}%
 \begin{subfigure}{.25\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{images/Results/AllReduce/allreduce_comp1_524288B.png}
-  \caption{Reduce - 512KB}
+  \caption{All-Reduce - 512KB}
   \label{reduce-selected-512B}
 \end{subfigure}
-\caption{Reduce results for small sized messages}
+\caption{All-Reduce results for small sized messages}
 \label{graph-reduce-small-selected}
 \end{figure}
 
@@ -692,17 +692,17 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \centering
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_1048576B.png}
-  \caption{Reduce - 1MB}
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2_1048576B.png}
+  \caption{All-Reduce - 1MB}
   \label{reduce-selected-1MB}
 \end{subfigure}%
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_3145728B.png}
-  \caption{Reduce - 3MB}
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2_3145728B.png}
+  \caption{All-Reduce - 3MB}
   \label{reduce-selected-3MB}
 \end{subfigure}
-\caption{Reduce results for medium sized messages}
+\caption{All-Reduce results for medium sized messages}
 \label{graph-reduce-medium1-selected}
 \end{figure}
 
@@ -710,17 +710,41 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \centering
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_5242880B.png}
-  \caption{Reduce - 5MB}
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/Allreduce_comp2_5242880B.png}
+  \caption{All-Reduce - 5MB}
   \label{reduce-selected-5MB}
 \end{subfigure}%
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2New_7340032B.png}
-  \caption{Reduce - 7MB}
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2_7340032B.png}
+  \caption{All-Reduce - 7MB}
   \label{reduce-selected-7MB}
 \end{subfigure}
-\caption{Reduce results for medium sized messages}
+\caption{All-Reduce results for medium sized messages}
+\label{graph-reduce-medium2-selected}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduceComp2_52428800B.png}
+  \caption{All-Reduce - 50MB}
+  \label{reduce-selected-5MB}
+\end{subfigure}%
+\begin{subfigure}{.25\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduceComp2_104857600B.png}
+  \caption{All-Reduce - 100MB}
+  \label{reduce-selected-7MB}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\linewidth]{images/Results/AllReduce/AllReduceComp2_209715200B.png}
+  \caption{All-Reduce - 200MB}
+  \label{reduce-selected-7MB}
+\end{subfigure}
+\caption{All-Reduce results for large sized messages}
 \label{graph-reduce-medium2-selected}
 \end{figure}
 
@@ -1111,4 +1135,3 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 % Text of appendix \ldots
 
 \end{document}
-
