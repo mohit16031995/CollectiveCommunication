@@ -299,9 +299,9 @@ The idea behind TwoTreeC is rather very simple. We construct two complete binary
     \item[$\bullet$]$T_1$(left tree) is numbered level wise, left to right, with increasing process id's starting from $0$.
     \item[$\bullet$]$T_2$(right tree) is numbered level wise, left to right, with decreasing process id's starting from $P-1$.
 \end{description}
-Here $P$ is the total number of processes. An example $T_1$ and $T_2$ for $20$ processes using TwoTreeC is shown in figure \ref{fig:twoTreeC}. Each process independently uses Algorithm \ref{alg:TwoTreeComp} to compute its parent and children in $T_1$ and $T_2$. With the exception of the root process, the remaining processes appear in both left and right trees. Therefore, $leftParent$ is used to denote parent of current process in left tree, and $rightParent$ is the parent of current process in right tree. $leftChild[]$ and $rightChild[]$ similarly denote the children of current node in left and right tree respectively. \\
+Here $P$ is the total number of processes. An example $T_1$ and $T_2$ for $20$ processes using TwoTreeC is shown in figure \ref{fig:twoTreeC}. Each process independently uses Algorithm \ref{alg:TwoTreeComp} to compute its parent and children in $T_1$ and $T_2$. With the exception of the root process, the remaining processes appear in both left and right trees. Therefore, $leftParent$ is used to denote parent of current process in left tree, and $rightParent$ is the parent of current process in right tree. $leftChild[]$ and $rightChild[]$ similarly denote the children of current node in left and right tree respectively. 
+
 %rough explanation for nonzero root
-In case the root of a rooted collective is not the process ranked $0$ but some process $k$ instead, then each process assumes a false rank $(rank-k)\%P$ and finds the false ranks of its parents and children using the same algorithm. Then it translates the false ranks back to original ranks.
 % \begin{figure}[h]
 % 
 %\begin{subfigure}{0.5\textwidth}
@@ -370,7 +370,7 @@ TwoTreeC implementation addresses all the observed issues with TwoTreeS. There i
 %Both the trees are relatively balanced than TwoTreeS. The impact of balancing has been seen in performance gain of reduce and allreduce collectives since, the communication begins at the leaf nodes in both of the collectives.
 
 \section{Collectives with TwoTreeC}\label{sec:Operations}
-The TwoTreeC topology discussed above is used to implement broadcast, reduce and allreduce operations. The broadcast and reduce operations are rooted collectives i.e., the data is either distributed by the root process (ex., broadcast) or is collected at the root process (as in reduce). We implement allreduce as a combination of broadcast and reduce collectives. Similar to binary pipeline algorithm, TwoTreeC divide message into smaller chunks and communicate the chunks in a pipeline. We describe the approaches used to calculate number of chunks for various collectives in section \ref{sec:Chunks}.  Figure \ref{fig:towtreeC_coll} depicts our basic approach to perform these collectives using TwoTreeC. Assuming the entire message is divided into $m$ small chunks, in broadcast, odd numbered chunks are sent to tree $T_1$ one after the other in a pipeline. Similarly, even numbered chunks are sent to sub-tree $T_2$. The reverse happens in the reduce collective. Whereas, in allreduce, reduce of the entire message happens at the root process which is followed by the pipelined broadcast. More details about each of the collectives is presented below.
+The TwoTreeC topology discussed above is used to implement broadcast, reduce and allreduce operations. The broadcast and reduce operations are rooted collectives i.e., the data is either distributed by the root process (ex., broadcast) or is collected at the root process (as in reduce). We implement allreduce as a combination of broadcast and reduce collectives. Similar to binary pipeline algorithm, TwoTreeC divides message into smaller chunks and communicate the chunks in a pipeline. We describe the approaches used to calculate number of chunks for various collectives in section \ref{sec:Chunks}.  Figure \ref{fig:towtreeC_coll} depicts our basic approach to perform these collectives using TwoTreeC. Assuming the entire message is divided into $m$ small chunks, in broadcast, even numbered chunks are sent to tree $T_1$ one after the other in a pipeline. Similarly, odd numbered chunks are sent to sub-tree $T_2$. The chunks travel from leaf processes to the root in the reduce collective. Whereas, in allreduce, reduce of the entire message happens at the root process which is followed by the pipelined broadcast. More details about each of the collectives is presented below.
 
 %\ifcmts \{\textcolor{blue}{todo @Mohit LogGP analysis for each of these approaches.}\}
 
@@ -384,8 +384,10 @@ The TwoTreeC topology discussed above is used to implement broadcast, reduce and
 \label{fig:towtreeC_coll}
 \end{figure}
 
-\subsection{Broadcast}
-In broadcast collective, a message from the root process is received at all other processes in the communicator. This root process is assumed to be the process with rank 0 and is the root of the two-tree constructed previously. The root node divides its data into a number of equal sized chunks, then one by one sends each odd-numbered chunk to the root of right tree and each even-numbered chunk to root of left tree. Non-root processes expect odd numbered chunks from $leftParent$ and upon receiving, forward them to their $leftChild[0]$ and $leftChild[1]$. Same task is performed in right tree. In the end, each process has received all the chunks, odd ones in right tree and even ones in left tree. The algorithm to implement broadcast operation using two-tree topology is as shown in the algorithm \ref{alg:broadcastImpl}
+\subsection{Broadcast} \label{sec:broad}
+In broadcast collective, a message from the root process is received at all other processes in the communicator. In case rank $0$ is the root process of the collective then each process execute algorithm \ref{alg:TwoTreeComp} to find its parent and children in tree $T_1$ and $T_2$. All other processes other than the root process are available in both $T_1$ and $T_2$. Later, processes perform send and receive operations using algorithm \ref{alg:broadcastImpl}. In case the root of a rooted collective is not the process ranked $0$ but some other process $k$, then each process assumes a false rank $abs(rank-k)\%P$ and finds the false ranks of its parents and children using algorithm \ref{alg:TwoTreeComp}. These false ranks are translated back to original ranks using the same modulo function. 
+
+The root node divides its data into a number of equal sized chunks, then one by one sends each odd-numbered chunk to the root of $T_2$ (right subtree) and each even-numbered chunk to the root of $T_1$ (left subtree). Non-root processes expect odd numbered chunks from $leftParent$ and upon receiving, forward them to their $leftChild[0]$ and $leftChild[1]$. Same task is performed in the right subtree. In the end, each process has received all the chunks, odd ones in the right tree and even ones in the left subtree.
 
 \begin{algorithm}
 \algsetup{linenosize=\tiny}
@@ -423,9 +425,9 @@ In broadcast collective, a message from the root process is received at all othe
 \end{algorithm}
 
 \subsection{Reduce}
-Reduce operation starts with the leaf nodes by sending message chunks to the parent nodes. Each non-leaf node receives the chunks their child nodes and then themselves perform the reduce operation on matching chunks from all of their children and their own chunk. Then finally sends the reduced chunk to their parent node. This way the top root process receives a message that is reduced output of messages from all other processes. The algorithm to implement the same is shown in algorithm \ref{alg:ReduceImpl}.
+We use TwoTreeC to implement commutative and associative reduce collective. In reduce collective as well, we use the similar process as described in section \ref{sec:broad} for broadcast to design two trees $T_1$ and $T_2$. Similarly, $T_1$ is placed as the left subtree of the root of the collective and  $T_2$ as the right subtree. The leaf nodes begins the reduce operation by sending chunks of messages to the parent nodes as depicted in figure \ref{fig:towtreeC_coll}(b). Each non-leaf node receives the chunk number say $m$ from the child nodes and then perform the reduce operation together with its own $m^{th}$ chunk. The reduced chunk is then forwarded to the parent node and eventually reaches the root of the tree. 
 
-\subsection{All-Reduce}
+\subsection{Allreduce}
 All-reduce operation can be implemented as combination of broadcast and reduce operation, in a way that first the message is reduced to root node and then the result is broadcast-ed to all other nodes. The previously stated design for the two tree was the first implementation used for all-reduce. Although good results were achieved but we realized that further improvements might be possible by making some modifications to the topology. When the exact same topology is used for both reduce and broadcast, leaf nodes are the first to finish the reduction part but are the last to receive the broadcast-ed reduced message. Hence we experimented with using different topologies for reduce phase and broadcast phase.
 
 \ifcmts \{\textcolor{red}{todo @Sir lower bound}\}
@@ -614,7 +616,7 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \centering
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1.\1linewidth]{images/Results/bcastFinal_262144B.png}
+  \includegraphics[width=1\linewidth]{images/Results/bcastFinal_262144B.png}
   \caption{Broadcast-256KB}
   \label{bcast-selected-256B}
 \end{subfigure}%
