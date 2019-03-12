@@ -428,110 +428,107 @@ The root node divides its data into a number of equal sized chunks, then one by 
 We use TwoTreeC to implement commutative and associative reduce collective. In reduce collective as well, we use the similar process as described in section \ref{sec:broad} for broadcast to design two trees $T_1$ and $T_2$. Similarly, $T_1$ is placed as the left subtree of the root of the collective and  $T_2$ as the right subtree. The leaf nodes begins the reduce operation by sending chunks of messages to the parent nodes as depicted in figure \ref{fig:towtreeC_coll}(b). Each non-leaf node receives the chunk number say $m$ from the child nodes and then perform the reduce operation together with its own $m^{th}$ chunk. The reduced chunk is then forwarded to the parent node and eventually reaches the root of the tree. 
 
 \subsection{Allreduce}
-All-reduce operation can be implemented as combination of broadcast and reduce operation, in a way that first the message is reduced to root node and then the result is broadcast-ed to all other nodes. The previously stated design for the two tree was the first implementation used for all-reduce. Although good results were achieved but we realized that further improvements might be possible by making some modifications to the topology. When the exact same topology is used for both reduce and broadcast, leaf nodes are the first to finish the reduction part but are the last to receive the broadcast-ed reduced message. Hence we experimented with using different topologies for reduce phase and broadcast phase.
+We have implemented allreduce operation by doing reduce of all the chunks at the root node and then doing a broadcast. We assume process with rank $0$ to be our root process. The trees $T_1$ and $T_2$ are designed as already explained in section \ref{sec:broad}. Both of these trees are used to perform pipelined reduce operation. As soon as the root process receives any of the reduced chunk, it performs the broadcast using the same $T_1$ and $T_2$ (refer Figure \ref{fig:towtreeC_allreduce}). By doing this overlap of reduce and broadcast operations, we further improve time efficiency of our implementation as compared to first wait for all the chunks to be reduced at the root process and then beginning to broadcast. 
 
-\ifcmts \{\textcolor{red}{todo @Sir lower bound}\}
+\begin{figure}[t]
+\includegraphics[scale=0.46]{images/ttallreduce.eps} \\ 
+\caption{Allreduce with TwoTreeC showing overlap of reduce and broadcast}
+\label{fig:towtreeC_allreduce}
+\end{figure}
 
-\subsubsection{TwoTreeC + Reordered TwoTreeC}
-The bandwidth of leaf nodes in reduce phase could be utilized further and so in this implementation of all-reduce operation, the reduction part uses the topology defined in algorithm \ref{alg:TwoTreeComp} and for the broadcast part a new topology is defined as described in the algorithm \ref{alg:ReorderedTwoTree}. This topology is created in a way that nodes finishing the reduce part using previous topology will be closer to the root.\\
+As can be seen in figure \ref{fig:towtreeC_allreduce}, to implement allreduce collective, two pairs of two-trees have been used. Instead of using the same pair of $T_1$ and $T_2$ for both reduce and broadcast, different pairs can also be used to further improve the time efficiency. We have designed and tested two variations of our original TwoTreeC allreduce implementation which uses different pairs for reduce and broadcast phases. 
 
-\subsubsection{Reordered TwoTreeC}
-This tree is similar to the TwoTreeC(see \ref{sec:Topology}) as in it consists of two complete binary trees T$_{1}$ and T$_{2}$ both constructed using $P-1$ processes, only difference is in the ordering of T$_{1}$ and T$_{2}$. The numbering is done as follows:
- \begin{description}
-     \item[$\bullet$]T$_{1}$ is numbered in level wise, in increasing order(circular in range $1...P-1$) starting form $\left \lceil{\dfrac{P}{2}}\right \rceil$
-     \item[$\bullet$] T$_{2}$ is numbered in level wise, in decreasing order(circular in range $1...P-1$) starting form $\left \lfloor{\dfrac{P}{2}}\right\rfloor $
+
+\subsubsection{TwoTreeC+C}
+The main idea behind TwoTreeC+C allreduce implementation is to improve the bandwidth utilization of the leaf nodes in the reduce phase of TwoTreeC. We design a new pair of two trees for broadcast phase (referred as $T_3$ and $T_4$) such that the nodes finishing the reduce part first in $T_1$ are closer to the root node in $T_3$ and $T_4$. The two trees for reduce phase in TwoTreeC+C is same as that of $T_1$ and $T_2$ in TwoTreeC. We have designed $T_3$ and $T_4$ (complete trees) for broadcast phase of TwoTreeC+C as follows:
+
+\begin{description}
+     \item[$\bullet$]T$_{3}$ is numbered in level wise, in increasing order (circular in range $1...P-1$) starting from $\left \lceil{\dfrac{P}{2}}\right \rceil$
+     \item[$\bullet$] T$_{4}$ is numbered in level wise, in decreasing order (circular in range $1...P-1$) starting from $\left \lfloor{\dfrac{P}{2}}\right\rfloor $
  \end{description}
-Figure \ref{fig:reordered} shows a reordered TwoTreeC for 20 processes.
+Figure \ref{fig:reordered} shows $T_3$ and $T_4$ for TwoTreeC+C for 20 processes.
 
- \begin{figure}[h]
- 
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.5\linewidth, height=4cm]{images/reordered-twoTreeC-T1.eps} 
-\caption{T1}
-\label{fig:RT1}
-\end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.5\linewidth, height=4cm]{images/reordered-twoTreeC-T2.eps}
-\caption{T2}
-\label{fig:RT2}
-\end{subfigure}
- 
-\caption{Reordered TwoTreeC: 20 nodes}
+\begin{figure}[b]
+\begin{tabular}{cc}
+\includegraphics[scale=0.46]{images/reordered-twoTreeC-T1.eps} &  \includegraphics[scale=0.46]{images/reordered-twoTreeC-T2.eps} \\ \\
+(a) $T_3$ & (b) $T_4$ \\
+\end{tabular}
+\caption{$T_3$ and $T_4$ for TwoTreeC+C for 20 processes}
 \label{fig:reordered}
 \end{figure}
 
+%
+%\begin{algorithm}[htp]
+%\algsetup{linenosize=\tiny}
+%\scriptsize
+%\caption{Reordered Two Tree Complete Construction}\label{alg:ReorderedTwoTree}
+%\SetAlgoLined\DontPrintSemicolon
+%\SetKwFunction{FUNCRP}{FUNCRP}
+%\SetKwFunction{FUNCONE}{FUNCONE}
+%\SetKwFunction{FUNCTWO}{FUNCTWO}
+%\SetKwFunction{algo}{algo}
+%\SetKwProg{myproc}{Procedure}{}{}
+%\SetKwProg{myalg}{Algorithm}{}{}
+%
+%\myproc{\FUNCRP{var}}{
+%    \begin{algorithmic}[1]
+%        \IF{$var = 0$}
+%            \RETURN $0$
+%        \ELSE
+%            \RETURN $ \big(p - \dfrac{p-var}{2}\big)\%p $
+%        \ENDIF
+%    \end{algorithmic}
+%}
+%\myproc{\FUNCONE{var}}{
+%    \begin{algorithmic}[1]
+%        \IF{$var = 0$}
+%            \RETURN $0$
+%        \ELSE
+%            \RETURN $ \bigg(\Big(\big((var-1-(\dfrac{p-1}{2}))+(p-1)\big) \% \big(p-1\big)\Big) + 1\bigg) $
+%        \ENDIF
+%    \end{algorithmic}
+%}
+%\myproc{\FUNCTWO{var}}{
+%    \begin{algorithmic}[1]
+%        \IF{$var = 0$}
+%            \RETURN $0$
+%        \ELSE
+%            \RETURN $ \bigg(\Big(\big((var-1+(\dfrac{p-1}{2}))+(p-1)\big) \% \big(p-1\big)\Big) + 1\bigg); $
+%        \ENDIF
+%    \end{algorithmic}
+%}
+%\myalg{\algo{}} {
+%\begin{algorithmic}[1]
+%\REQUIRE Number of Process $\leftarrow$ \(p\), rank $\leftarrow processId$ 
+%\IF{$rank$ = 0}
+%    \STATE number\_leftChildren $ \leftarrow 1$
+%    \STATE number\_rightChildren $ \leftarrow 1$
+%    \STATE leftChild$[0] \leftarrow$ FUNCTWO($1$)
+%    \STATE rightChild$[0] \leftarrow$ FUNCONE($p-1$)
+%\ELSE[$rank \neq 0$]
+%    \STATE leftParent $ \leftarrow$ FUNCTWO\big( FUNCONE($rank$) $ / 2$\big)
+%    \STATE rightParent $ \leftarrow$ FUNCONE\Big( FUNCRP\big( FUNCTWO($rank$) \big) \Big)
+%    \IF{$2 \times$ FUNCONE($rank$) $< p$}
+%         \STATE number\_leftChildren $ \leftarrow 1$
+%         \STATE leftChild[0]$ \leftarrow$ FUNCTWO\big( $2 \times $FUNCONE($rank$) \big)
+%    \ENDIF
+%    \IF{$\big(2 \times$ FUNCONE($rank$)\big)$+1 < p$}
+%         \STATE number\_leftChildren $ \leftarrow 2$
+%         \STATE leftChild[1]$ \leftarrow$ FUNCTWO\Big( \big($2 \times$ FUNCONE( $rank$ )\big)$+1$\Big)
+%    \ENDIF
+%    \IF{$\big(2 \times$ FUNCTWO($rank$)\big)$ - p > 0$}
+%         \STATE number\_rightChildren $ \leftarrow 1$
+%         \STATE rightChild$[0] \leftarrow$ FUNCONE\Big( \big($2 \times$ FUNCTWO( $rank$ )\big)$ - p$\Big)
+%    \ENDIF
+%    \IF{$\big(2 \times$ FUNCTWO($rank$)\big)$-p-1 > 0$}
+%         \STATE number\_rightChildren $ \leftarrow 2$
+%         \STATE rightChild$[1] \leftarrow$ FUNCONE\Big( \big($2 \times$ FUNCTWO( $rank$ )\big)$-p-1$\Big)
+%    \ENDIF
+%\ENDIF
+%\end{algorithmic}}
+%\end{algorithm}
 
-\begin{algorithm}[htp]
-\algsetup{linenosize=\tiny}
-\scriptsize
-\caption{Reordered Two Tree Complete Construction}\label{alg:ReorderedTwoTree}
-\SetAlgoLined\DontPrintSemicolon
-\SetKwFunction{FUNCRP}{FUNCRP}
-\SetKwFunction{FUNCONE}{FUNCONE}
-\SetKwFunction{FUNCTWO}{FUNCTWO}
-\SetKwFunction{algo}{algo}
-\SetKwProg{myproc}{Procedure}{}{}
-\SetKwProg{myalg}{Algorithm}{}{}
-
-\myproc{\FUNCRP{var}}{
-    \begin{algorithmic}[1]
-        \IF{$var = 0$}
-            \RETURN $0$
-        \ELSE
-            \RETURN $ \big(p - \dfrac{p-var}{2}\big)\%p $
-        \ENDIF
-    \end{algorithmic}
-}
-\myproc{\FUNCONE{var}}{
-    \begin{algorithmic}[1]
-        \IF{$var = 0$}
-            \RETURN $0$
-        \ELSE
-            \RETURN $ \bigg(\Big(\big((var-1-(\dfrac{p-1}{2}))+(p-1)\big) \% \big(p-1\big)\Big) + 1\bigg) $
-        \ENDIF
-    \end{algorithmic}
-}
-\myproc{\FUNCTWO{var}}{
-    \begin{algorithmic}[1]
-        \IF{$var = 0$}
-            \RETURN $0$
-        \ELSE
-            \RETURN $ \bigg(\Big(\big((var-1+(\dfrac{p-1}{2}))+(p-1)\big) \% \big(p-1\big)\Big) + 1\bigg); $
-        \ENDIF
-    \end{algorithmic}
-}
-\myalg{\algo{}} {
-\begin{algorithmic}[1]
-\REQUIRE Number of Process $\leftarrow$ \(p\), rank $\leftarrow processId$ 
-\IF{$rank$ = 0}
-    \STATE number\_leftChildren $ \leftarrow 1$
-    \STATE number\_rightChildren $ \leftarrow 1$
-    \STATE leftChild$[0] \leftarrow$ FUNCTWO($1$)
-    \STATE rightChild$[0] \leftarrow$ FUNCONE($p-1$)
-\ELSE[$rank \neq 0$]
-    \STATE leftParent $ \leftarrow$ FUNCTWO\big( FUNCONE($rank$) $ / 2$\big)
-    \STATE rightParent $ \leftarrow$ FUNCONE\Big( FUNCRP\big( FUNCTWO($rank$) \big) \Big)
-    \IF{$2 \times$ FUNCONE($rank$) $< p$}
-         \STATE number\_leftChildren $ \leftarrow 1$
-         \STATE leftChild[0]$ \leftarrow$ FUNCTWO\big( $2 \times $FUNCONE($rank$) \big)
-    \ENDIF
-    \IF{$\big(2 \times$ FUNCONE($rank$)\big)$+1 < p$}
-         \STATE number\_leftChildren $ \leftarrow 2$
-         \STATE leftChild[1]$ \leftarrow$ FUNCTWO\Big( \big($2 \times$ FUNCONE( $rank$ )\big)$+1$\Big)
-    \ENDIF
-    \IF{$\big(2 \times$ FUNCTWO($rank$)\big)$ - p > 0$}
-         \STATE number\_rightChildren $ \leftarrow 1$
-         \STATE rightChild$[0] \leftarrow$ FUNCONE\Big( \big($2 \times$ FUNCTWO( $rank$ )\big)$ - p$\Big)
-    \ENDIF
-    \IF{$\big(2 \times$ FUNCTWO($rank$)\big)$-p-1 > 0$}
-         \STATE number\_rightChildren $ \leftarrow 2$
-         \STATE rightChild$[1] \leftarrow$ FUNCONE\Big( \big($2 \times$ FUNCTWO( $rank$ )\big)$-p-1$\Big)
-    \ENDIF
-\ENDIF
-\end{algorithmic}}
-\end{algorithm}
-
-\subsubsection{TwoTreeC + TwoTreeS}
+\subsubsection{TwoTreeC+S}
 As seen in the previous optimization, all-reduce operation can be improved using different algorithms for the sub parts reduce and broadcast. So similarly here this version of all-reduce operation uses the TwoTreeS for the first part $i.e.$ reduce and uses the TwoTreeC for the second part $i.e.$ broadcast.
 
 \section{Calculation of Number of Chunks} \label{sec:Chunks}
@@ -727,7 +724,7 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \end{figure}
 
 \subsection{All-Reduce}
-
+\ifcmts \{\textcolor{red}{todo @Sir lower bound}\}
 \begin{figure}
 \centering
 \begin{subfigure}{.25\textwidth}
@@ -750,13 +747,13 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \centering
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2_1048576B.png}
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/Allreduce_comp2_1048576B.png}
   \caption{All-Reduce - 1MB}
   \label{reduce-selected-1MB}
 \end{subfigure}%
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2_3145728B.png}
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/Allreduce_comp2_3145728B.png}
   \caption{All-Reduce - 3MB}
   \label{reduce-selected-3MB}
 \end{subfigure}
@@ -774,7 +771,7 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \end{subfigure}%
 \begin{subfigure}{.25\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{images/Results/AllReduce/AllReduce_comp2_7340032B.png}
+  \includegraphics[width=1\linewidth]{images/Results/AllReduce/Allreduce_comp2_7340032B.png}
   \caption{All-Reduce - 7MB}
   \label{reduce-selected-7MB}
 \end{subfigure}
