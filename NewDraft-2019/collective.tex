@@ -209,6 +209,7 @@ Text of abstract \ldots.
 %% comma separated list
 \keywords{keyword1, keyword2, keyword3}  %% \keywords are mandatory in final camera-ready submission
 
+\newcommand{\tablefont}{\fontsize{6}{6}\selectfont}
 
 %% \maketitle
 %% Note: \maketitle command must come after title commands, author
@@ -752,9 +753,11 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 
 \subsection{Optimal Number of Chunks}
 
-\begin{table}[]
+\begin{table}[t]
+
 \caption{Broadcast - TwoTreeC}
 \begin{center}
+\tablefont
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
 \hline
 & \multicolumn{8}{c|}{Number of Processes} \\
@@ -775,6 +778,7 @@ Size & 32 & 53 & 64 & 96 & 128 & 158 & 188 & 256\\
 \begin{table}[]
 \caption{Reduce - TwoTreeC}
 \begin{center}
+\tablefont
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
 & \multicolumn{12}{c|}{Number of Processes} \\
@@ -795,6 +799,7 @@ Size & 8 & 12 & 16 & 24 & 32 & 53 & 64 & 96 & 128 & 158 & 188 & 256\\
 \begin{table}[]
 \caption{Allreduce - TwoTreeC+S}
 \begin{center}
+\tablefont
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
  & \multicolumn{12}{c|}{Number of Processes} \\
