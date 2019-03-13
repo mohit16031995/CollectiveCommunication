@@ -803,6 +803,68 @@ Message Sizes : 256KB, 512KB, 1MB, 3MB, 5MB, 7MB
 \label{graph-reduce-medium2-selected}
 \end{figure}
 
+\subsection{Optimal Number of Chunks}
+
+\begin{table}[]
+\caption{Broadcast - TwoTreeC}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+& \multicolumn{8}{c|}{Number of Processes} \\
+\hline
+& 32 & 53 & 64 & 96 & 128 & 158 & 188 & 256\\
+\hline
+ 256 KB & 4 & 7 & 10 & 14 & 6 & 6 & 10 & 10\\
+ 512 KB & 10 & 10 & 10 & 15 & 14 & 8 & 15 & 14\\
+ 1 MB & 8 & 8 & 16 & 16 & 15 & 15 & 15 & 12\\
+ 3 MB & 27 & 27 & 24 & 27 & 27 & 16 & 25 & 24\\
+ 5 MB & 20 & 45 & 45 & 45 & 45 & 45 & 45 & 45\\
+ 7 MB & 29 & 24 & 46 & 58 & 32 & 32 & 32 & 57\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[]
+\caption{Reduce - TwoTreeC}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+& \multicolumn{12}{c|}{Number of Processes} \\
+\hline
+& 8 & 12 & 16 & 24 & 32 & 53 & 64 & 96 & 128 & 158 & 188 & 256\\
+\hline
+ 256 KB & 4 & 4 & 4 & 4 & 3 & 2 & 3 & 3 & 1 & 2 & 3 & 3\\
+ 512 KB & 4 & 4 & 4 & 4 & 4 & 6 & 12 & 9 & 9 & 12 & 12 & 12\\
+ 1 MB & 4 & 12 & 4 & 12 & 6 & 9 & 12 & 12 & 8 & 12 & 12 & 17\\
+ 3 MB & 14 & 10 & 18 & 22 & 15 & 24 & 15 & 30 & 40 & 24 & 24 & 30\\
+ 5 MB & 18 & 15 & 18 & 26 & 38 & 24 & 30 & 40 & 40 & 36 & 30 & 30\\
+ 7 MB & 14 & 20 & 34 & 26 & 38 & 24 & 40 & 30 & 40 & 30 & 52 & 40\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[]
+\caption{Allreduce - TwoTreeC+S}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+ & \multicolumn{12}{c|}{Number of Processes} \\
+\hline
+ & 8 & 12 & 16 & 24 & 32 & 53 & 64 & 96 & 128 & 158 & 188 & 256\\
+\hline
+ 256 KB & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2\\
+ 512 KB & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 6 & 6 & 2 & 6\\
+ 1 MB & 4 & 4 & 5 & 5 & 6 & 20 & 20 & 18 & 18 & 14 & 12 & 18\\
+ 3 MB & 10 & 10 & 12 & 12 & 18 & 18 & 18 & 21 & 21 & 18 & 16 & 18\\
+ 5 MB & 12 & 12 & 14 & 14 & 18 & 18 & 18 & 20 & 21 & 16 & 24 & 18\\
+ 7 MB & 12 & 12 & 14 & 14 & 33 & 18 & 18 & 20 & 21 & 26 & 24 & 18\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
 % Text of paper \ldots
 
 % \section{Topologies}\label{sec:Topologies}
