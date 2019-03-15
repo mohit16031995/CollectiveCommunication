@@ -164,9 +164,9 @@ The main idea behind two trees algorithm is to maximize the bandwidth utilizatio
 \end{figure*}
 
 \begin{description}
-    \item[$\bullet$]TwoTreeS suffers from an overhead of indirect synchronization due to the colouring of edges. Colouring ensures that the communication goes round by round in a synchronized way. However, synchronization might add delays due to underlying network traffic. We have implemented TwoTreeS both with synchronization and without, results clearly state that the overhead of synchronization is more than its benefit.
+    \item[$\bullet$]TwoTreeS suffers from an overhead of indirect synchronization due to the colouring of edges. Colouring ensures that the communication goes round by round in a synchronized way. However, synchronization might add delays due to underlying network traffic. We have implemented TwoTreeS both with colouring based schedule (TwoTreeS\_Bottom and TwoTreeS\_Top) and completely unsynchronized using our approach (TwoTreeS\_Unsync), results clearly state that the overhead of synchronization is more than its benefit.
 %    \item[$\bullet$]TwoTreeS does not ensure proper balancing of tree, which could result in reduced bandwidth utilization in cases with non power of two number of processes. Effects were evident especially in reduce and allreduce when one sub-tree becomes significantly shorter than the other. Figure \ref{fig:twoTreeS} illustrates this imbalance for $21$ processes.
-    \item[$\bullet$]As described in the article \cite{sanders_two-tree_2009}, in a particular case of total \(2^n+1\) processes for a rooted collective operation, the two trees are constructed such that they have a full binary tree of \(2^n-1\) processes, and one extra node at the top. This extra node thus only has one child. Hence, extra latency is added to the pipeline.
+    \item[$\bullet$]As described in the article \cite{sanders_two-tree_2009}, in a particular case of total \(2^n+1\) processes for a rooted collective operation, the two trees are constructed such that there is a complete binary tree of \(2^n-1\) processes, and one extra node at the top. Thus, this extra node has only one child on the left in $T_1$ and the right in $T_2$. Later, root process node is also put on the top.  Hence, extra latency is added to the pipeline. We refer to this version of TwoTreeS as TwoTreeS\_Top and to understand the impact of this latency, we added this extra node at the bottom of the complete tree for this specific case only. This variation is named as  TwoTreeS\_Bottom.
     \item[$\bullet$]The topology construction time for TwoTreeS is relatively higher, especially, the colouring algorithm.
 \end{description}
 
@@ -308,11 +308,11 @@ Figure \ref{fig:reordered} shows $T_3$ and $T_4$ for TwoTreeC+C for 20 processes
 \end{figure}
 
 \subsubsection{TwoTreeC+S}
-This version of allreduce uses the TwoTreeC for the reduce and TwoTreeS for the broadcast phase.
+Both TwoTreeC and TwoTreeS uses totally different methods to achieve the same objective of designing pair of two trees. This version of allreduce is a random choice of using both of the topologies together. The $T_1$ and $T_2$ trees uses TwoTreeC topology whereas $T_3$ and $T_4$ are designed using TwoTreeS topology. The basic idea is to get benefit from both of the topologies. However, instead of using coloring for synchronization in TwoTreeS, we only make use of TwoTreeS topology exactly similar to TwoTreeC i.e., in an unsynchronized way as described in algorithm \ref{alg:broadcastImpl}. 
 
 \section{Calculating Number of Chunks} \label{sec:Chunks}
 An important component of any pipelined collective is to optimally divide the message in to smaller number of chunks. The number of chunks and hence, the size of each chunk are important factors affecting runtime. %Calculating the chunks value for different algorithms and for different parameters was also very challenging. 
-We have tried and tested following three approaches to calculate the best possible chunk value for the proposed algorithm for varying message size and number of processes. All of these approaches are based on modelling the runtime of the algorithm based on LogGP \cite{alexandrov_loggp:_1995} parameters viz: L:Latency; o:cpu overhead; g: gap between messages; G: gap per byte; P: number of processes. To evaluate these parameters for an HPC system, Netgauge simulator \cite{hoefler_w.:_2007} has been used. The values of these parameters along with optimal chunk values for each algorithm is described in the results section.
+We have tried and tested following three approaches to calculate the best possible chunk value for the proposed algorithm for varying message size and number of processes. All of these approaches are based on modelling the runtime of the algorithm based on LogGP \cite{alexandrov_loggp:_1995} parameters viz: L:Latency; o:cpu overhead; g: gap between messages; G: gap per byte; P: number of processes. To evaluate these parameters for an HPC system, netgauge tool \cite{hoefler_w.:_2007} is used. The values of these parameters along with optimal chunk values for each algorithm is described in the results section.
 
 %Testing 1025 bytes 100 times:
 %L = 1.589921 s = 1025 o_s = 1.709757 o_r = 1.711930 g = 1.346026 G = 0.000362 (21.564100 GiB/s) lsqu(g,G) = -nan
@@ -338,11 +338,13 @@ where, $N$ is the number of chunks into which the message size $s$ is divided. T
 \subsection{Simulation}
 Another interesting choice is to simulate the send and receive operations in a collective using a simulator. LogGOPSim \cite{hoefler-loggopsim} simulator is based on LogGP model and has been widely used for simulating MPI collectives. 
 
+\ifcmts \{\textcolor{red}{todo @Salvo To write more about LogGOPSim}\} \fi
+
 \subsection{Random}
-LogGOPSim simulator also does not model real network traffic and hence, was not always accurate to predict the optimal number of chunks as depicted experimentally. To have a more robust approach, we performed experiments using ($\pm$10\%, $\pm$20\%) of the optimal chunk value obtained from LogGOPSim. This approach helped us to cover a relatively larger range and then choose the best out of them for different number of processes and message sizes. 
+LogGOPSim simulator also does not model real network traffic and hence, is not always accurate to predict the optimal number of chunks as depicted experimentally. To have a more robust approach, we performed experiments using ($\pm$10\%, $\pm$20\%) of the optimal chunk value obtained from LogGOPSim. This approach helped us to cover a relatively larger range of chunk values and then choose the chunk value for which the collective finishes the fastest for different number of processes and message sizes. 
 
 \section{Experiments and Results} \label{sec:results}
-\ifcmts \{\textcolor{blue}{todo LogGP parameter values, other details like single process per node, etc.}\}
+\ifcmts \{\textcolor{blue}{todo: LogGP parameter values, algorithm compared with, other details like single process per node, etc.}\}
 %Mention and briefly explain all the implementations compared: linear pipeline, pipelined binary tree, our pipelined two tree, mpi standard library, scatter-gather. Conclude how our approach outperformes the rest on larger data sizes.
 
 \subsection{Broadcast}
@@ -451,7 +453,7 @@ LogGOPSim simulator also does not model real network traffic and hence, was not 
 
 \subsection{All-Reduce}
 
-\ifcmts \{\textcolor{red}{todo lower bound plot}\}
+\ifcmts \{\textcolor{red}{todo lower bound plot}\} \fi
 
 \begin{figure*}
 \centering
