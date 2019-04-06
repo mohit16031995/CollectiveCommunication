@@ -37,7 +37,7 @@
 
 %
 % The "title" command has an optional parameter, allowing the author to define a "short title" to be used in page headers.
-\title{Efficient Two Trees to Optimize Collectives: Broadcast, Reduce, and Allreduce}
+\title{Efficient Two Trees to Optimize MPI Broadcast, Reduce, and Allreduce Collectives}
 
 %
 % The "author" command and its associated commands are used to define the authors and their affiliations.
@@ -69,7 +69,7 @@
 %
 % The abstract is a short summary of the work to be presented in the article.
 \begin{abstract}
-Text of abstract \ldots.
+Binary and linear tree pipeline algorithms are observed to reduce the runtime of various MPI collective operations which involves medium to large message sizes. To fully utilize the bandwidth of all the processes in a binary tree pipeline, a combination of two trees is used where leaf nodes of one binary tree becomes the inner nodes of the other tree. Implementing a collective using two trees consists of three significant components: binary tree structure for both the trees, labelling of nodes of the tree with process ranks and, number of chunks into which the message is divided. However, impact of these three components on collective operations using two trees is still unknown. This paper presents a comprehensive analysis of two trees by varying tree structure, labelling and chunk size for different message sizes and number of processes. Later, we propose optimized implementation of broadcast, reduce and allreduce collectives using two trees. After detailed experimentation on state-of-the-art high performance computing system, it is observed that the proposed implementations are run time efficient and stable for both power of two and non power of two number of processes than the other well known algorithms. Especially, allreduce implementation is much closer to the theoretical lower bound. 
 \end{abstract}
 
 
